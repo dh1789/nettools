@@ -9,7 +9,7 @@
  * 빌드: npm run build (prebuild에서 자동 실행)
  */
 
-import { writeFileSync } from "fs";
+import { writeFileSync, mkdirSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -54,6 +54,8 @@ function parseCSV(text) {
 
 async function main() {
   console.log("IEEE OUI 데이터 다운로드 중...");
+
+  mkdirSync(dirname(OUT_PATH), { recursive: true });
 
   const db = {};
   let total = 0;
