@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nettools",
+  "compatibility_date": "2025-03-22",
+  "assets": {
+    "directory": "out"
+  }
+}
