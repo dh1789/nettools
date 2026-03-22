@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useLocale } from "@/lib/LocaleProvider";
+import { T } from "@/lib/i18n";
 
 interface SubnetResult {
   networkAddress: string;
@@ -66,6 +68,40 @@ function validateIp(ip: string): boolean {
     const n = parseInt(p, 10);
     return !isNaN(n) && n >= 0 && n <= 255 && p === String(n);
   });
+}
+
+/** 구체적인 IP 에러를 반환. null이면 유효 */
+function getIpError(ip: string): { key: "octets" | "range"; n?: number; val?: string } | null {
+  const parts = ip.split(".");
+  if (parts.length !== 4) return { key: "octets" };
+  for (let i = 0; i < 4; i++) {
+    const p = parts[i];
+    const n = parseInt(p, 10);
+    if (isNaN(n) || n < 0 || n > 255 || p !== String(n)) {
+      return { key: "range", n: i + 1, val: p };
+    }
+  }
+  return null;
+}
+
+function cidrToMask(cidr: number): string {
+  const maskInt = cidr === 0 ? 0 : (~0 << (32 - cidr)) >>> 0;
+  return intToIp(maskInt);
+}
+
+function maskToCidr(mask: string): number | null {
+  if (!validateIp(mask)) return null;
+  const maskInt = ipToInt(mask);
+  // 연속된 1 뒤에 연속된 0인지 검증
+  const inverted = (~maskInt) >>> 0;
+  if (((inverted + 1) & inverted) !== 0) return null;
+  let bits = 0;
+  let n = maskInt;
+  while (n) {
+    bits += n & 1;
+    n >>>= 1;
+  }
+  return bits;
 }
 
 function calculate(ip: string, cidr: number): SubnetResult | null {
@@ -138,27 +174,62 @@ const resultValueStyle: React.CSSProperties = {
 };
 
 export function SubnetCalculator() {
+  const { t, tf } = useLocale();
   const [ip, setIp] = useState("192.168.1.100");
   const [cidr, setCidr] = useState(24);
+  const [mask, setMask] = useState("255.255.255.0");
   const [result, setResult] = useState<SubnetResult | null>(() =>
     calculate("192.168.1.100", 24),
   );
   const [copied, setCopied] = useState(false);
+  const [ipError, setIpError] = useState("");
+  const [maskError, setMaskError] = useState("");
 
   const handleCalculate = useCallback(() => {
     setResult(calculate(ip, cidr));
   }, [ip, cidr]);
 
+  const resolveIpError = (value: string): string => {
+    const err = getIpError(value);
+    if (!err) return "";
+    if (err.key === "octets") return t(T.ipNeedsFourOctets);
+    return tf(T.ipOctetRange, { n: err.n!, val: err.val! });
+  };
+
   const handleIpChange = (value: string) => {
     setIp(value);
+    const err = resolveIpError(value);
+    setIpError(err);
     const r = calculate(value, cidr);
     if (r) setResult(r);
   };
 
   const handleCidrChange = (value: number) => {
     setCidr(value);
+    setMask(cidrToMask(value));
+    setMaskError("");
     const r = calculate(ip, value);
     if (r) setResult(r);
+  };
+
+  const handleMaskChange = (value: string) => {
+    setMask(value);
+    const c = maskToCidr(value);
+    if (c !== null) {
+      setMaskError("");
+      setCidr(c);
+      const r = calculate(ip, c);
+      if (r) setResult(r);
+    } else if (value.length > 0) {
+      const ipErr = getIpError(value);
+      if (ipErr) {
+        setMaskError(ipErr.key === "octets" ? t(T.ipNeedsFourOctets) : tf(T.ipOctetRange, { n: ipErr.n!, val: ipErr.val! }));
+      } else {
+        setMaskError(t(T.invalidMaskMsg));
+      }
+    } else {
+      setMaskError("");
+    }
   };
 
   const copyAll = () => {
@@ -183,42 +254,73 @@ export function SubnetCalculator() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr auto",
+          gridTemplateColumns: "1fr 1fr",
           gap: "1rem",
-          marginBottom: "1.5rem",
+          marginBottom: "1rem",
         }}
       >
         <div>
-          <label style={labelStyle}>IP Address</label>
+          <label style={labelStyle}>{t(T.ipAddress)}</label>
           <input
             type="text"
             value={ip}
             onChange={(e) => handleIpChange(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCalculate()}
             placeholder="192.168.1.100"
-            style={inputStyle}
-          />
-        </div>
-        <div style={{ minWidth: "100px" }}>
-          <label style={labelStyle}>CIDR (/{cidr})</label>
-          <input
-            type="range"
-            min={0}
-            max={32}
-            value={cidr}
-            onChange={(e) => handleCidrChange(parseInt(e.target.value))}
-            style={{ width: "100%", marginTop: "0.625rem" }}
-          />
-          <div
             style={{
-              textAlign: "center",
-              fontFamily: "monospace",
-              fontSize: "0.875rem",
-              color: "var(--text-secondary, #6b7280)",
+              ...inputStyle,
+              borderColor: ipError ? "#ef4444" : "var(--border, #d1d5db)",
             }}
-          >
-            /{cidr}
-          </div>
+          />
+          {ipError && (
+            <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "0.25rem" }}>
+              {ipError}
+            </p>
+          )}
+        </div>
+        <div>
+          <label style={labelStyle}>{t(T.subnetMask)}</label>
+          <input
+            type="text"
+            value={mask}
+            onChange={(e) => handleMaskChange(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleCalculate()}
+            placeholder="255.255.255.0"
+            style={{
+              ...inputStyle,
+              borderColor: maskError ? "#ef4444" : "var(--border, #d1d5db)",
+            }}
+          />
+          {maskError && (
+            <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "0.25rem" }}>
+              {maskError}
+            </p>
+          )}
+        </div>
+      </div>
+      <div style={{ marginBottom: "1.5rem" }}>
+        <label style={labelStyle}>{tf(T.cidrPrefix, { cidr })}</label>
+        <input
+          type="range"
+          min={0}
+          max={32}
+          value={cidr}
+          onChange={(e) => handleCidrChange(parseInt(e.target.value))}
+          style={{ width: "100%", marginTop: "0.25rem" }}
+        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            fontFamily: "monospace",
+            fontSize: "0.75rem",
+            color: "var(--text-secondary, #6b7280)",
+            marginTop: "0.125rem",
+          }}
+        >
+          <span>/0</span>
+          <span>/{cidr} — {mask}</span>
+          <span>/32</span>
         </div>
       </div>
 
@@ -240,7 +342,7 @@ export function SubnetCalculator() {
                 color: "var(--text-primary, #111)",
               }}
             >
-              Results
+              {t(T.results)}
             </h2>
             <button
               onClick={copyAll}
@@ -255,7 +357,7 @@ export function SubnetCalculator() {
                 transition: "all 0.2s",
               }}
             >
-              {copied ? "Copied!" : "Copy All"}
+              {copied ? t(T.copied) : t(T.copyAll)}
             </button>
           </div>
 
@@ -268,37 +370,37 @@ export function SubnetCalculator() {
             }}
           >
             <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>Network Address</span>
+              <span style={resultLabelStyle}>{t(T.networkAddress)}</span>
               <span style={resultValueStyle}>{result.networkAddress}</span>
             </div>
             <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>Broadcast Address</span>
+              <span style={resultLabelStyle}>{t(T.broadcastAddress)}</span>
               <span style={resultValueStyle}>{result.broadcastAddress}</span>
             </div>
             <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>First Usable Host</span>
+              <span style={resultLabelStyle}>{t(T.firstUsableHost)}</span>
               <span style={resultValueStyle}>{result.firstHost}</span>
             </div>
             <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>Last Usable Host</span>
+              <span style={resultLabelStyle}>{t(T.lastUsableHost)}</span>
               <span style={resultValueStyle}>{result.lastHost}</span>
             </div>
             <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>Subnet Mask</span>
+              <span style={resultLabelStyle}>{t(T.subnetMask)}</span>
               <span style={resultValueStyle}>{result.subnetMask}</span>
             </div>
             <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>Wildcard Mask</span>
+              <span style={resultLabelStyle}>{t(T.wildcardMask)}</span>
               <span style={resultValueStyle}>{result.wildcardMask}</span>
             </div>
             <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>Total Hosts</span>
+              <span style={resultLabelStyle}>{t(T.totalHosts)}</span>
               <span style={resultValueStyle}>
                 {result.totalHosts.toLocaleString()}
               </span>
             </div>
             <div style={{ ...resultRowStyle, borderBottom: "none" }}>
-              <span style={resultLabelStyle}>Usable Hosts</span>
+              <span style={resultLabelStyle}>{t(T.usableHosts)}</span>
               <span style={resultValueStyle}>
                 {result.usableHosts.toLocaleString()}
               </span>
@@ -322,7 +424,7 @@ export function SubnetCalculator() {
               }}
             >
               <div style={{ color: "var(--text-secondary, #6b7280)" }}>
-                IP Class
+                {t(T.ipClass)}
               </div>
               <div
                 style={{
@@ -344,7 +446,7 @@ export function SubnetCalculator() {
               }}
             >
               <div style={{ color: "var(--text-secondary, #6b7280)" }}>
-                Address Type
+                {t(T.addressType)}
               </div>
               <div
                 style={{
@@ -352,7 +454,7 @@ export function SubnetCalculator() {
                   color: "var(--text-primary, #111)",
                 }}
               >
-                {result.isPrivate ? "Private (RFC 1918)" : "Public"}
+                {result.isPrivate ? t(T.privateRfc) : t(T.public)}
               </div>
             </div>
           </div>
@@ -367,7 +469,7 @@ export function SubnetCalculator() {
                 userSelect: "none",
               }}
             >
-              Binary representation
+              {t(T.binaryRepresentation)}
             </summary>
             <div
               style={{
@@ -385,17 +487,19 @@ export function SubnetCalculator() {
         </div>
       )}
 
-      {!result && (
+      {!result && (ipError || maskError) && (
         <div
           style={{
-            textAlign: "center",
-            padding: "2rem",
-            color: "#ef4444",
+            padding: "0.75rem 1rem",
+            background: "#fef2f2",
+            border: "1px solid #fecaca",
+            borderRadius: "8px",
+            color: "#dc2626",
             fontSize: "0.875rem",
           }}
         >
-          Invalid IP address. Please enter a valid IPv4 address (e.g.,
-          192.168.1.100)
+          {ipError && <div>{ipError}</div>}
+          {maskError && <div>{maskError}</div>}
         </div>
       )}
     </div>

@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import { LocaleProvider } from "@/lib/LocaleProvider";
+import { ClientHeader } from "@/components/layout/ClientHeader";
+import { ClientFooter } from "@/components/layout/ClientFooter";
+import { SidebarLayout } from "@/components/layout/SidebarLayout";
 
 export const metadata: Metadata = {
   title: {
@@ -18,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <style
           dangerouslySetInnerHTML={{
@@ -72,73 +76,22 @@ export default function RootLayout({
                 border-color: #3b82f6;
                 box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
               }
+              @keyframes slideIn {
+                from { transform: translateX(-100%); }
+                to { transform: translateX(0); }
+              }
             `,
           }}
         />
       </head>
       <body>
-        {/* Header */}
-        <header
-          style={{
-            borderBottom: "1px solid var(--border)",
-            padding: "0.75rem 1rem",
-          }}
-        >
-          <nav
-            style={{
-              maxWidth: "960px",
-              margin: "0 auto",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <a
-              href="/"
-              style={{
-                fontWeight: 700,
-                fontSize: "1.125rem",
-                textDecoration: "none",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              NetTools
-            </a>
-            <div style={{ display: "flex", gap: "1.5rem", fontSize: "0.875rem" }}>
-              <a
-                href="/"
-                style={{ textDecoration: "none", color: "var(--text-secondary)" }}
-              >
-                Tools
-              </a>
-              <a
-                href="/about"
-                style={{ textDecoration: "none", color: "var(--text-secondary)" }}
-              >
-                About
-              </a>
-            </div>
-          </nav>
-        </header>
-
-        {children}
-
-        {/* Footer */}
-        <footer
-          style={{
-            borderTop: "1px solid var(--border)",
-            padding: "2rem 1rem",
-            marginTop: "3rem",
-            textAlign: "center",
-            fontSize: "0.8125rem",
-            color: "var(--text-tertiary)",
-          }}
-        >
-          <p>NetTools — Built by a network security developer with 19 years of experience.</p>
-          <p style={{ marginTop: "0.25rem" }}>
-            All tools run entirely in your browser. No data is sent to any server.
-          </p>
-        </footer>
+        <LocaleProvider>
+          <ClientHeader />
+          <SidebarLayout>
+            {children}
+          </SidebarLayout>
+          <ClientFooter />
+        </LocaleProvider>
       </body>
     </html>
   );

@@ -8,9 +8,10 @@
  */
 
 import { SubnetCalculator } from "./SubnetCalculator";
+import { MacOuiLookup } from "./MacOuiLookup";
 
 export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   SubnetCalculator,
-  // MacOuiLookup,      ← 다음 도구
+  MacOuiLookup,
   // CidrToRange,       ← 그 다음
 };

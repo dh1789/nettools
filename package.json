@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 50000 -H 0.0.0.0",
+    "prebuild": "node scripts/fetch-oui.mjs",
     "build": "next build",
+    "fetch-oui": "node scripts/fetch-oui.mjs",
     "start": "next start",
     "lint": "next lint",
     "new-tool": "node scripts/new-tool.mjs"
