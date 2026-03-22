@@ -2,6 +2,8 @@ import { TOOLS } from "@/data/tools";
 import { generateSitemapEntries } from "@/lib/seo";
 import type { MetadataRoute } from "next";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries = generateSitemapEntries(TOOLS);
 
