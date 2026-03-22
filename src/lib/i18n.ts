@@ -20,11 +20,17 @@ export const DEFAULT_LOCALE: Locale = "en";
 export const STORAGE_KEY = "nettools-locale";
 
 export function detectBrowserLocale(): Locale {
-  if (typeof window === "undefined") return DEFAULT_LOCALE;
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === "ko" || stored === "en") return stored;
-  const lang = navigator.language || "";
-  if (lang.startsWith("ko")) return "ko";
+  try {
+    if (typeof window === "undefined" || typeof localStorage === "undefined") {
+      return DEFAULT_LOCALE;
+    }
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "ko" || stored === "en") return stored;
+    const lang = navigator.language || "";
+    if (lang.startsWith("ko")) return "ko";
+  } catch {
+    // SSR or restricted context
+  }
   return DEFAULT_LOCALE;
 }
 

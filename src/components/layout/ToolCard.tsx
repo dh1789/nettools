@@ -11,7 +11,7 @@ interface ToolCardProps {
 export default function ToolCard({ slug, title, description }: ToolCardProps) {
   return (
     <Link
-      href={`/tools/${slug}`}
+      href={`/tools/net/${slug}`}
       style={{
         display: "block",
         padding: "1.25rem",

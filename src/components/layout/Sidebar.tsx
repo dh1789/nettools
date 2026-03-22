@@ -30,7 +30,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
     <nav style={{ padding: "1rem 0" }}>
       {/* Home */}
       <Link
-        href="/"
+        href="/tools/net/"
         onClick={onNavigate}
         style={{
           display: "flex",
@@ -38,9 +38,9 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           gap: "0.5rem",
           padding: "0.5rem 1rem",
           fontSize: "0.875rem",
-          fontWeight: isActive("/") ? 700 : 400,
-          color: isActive("/") ? "#3b82f6" : "var(--text-primary)",
-          background: isActive("/") ? "var(--info-bg, #eff6ff)" : "transparent",
+          fontWeight: isActive("/tools/net") ? 700 : 400,
+          color: isActive("/tools/net") ? "#3b82f6" : "var(--text-primary)",
+          background: isActive("/tools/net") ? "var(--info-bg, #eff6ff)" : "transparent",
           borderRadius: "6px",
           textDecoration: "none",
           margin: "0 0.5rem 0.25rem",
@@ -104,7 +104,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
             {!isCollapsed && (
               <div>
                 {tools.map((tool) => {
-                  const toolPath = `/tools/${tool.slug}`;
+                  const toolPath = `/tools/net/${tool.slug}`;
                   const active = isActive(toolPath);
                   return (
                     <Link

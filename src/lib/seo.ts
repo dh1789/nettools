@@ -21,16 +21,16 @@ export function generateToolMetadata(tool: Tool, locale: Locale): Metadata {
     openGraph: {
       title,
       description,
-      url: `${SITE_URL}/tools/${tool.slug}`,
+      url: `${SITE_URL}/tools/net/${tool.slug}`,
       siteName: "NetTools",
       type: "website",
       locale: locale === "ko" ? "ko_KR" : "en_US",
     },
     alternates: {
-      canonical: `${SITE_URL}/tools/${tool.slug}`,
+      canonical: `${SITE_URL}/tools/net/${tool.slug}`,
       languages: {
-        ko: `${SITE_URL}/ko/tools/${tool.slug}`,
-        en: `${SITE_URL}/en/tools/${tool.slug}`,
+        ko: `${SITE_URL}/ko/tools/net/${tool.slug}`,
+        en: `${SITE_URL}/en/tools/net/${tool.slug}`,
       },
     },
   };
@@ -49,7 +49,7 @@ export function generateToolJsonLd(tool: Tool, locale: Locale): string {
     "@type": "WebApplication",
     name: title,
     description,
-    url: `${SITE_URL}/tools/${tool.slug}`,
+    url: `${SITE_URL}/tools/net/${tool.slug}`,
     applicationCategory: "UtilityApplication",
     operatingSystem: "Any",
     offers: {
@@ -95,7 +95,7 @@ export function generateSitemapEntries(
   const entries = [
     { url: SITE_URL, priority: 1.0 },
     ...tools.map((tool) => ({
-      url: `${SITE_URL}/tools/${tool.slug}`,
+      url: `${SITE_URL}/tools/net/${tool.slug}`,
       lastmod: tool.dateModified || tool.datePublished,
       priority: 0.8,
     })),

@@ -24,7 +24,7 @@ export function ClientHeader() {
         }}
       >
         <a
-          href="/"
+          href="/tools/net/"
           style={{
             fontWeight: 700,
             fontSize: "1.125rem",
@@ -36,7 +36,7 @@ export function ClientHeader() {
         </a>
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", fontSize: "0.875rem" }}>
           <a
-            href="/"
+            href="/tools/net/"
             style={{ textDecoration: "none", color: "var(--text-secondary)" }}
           >
             {t(T.navTools)}
