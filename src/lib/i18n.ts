@@ -145,6 +145,25 @@ export const T = {
     ko: "IEEE에서 배포하는 MA-L(24비트), MA-M(28비트), MA-S(36비트) 3종 데이터를 모두 지원합니다.",
     en: "Supports all three IEEE registries: MA-L (24-bit), MA-M (28-bit), and MA-S (36-bit).",
   },
+  // CidrToRange
+  cidrNotation: { ko: "CIDR 표기법", en: "CIDR Notation" },
+  convert: { ko: "변환", en: "Convert" },
+  cidrFormatHint: {
+    ko: "형식: IP주소/프리픽스 (예: 192.168.1.0/24, 10.0.0.0/8)",
+    en: "Format: IP/prefix (e.g., 192.168.1.0/24, 10.0.0.0/8)",
+  },
+  cidrInvalidFormat: {
+    ko: "유효하지 않은 CIDR 표기법입니다. (예: 192.168.1.0/24)",
+    en: "Invalid CIDR notation. (e.g., 192.168.1.0/24)",
+  },
+  cidrIpRange: { ko: "IP 범위", en: "IP Range" },
+  cidrTotalCount: {
+    ko: "총 {count}개 IP 주소",
+    en: "{count} IP addresses total",
+  },
+  cidrFirstIp: { ko: "시작 IP", en: "First IP" },
+  cidrLastIp: { ko: "끝 IP", en: "Last IP" },
+  cidrTotalIps: { ko: "전체 IP 수", en: "Total IPs" },
 } as const satisfies Record<string, Translatable>;
 
 /** 템플릿 문자열 치환 */
