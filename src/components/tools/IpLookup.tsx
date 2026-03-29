@@ -247,9 +247,10 @@ export function IpLookup() {
         }
         setState({ type: "public", ip, info: data });
       } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
         setState({
           type: "error",
-          message: t(T.ipLookupFetchError),
+          message: `${t(T.ipLookupFetchError)} (${msg})`,
         });
       }
     },
