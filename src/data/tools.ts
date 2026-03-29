@@ -145,6 +145,21 @@ export const TOOLS: Tool[] = [
     component: "CidrToRange",
     datePublished: "2026-03-22",
   },
+  {
+    slug: "ip-lookup",
+    title: {
+      ko: "IP 주소 조회기",
+      en: "IP Address Lookup",
+    },
+    description: {
+      ko: "IP 주소의 공인/사설 여부를 확인하고, 공인 IP의 등록 정보(국가, ISP, 조직 등)를 조회합니다.",
+      en: "Check if an IP is public or private, and look up registration info (country, ISP, org) for public IPs.",
+    },
+    category: "network",
+    keywords: ["ip", "lookup", "whois", "geolocation", "public", "private", "아이피", "조회", "공인", "사설"],
+    component: "IpLookup",
+    datePublished: "2026-03-29",
+  },
 ];
 
 // Helper functions

@@ -164,6 +164,50 @@ export const T = {
   cidrFirstIp: { ko: "시작 IP", en: "First IP" },
   cidrLastIp: { ko: "끝 IP", en: "Last IP" },
   cidrTotalIps: { ko: "전체 IP 수", en: "Total IPs" },
+  // IpLookup
+  ipLookupLabel: { ko: "IP 주소", en: "IP Address" },
+  ipLookupBtn: { ko: "조회", en: "Lookup" },
+  ipLookupMyIp: { ko: "내 IP 확인", en: "My IP" },
+  ipLookupDetecting: { ko: "확인중...", en: "Detecting..." },
+  ipLookupHint: {
+    ko: "IPv4 주소를 입력하거나 '내 IP 확인' 버튼으로 현재 공인 IP를 조회합니다.",
+    en: "Enter an IPv4 address or click 'My IP' to detect your current public IP.",
+  },
+  ipLookupInvalidIp: {
+    ko: "유효하지 않은 IP 주소입니다. (예: 8.8.8.8)",
+    en: "Invalid IP address. (e.g., 8.8.8.8)",
+  },
+  ipLookupFetchError: {
+    ko: "IP 정보를 가져오는 데 실패했습니다. 잠시 후 다시 시도해주세요.",
+    en: "Failed to fetch IP information. Please try again later.",
+  },
+  ipLookupMyIpError: {
+    ko: "공인 IP를 감지할 수 없습니다. 네트워크 연결을 확인해주세요.",
+    en: "Could not detect your public IP. Please check your network connection.",
+  },
+  ipLookupLoading: { ko: "조회 중...", en: "Looking up..." },
+  ipLookupPrivate: { ko: "사설 IP", en: "Private IP" },
+  ipLookupPublic: { ko: "공인 IP", en: "Public IP" },
+  ipLookupRange: { ko: "주소 범위", en: "Address Range" },
+  ipLookupRfc: { ko: "표준 문서", en: "Standard" },
+  ipLookupDescription: { ko: "설명", en: "Description" },
+  ipLookupPrivateNotice: {
+    ko: "사설 IP 주소는 내부 네트워크에서만 사용되며, 인터넷에서 직접 접근할 수 없습니다. 공인 IP 등록 정보는 공인 IP 주소에서만 조회 가능합니다.",
+    en: "Private IP addresses are used only within internal networks and are not routable on the internet. Registration info is only available for public IP addresses.",
+  },
+  ipLookupCountry: { ko: "국가", en: "Country" },
+  ipLookupRegion: { ko: "지역", en: "Region" },
+  ipLookupCity: { ko: "도시", en: "City" },
+  ipLookupZip: { ko: "우편번호", en: "ZIP Code" },
+  ipLookupTimezone: { ko: "시간대", en: "Timezone" },
+  ipLookupIsp: { ko: "ISP", en: "ISP" },
+  ipLookupOrg: { ko: "조직", en: "Organization" },
+  ipLookupAs: { ko: "AS 번호", en: "AS Number" },
+  ipLookupCoordinates: { ko: "좌표 (위도/경도)", en: "Coordinates (Lat/Lon)" },
+  ipLookupApiNotice: {
+    ko: "공인 IP 등록 정보는 ip-api.com에서 제공됩니다. 위치 정보는 대략적이며, 실제 물리적 위치와 다를 수 있습니다.",
+    en: "Public IP registration data is provided by ip-api.com. Location is approximate and may not reflect the actual physical location.",
+  },
 } as const satisfies Record<string, Translatable>;
 
 /** 템플릿 문자열 치환 */
