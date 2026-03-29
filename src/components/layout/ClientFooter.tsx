@@ -19,6 +19,17 @@ export function ClientFooter() {
     >
       <p>{t(T.footerBuiltBy)}</p>
       <p style={{ marginTop: "0.25rem" }}>{t(T.footerPrivacy)}</p>
+      <p
+        style={{
+          marginTop: "0.5rem",
+          fontSize: "0.6875rem",
+          fontFamily: "monospace",
+          color: "var(--text-tertiary)",
+          opacity: 0.6,
+        }}
+      >
+        {process.env.NEXT_PUBLIC_GIT_HASH} · {process.env.NEXT_PUBLIC_BUILD_TIME}
+      </p>
     </footer>
   );
 }
