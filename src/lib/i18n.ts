@@ -205,8 +205,8 @@ export const T = {
   ipLookupAs: { ko: "AS 번호", en: "AS Number" },
   ipLookupCoordinates: { ko: "좌표 (위도/경도)", en: "Coordinates (Lat/Lon)" },
   ipLookupApiNotice: {
-    ko: "공인 IP 등록 정보는 ipwho.is에서 제공됩니다. 위치 정보는 대략적이며, 실제 물리적 위치와 다를 수 있습니다.",
-    en: "Public IP registration data is provided by ipwho.is. Location is approximate and may not reflect the actual physical location.",
+    ko: "공인 IP 등록 정보는 ipapi.co에서 제공됩니다. 위치 정보는 대략적이며, 실제 물리적 위치와 다를 수 있습니다.",
+    en: "Public IP registration data is provided by ipapi.co. Location is approximate and may not reflect the actual physical location.",
   },
 } as const satisfies Record<string, Translatable>;
 
