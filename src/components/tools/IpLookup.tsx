@@ -104,20 +104,17 @@ const PRIVATE_RANGES: PrivateRange[] = [
 ];
 
 interface IpInfo {
-  query: string;
-  status: string;
+  ip: string;
+  success: boolean;
   country: string;
-  countryCode: string;
+  country_code: string;
   region: string;
-  regionName: string;
   city: string;
-  zip: string;
-  lat: number;
-  lon: number;
-  timezone: string;
-  isp: string;
-  org: string;
-  as: string;
+  postal: string;
+  latitude: number;
+  longitude: number;
+  timezone: { id: string };
+  connection: { isp: string; org: string; asn: number; domain: string };
 }
 
 function ipToInt(ip: string): number {
@@ -242,16 +239,11 @@ export function IpLookup() {
 
       setState({ type: "loading" });
       try {
-        const res = await fetch(
-          `http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query`
-        );
+        const res = await fetch(`https://ipwho.is/${ip}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data: IpInfo = await res.json();
-        if (data.status !== "success") {
-          throw new Error(
-            (data as unknown as { message?: string }).message ||
-              "Lookup failed"
-          );
+        if (!data.success) {
+          throw new Error("Lookup failed");
         }
         setState({ type: "public", ip, info: data });
       } catch (e) {
@@ -296,17 +288,17 @@ export function IpLookup() {
     } else {
       const info = state.info;
       text = [
-        `IP: ${info.query}`,
+        `IP: ${info.ip}`,
         `Type: Public`,
-        `Country: ${info.country} (${info.countryCode})`,
-        `Region: ${info.regionName}`,
+        `Country: ${info.country} (${info.country_code})`,
+        `Region: ${info.region}`,
         `City: ${info.city}`,
-        `ZIP: ${info.zip}`,
-        `Timezone: ${info.timezone}`,
-        `ISP: ${info.isp}`,
-        `Org: ${info.org}`,
-        `AS: ${info.as}`,
-        `Location: ${info.lat}, ${info.lon}`,
+        `ZIP: ${info.postal}`,
+        `Timezone: ${info.timezone.id}`,
+        `ISP: ${info.connection.isp}`,
+        `Org: ${info.connection.org}`,
+        `AS: AS${info.connection.asn}`,
+        `Location: ${info.latitude}, ${info.longitude}`,
       ].join("\n");
     }
     navigator.clipboard.writeText(text);
@@ -573,7 +565,7 @@ export function IpLookup() {
                 color: "var(--text-primary, #111)",
               }}
             >
-              {state.info.query}
+              {state.info.ip}
             </div>
           </div>
 
@@ -589,23 +581,23 @@ export function IpLookup() {
             <div style={resultRowStyle}>
               <span style={resultLabelStyle}>{t(T.ipLookupCountry)}</span>
               <span style={resultValueStyle}>
-                {state.info.country} ({state.info.countryCode})
+                {state.info.country} ({state.info.country_code})
               </span>
             </div>
             <div style={resultRowStyle}>
               <span style={resultLabelStyle}>{t(T.ipLookupRegion)}</span>
               <span style={resultValueStyle}>
-                {state.info.regionName}
+                {state.info.region}
               </span>
             </div>
             <div style={resultRowStyle}>
               <span style={resultLabelStyle}>{t(T.ipLookupCity)}</span>
               <span style={resultValueStyle}>{state.info.city}</span>
             </div>
-            {state.info.zip && (
+            {state.info.postal && (
               <div style={resultRowStyle}>
                 <span style={resultLabelStyle}>{t(T.ipLookupZip)}</span>
-                <span style={resultValueStyle}>{state.info.zip}</span>
+                <span style={resultValueStyle}>{state.info.postal}</span>
               </div>
             )}
             <div style={resultRowStyle}>
@@ -613,20 +605,20 @@ export function IpLookup() {
                 {t(T.ipLookupTimezone)}
               </span>
               <span style={resultValueStyle}>
-                {state.info.timezone}
+                {state.info.timezone.id}
               </span>
             </div>
             <div style={resultRowStyle}>
               <span style={resultLabelStyle}>{t(T.ipLookupIsp)}</span>
-              <span style={resultValueStyle}>{state.info.isp}</span>
+              <span style={resultValueStyle}>{state.info.connection.isp}</span>
             </div>
             <div style={resultRowStyle}>
               <span style={resultLabelStyle}>{t(T.ipLookupOrg)}</span>
-              <span style={resultValueStyle}>{state.info.org}</span>
+              <span style={resultValueStyle}>{state.info.connection.org}</span>
             </div>
             <div style={{ ...resultRowStyle, borderBottom: "none" }}>
               <span style={resultLabelStyle}>{t(T.ipLookupAs)}</span>
-              <span style={resultValueStyle}>{state.info.as}</span>
+              <span style={resultValueStyle}>AS{state.info.connection.asn}</span>
             </div>
           </div>
 
@@ -650,7 +642,7 @@ export function IpLookup() {
                 color: "var(--text-primary, #111)",
               }}
             >
-              {state.info.lat}, {state.info.lon}
+              {state.info.latitude}, {state.info.longitude}
             </div>
           </details>
 
