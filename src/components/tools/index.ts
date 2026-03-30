@@ -40,6 +40,11 @@ import { ByteUnitConverter } from "./ByteUnitConverter";
 import { TotpGenerator } from "./TotpGenerator";
 import { ImageBase64Converter } from "./ImageBase64Converter";
 import { HttpStatusDictionary } from "./HttpStatusDictionary";
+import { CspGenerator } from "./CspGenerator";
+import { SshConfigGenerator } from "./SshConfigGenerator";
+import { VlsmCalculator } from "./VlsmCalculator";
+import { JsonSchemaValidator } from "./JsonSchemaValidator";
+import { AsciiUnicodeTable } from "./AsciiUnicodeTable";
 
 export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   SubnetCalculator,
@@ -75,4 +80,9 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   TotpGenerator,
   ImageBase64Converter,
   HttpStatusDictionary,
+  CspGenerator,
+  SshConfigGenerator,
+  VlsmCalculator,
+  JsonSchemaValidator,
+  AsciiUnicodeTable,
 };

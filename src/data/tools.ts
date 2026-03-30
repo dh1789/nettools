@@ -2023,6 +2023,337 @@ export const TOOLS: Tool[] = [
       },
     ],
   },
+  // Phase 3 도구
+  {
+    slug: "csp-generator",
+    title: {
+      ko: "CSP 헤더 생성기",
+      en: "CSP Header Generator",
+    },
+    description: {
+      ko: "Content-Security-Policy 헤더를 시각적으로 빌드합니다. 각 지시어를 설정하고 즉시 헤더를 생성합니다.",
+      en: "Visually build a Content-Security-Policy header. Configure directives and generate the header instantly.",
+    },
+    longDescription: {
+      ko: "CSP(Content-Security-Policy) 헤더 생성기는 XSS 공격 방어를 위한 보안 헤더를 손쉽게 생성할 수 있는 도구입니다. default-src, script-src, style-src 등 각 지시어를 체크박스로 활성화하고 허용할 출처를 입력하면 즉시 HTTP 헤더와 HTML meta 태그 형식으로 출력됩니다. 엄격(Strict) 및 CDN 허용 프리셋을 제공합니다.",
+      en: "The CSP Header Generator makes it easy to create Content-Security-Policy headers for XSS protection. Enable directives like default-src, script-src, style-src using checkboxes and enter allowed origins to instantly output the HTTP header and HTML meta tag format. Includes Strict and CDN-friendly presets.",
+    },
+    category: "security",
+    keywords: [
+      "csp generator",
+      "content security policy",
+      "csp header",
+      "xss protection",
+      "web security header",
+      "http security",
+      "csp builder",
+      "content-security-policy",
+      "csp 생성기",
+      "콘텐츠 보안 정책",
+      "웹 보안 헤더",
+      "xss 방어",
+      "보안 헤더",
+    ],
+    component: "CspGenerator",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "CSP(Content-Security-Policy)란 무엇인가요?",
+          en: "What is Content-Security-Policy (CSP)?",
+        },
+        answer: {
+          ko: "CSP는 브라우저에서 로드할 수 있는 리소스의 출처를 제한하는 HTTP 응답 헤더입니다. XSS(크로스 사이트 스크립팅) 공격을 방어하는 가장 효과적인 방법 중 하나로, 악성 스크립트 실행을 차단합니다.",
+          en: "CSP is an HTTP response header that restricts which resources the browser can load. It's one of the most effective defenses against XSS (Cross-Site Scripting) attacks, blocking execution of malicious scripts.",
+        },
+      },
+      {
+        question: {
+          ko: "'self'는 무엇을 의미하나요?",
+          en: "What does 'self' mean?",
+        },
+        answer: {
+          ko: "'self'는 현재 페이지와 동일한 출처(same origin: 프로토콜, 도메인, 포트가 동일)의 리소스만 허용합니다. 외부 CDN이나 다른 도메인의 리소스는 별도로 명시해야 합니다.",
+          en: "'self' allows resources only from the same origin (same protocol, domain, and port) as the current page. External CDNs or resources from other domains must be explicitly listed.",
+        },
+      },
+      {
+        question: {
+          ko: "CSP를 적용하면 사이트가 깨지는 이유는?",
+          en: "Why does my site break after applying CSP?",
+        },
+        answer: {
+          ko: "CSP는 기본적으로 허용되지 않은 모든 리소스를 차단합니다. 외부 폰트, CDN 스크립트, 인라인 스타일, eval() 등을 사용하고 있다면 해당 출처를 허용하거나 'unsafe-inline', 'unsafe-eval' 키워드를 추가해야 합니다. 보안과 호환성 간의 균형이 필요합니다.",
+          en: "CSP blocks all resources not explicitly allowed. If your site uses external fonts, CDN scripts, inline styles, or eval(), you need to allow those sources or add 'unsafe-inline' / 'unsafe-eval' keywords. Balancing security and compatibility is key.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "ssh-config-generator",
+    title: {
+      ko: "SSH Config 생성기",
+      en: "SSH Config Generator",
+    },
+    description: {
+      ko: "~/.ssh/config 파일을 시각적으로 편집합니다. 호스트 별칭, 포트 포워딩, ProxyJump 등 SSH 설정을 쉽게 관리하세요.",
+      en: "Visually edit your ~/.ssh/config file. Easily manage SSH settings like host aliases, port forwarding, and ProxyJump.",
+    },
+    longDescription: {
+      ko: "SSH Config 생성기는 서버 관리자에게 필수적인 ~/.ssh/config 파일을 시각적으로 편집할 수 있는 도구입니다. 호스트 별칭(Host), 실제 주소(HostName), 사용자(User), 포트, IdentityFile, ServerAliveInterval, ForwardAgent, ProxyJump, 로컬/원격 포트 포워딩 등 모든 주요 SSH 설정을 GUI로 입력하고 즉시 config 형식으로 출력합니다. CCNA/CCNP, AWS, GCP 등 클라우드 인프라 관리에 유용합니다.",
+      en: "The SSH Config Generator lets you visually edit the ~/.ssh/config file essential for server administrators. Configure Host aliases, HostName, User, Port, IdentityFile, ServerAliveInterval, ForwardAgent, ProxyJump, local/remote port forwarding, and more via GUI — instantly outputting proper config format. Useful for cloud infrastructure management on AWS, GCP, and more.",
+    },
+    category: "linux",
+    keywords: [
+      "ssh config",
+      "ssh config generator",
+      "ssh config editor",
+      "ssh host alias",
+      "ssh port forwarding",
+      "proxyjump",
+      "ssh tunnel",
+      "ssh identity file",
+      "ssh 설정",
+      "ssh 설정 생성기",
+      "ssh 포트 포워딩",
+      "서버 접속 설정",
+      "ssh config 편집기",
+    ],
+    component: "SshConfigGenerator",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "SSH Config 파일이란 무엇인가요?",
+          en: "What is the SSH config file?",
+        },
+        answer: {
+          ko: "~/.ssh/config는 SSH 연결 설정을 저장하는 파일입니다. 긴 호스트명이나 복잡한 옵션을 짧은 별칭으로 대체할 수 있어, 'ssh myserver'처럼 간단하게 접속할 수 있습니다. 여러 서버를 관리하는 개발자와 시스템 관리자에게 필수적입니다.",
+          en: "~/.ssh/config is a file that stores SSH connection settings. You can replace long hostnames and complex options with short aliases, allowing simple commands like 'ssh myserver'. Essential for developers and system administrators managing multiple servers.",
+        },
+      },
+      {
+        question: {
+          ko: "ProxyJump란 무엇인가요?",
+          en: "What is ProxyJump?",
+        },
+        answer: {
+          ko: "ProxyJump는 SSH 점프 호스트(bastion host)를 통해 내부 서버에 접속할 때 사용합니다. 예를 들어 bastion 서버를 거쳐 내부 서버에 접속하려면 'ProxyJump bastion'을 설정합니다. OpenSSH 7.3 이상에서 지원됩니다.",
+          en: "ProxyJump is used to connect to internal servers through an SSH jump host (bastion host). For example, to connect to an internal server via a bastion host, set 'ProxyJump bastion'. Supported in OpenSSH 7.3+.",
+        },
+      },
+      {
+        question: {
+          ko: "ServerAliveInterval을 설정하는 이유는?",
+          en: "Why set ServerAliveInterval?",
+        },
+        answer: {
+          ko: "ServerAliveInterval은 SSH 클라이언트가 서버로 주기적으로 keepalive 패킷을 보내는 간격(초)입니다. 유휴 연결이 방화벽이나 NAT에 의해 끊기는 것을 방지합니다. 일반적으로 60초로 설정하며, ServerAliveCountMax와 함께 사용합니다.",
+          en: "ServerAliveInterval sets how often (in seconds) the SSH client sends keepalive packets to the server. It prevents idle connections from being dropped by firewalls or NAT. Typically set to 60 seconds, used with ServerAliveCountMax.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "vlsm-calculator",
+    title: {
+      ko: "VLSM 계산기",
+      en: "VLSM Calculator",
+    },
+    description: {
+      ko: "Variable Length Subnet Masking으로 네트워크를 효율적으로 분할합니다. 각 서브넷에 필요한 호스트 수를 입력하면 최적 할당을 자동 계산합니다.",
+      en: "Efficiently divide a network using Variable Length Subnet Masking. Enter required host counts per subnet for automatic optimal allocation.",
+    },
+    longDescription: {
+      ko: "VLSM(Variable Length Subnet Masking) 계산기는 한정된 IP 주소 공간을 효율적으로 분할하는 도구입니다. CCNA/CCNP 시험의 핵심 주제이며, 실제 네트워크 설계에도 필수적입니다. 각 서브넷에 필요한 호스트 수를 입력하면 가장 효율적인 서브넷 분할을 자동으로 계산하여 네트워크 주소, 브로드캐스트, 호스트 범위를 표로 출력합니다. 최대 호스트 수 기준 내림차순 정렬로 낭비를 최소화합니다.",
+      en: "The VLSM Calculator efficiently divides IP address space. It's a core CCNA/CCNP exam topic and essential for real network design. Enter required host counts per subnet to automatically calculate the most efficient subnet allocation — outputting network address, broadcast, and host range in a table. Subnets are sorted by required hosts (descending) to minimize waste.",
+    },
+    category: "network",
+    keywords: [
+      "vlsm calculator",
+      "variable length subnet masking",
+      "vlsm",
+      "subnet calculator",
+      "network design",
+      "ip address planning",
+      "ccna",
+      "ccnp",
+      "cidr subnetting",
+      "vlsm 계산기",
+      "가변 길이 서브넷",
+      "서브넷 분할",
+      "네트워크 설계",
+      "아이피 할당",
+      "ccna 시험",
+    ],
+    component: "VlsmCalculator",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "VLSM이란 무엇인가요?",
+          en: "What is VLSM?",
+        },
+        answer: {
+          ko: "VLSM(Variable Length Subnet Masking)은 각 서브넷마다 다른 프리픽스 길이를 사용할 수 있는 기술입니다. 기존의 고정 길이 서브넷과 달리, 각 네트워크 세그먼트의 호스트 수에 맞게 서브넷 크기를 최적화하여 IP 주소 낭비를 줄입니다.",
+          en: "VLSM (Variable Length Subnet Masking) allows different prefix lengths for each subnet. Unlike fixed-length subnetting, it optimizes subnet sizes to match each network segment's actual host count, reducing IP address waste.",
+        },
+      },
+      {
+        question: {
+          ko: "VLSM은 CCNA 시험에서 얼마나 중요한가요?",
+          en: "How important is VLSM for the CCNA exam?",
+        },
+        answer: {
+          ko: "VLSM은 CCNA 시험의 핵심 주제 중 하나입니다. IP 주소 설계, 서브넷 계산, 라우팅 테이블 설계 등 다양한 시나리오 문제에서 VLSM 이해가 필요합니다. 주어진 네트워크에서 여러 서브넷을 효율적으로 분할하는 문제가 자주 출제됩니다.",
+          en: "VLSM is one of the core topics in the CCNA exam. Understanding VLSM is required for IP address design, subnet calculation, and routing table design scenarios. Questions about efficiently dividing a network into multiple subnets are common.",
+        },
+      },
+      {
+        question: {
+          ko: "호스트 수가 큰 서브넷을 먼저 할당하는 이유는?",
+          en: "Why are subnets with more hosts allocated first?",
+        },
+        answer: {
+          ko: "VLSM 설계에서 가장 큰 서브넷을 먼저 할당하는 것이 표준 관행입니다. 이렇게 하면 큰 블록에 대한 정렬 낭비를 최소화하고, 남은 주소 공간을 작은 서브넷에 효율적으로 분배할 수 있습니다.",
+          en: "Allocating the largest subnets first is standard VLSM practice. This minimizes alignment waste for large blocks and allows remaining address space to be efficiently distributed to smaller subnets.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "json-schema-validator",
+    title: {
+      ko: "JSON Schema 검증기",
+      en: "JSON Schema Validator",
+    },
+    description: {
+      ko: "JSON 데이터를 JSON Schema(Draft 7)로 검증합니다. API 개발 시 요청/응답 스키마를 즉시 검사할 수 있습니다.",
+      en: "Validate JSON data against JSON Schema (Draft 7). Instantly check request/response schemas during API development.",
+    },
+    longDescription: {
+      ko: "JSON Schema 검증기는 API 개발자에게 필수적인 도구입니다. JSON 데이터가 정의된 스키마 구조를 따르는지 즉시 검증합니다. Draft 7 핵심 키워드(type, properties, required, additionalProperties, enum, const, allOf, anyOf, oneOf, not, minLength, maxLength, pattern, minimum, maximum, items, uniqueItems 등)를 지원합니다. REST API, GraphQL, OpenAPI 문서 작성 시 유용합니다.",
+      en: "The JSON Schema Validator is an essential tool for API developers. It instantly validates whether JSON data follows a defined schema structure. Supports Draft 7 core keywords: type, properties, required, additionalProperties, enum, const, allOf, anyOf, oneOf, not, minLength, maxLength, pattern, minimum, maximum, items, uniqueItems, and more. Useful for REST API, GraphQL, and OpenAPI documentation.",
+    },
+    category: "developer",
+    keywords: [
+      "json schema validator",
+      "json schema",
+      "json validation",
+      "json schema draft 7",
+      "api validation",
+      "schema validation",
+      "json lint",
+      "openapi",
+      "rest api testing",
+      "json schema 검증기",
+      "json 스키마",
+      "api 개발",
+      "스키마 유효성 검사",
+      "json 검증",
+    ],
+    component: "JsonSchemaValidator",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "JSON Schema란 무엇인가요?",
+          en: "What is JSON Schema?",
+        },
+        answer: {
+          ko: "JSON Schema는 JSON 데이터의 구조와 유효성을 정의하는 명세입니다. 필드의 타입, 필수 여부, 패턴, 값의 범위 등을 정의하고, 이를 통해 API 요청/응답 데이터의 일관성을 보장할 수 있습니다. REST API 설계와 OpenAPI/Swagger 문서화에 널리 사용됩니다.",
+          en: "JSON Schema is a specification for defining the structure and validity of JSON data. It defines field types, required properties, patterns, value ranges, and more — ensuring consistency of API request/response data. Widely used in REST API design and OpenAPI/Swagger documentation.",
+        },
+      },
+      {
+        question: {
+          ko: "Draft 7이란 무엇인가요?",
+          en: "What is Draft 7?",
+        },
+        answer: {
+          ko: "JSON Schema Draft 7은 2019년까지 가장 널리 사용되던 JSON Schema 버전입니다. allOf, anyOf, oneOf, not 같은 논리 조합자, $ref를 이용한 참조 등을 지원합니다. 현재는 Draft 2019-09, Draft 2020-12 등 최신 버전도 있지만, Draft 7이 여전히 가장 광범위하게 지원됩니다.",
+          en: "JSON Schema Draft 7 was the most widely used version until 2019. It supports logical combiners like allOf, anyOf, oneOf, not, and $ref references. Newer versions (Draft 2019-09, Draft 2020-12) exist, but Draft 7 remains the most broadly supported.",
+        },
+      },
+      {
+        question: {
+          ko: "additionalProperties: false는 언제 사용하나요?",
+          en: "When should I use additionalProperties: false?",
+        },
+        answer: {
+          ko: "additionalProperties: false는 스키마의 properties에 정의되지 않은 추가 필드를 허용하지 않을 때 사용합니다. 엄격한 API 계약이 필요할 때 유용하며, 예상치 못한 필드가 포함된 데이터를 차단합니다. 단, 상속이나 확장 가능한 데이터 구조에는 적합하지 않을 수 있습니다.",
+          en: "additionalProperties: false disallows any extra fields not defined in the schema's properties. It's useful when you need a strict API contract, blocking data with unexpected fields. However, it may not be suitable for extensible data structures or inheritance scenarios.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "ascii-unicode-table",
+    title: {
+      ko: "ASCII/유니코드 테이블",
+      en: "ASCII/Unicode Table",
+    },
+    description: {
+      ko: "문자 코드를 검색하고 10진수, 16진수, HTML 엔티티, URL 인코딩 등을 확인합니다.",
+      en: "Search character codes and view decimal, hex, HTML entity, URL encoding, and more.",
+    },
+    longDescription: {
+      ko: "ASCII/유니코드 테이블은 개발자 참조 도구입니다. ASCII(0-127), 확장 ASCII, 라틴 확장, 그리스어, 키릴 문자, 아랍어, 한글 자모/음절, CJK 한자, 이모지 등 다양한 유니코드 범위를 탐색할 수 있습니다. 문자, 코드 번호, 문자 이름으로 검색하면 10진수, 16진수, 8진수, 2진수, 유니코드 코드 포인트, HTML 엔티티, URL 인코딩을 즉시 확인할 수 있습니다. 프로그래밍, 웹 개발, 데이터 처리에 유용한 레퍼런스 도구입니다.",
+      en: "The ASCII/Unicode Table is a developer reference tool. Browse various Unicode ranges including ASCII (0-127), Extended ASCII, Latin Extended, Greek, Cyrillic, Arabic, Hangul Jamo/Syllables, CJK Ideographs, and Emoji. Search by character, code number, or character name to instantly see decimal, hex, octal, binary, Unicode code point, HTML entity, and URL encoding. A useful reference for programming, web development, and data processing.",
+    },
+    category: "general",
+    keywords: [
+      "ascii table",
+      "unicode table",
+      "character code",
+      "ascii chart",
+      "unicode lookup",
+      "html entity",
+      "character encoding",
+      "code point",
+      "ascii code",
+      "ascii/유니코드 테이블",
+      "문자 코드",
+      "유니코드 조회",
+      "아스키 코드",
+      "문자 인코딩",
+      "html 엔티티",
+    ],
+    component: "AsciiUnicodeTable",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "ASCII란 무엇인가요?",
+          en: "What is ASCII?",
+        },
+        answer: {
+          ko: "ASCII(American Standard Code for Information Interchange)는 0~127 범위의 128개 문자를 정의하는 문자 인코딩 표준입니다. 영문 알파벳, 숫자, 기본 기호, 제어 문자로 구성되며, 모든 현대 컴퓨터 시스템의 기반이 됩니다.",
+          en: "ASCII (American Standard Code for Information Interchange) is a character encoding standard defining 128 characters (0-127). It includes English letters, digits, basic symbols, and control characters — forming the foundation of all modern computer systems.",
+        },
+      },
+      {
+        question: {
+          ko: "유니코드와 ASCII의 차이는?",
+          en: "What is the difference between Unicode and ASCII?",
+        },
+        answer: {
+          ko: "ASCII는 128개(또는 확장 256개) 문자만 지원하지만, 유니코드는 140만 개 이상의 코드 포인트를 가진 전 세계 모든 문자 시스템을 표현할 수 있습니다. 유니코드의 처음 128개 코드 포인트(U+0000~U+007F)는 ASCII와 동일합니다. UTF-8, UTF-16, UTF-32는 유니코드의 인코딩 방식입니다.",
+          en: "ASCII supports only 128 (or 256 extended) characters, while Unicode can represent all writing systems worldwide with over 1 million code points. The first 128 Unicode code points (U+0000-U+007F) are identical to ASCII. UTF-8, UTF-16, and UTF-32 are encoding schemes for Unicode.",
+        },
+      },
+      {
+        question: {
+          ko: "HTML 엔티티는 언제 사용하나요?",
+          en: "When should I use HTML entities?",
+        },
+        answer: {
+          ko: "HTML에서 특수 의미를 가진 문자(<, >, &, \", ')나 키보드로 직접 입력하기 어려운 특수 문자를 HTML 소스에 표현할 때 사용합니다. 예를 들어 &lt;는 <, &amp;는 &를 나타냅니다. 이모지나 특수 기호를 웹 페이지에 안전하게 삽입할 때도 HTML 엔티티 코드를 사용할 수 있습니다.",
+          en: "HTML entities are used in HTML source when you need to represent characters with special meaning (<, >, &, \", ') or characters hard to type directly. For example, &lt; represents < and &amp; represents &. You can also use HTML entity codes to safely embed emoji and special symbols on web pages.",
+        },
+      },
+    ],
+  },
 ];
 
 // Helper functions
