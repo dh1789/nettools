@@ -12,9 +12,13 @@
     "new-tool": "node scripts/new-tool.mjs"
   },
   "dependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "js-yaml": "^4.1.1",
+    "marked": "^17.0.5",
     "next": "15.4.11",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "sql-formatter": "^15.7.3"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.0",

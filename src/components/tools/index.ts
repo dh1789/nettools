@@ -30,6 +30,11 @@ import { TextDiff } from "./TextDiff";
 import { LoremIpsumGenerator } from "./LoremIpsumGenerator";
 import { TextCounter } from "./TextCounter";
 import { QrCodeGenerator } from "./QrCodeGenerator";
+import { JwtDecoder } from "./JwtDecoder";
+import { UuidGenerator } from "./UuidGenerator";
+import { YamlJsonConverter } from "./YamlJsonConverter";
+import { SqlFormatter } from "./SqlFormatter";
+import { MarkdownPreview } from "./MarkdownPreview";
 
 export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   SubnetCalculator,
@@ -55,4 +60,9 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   LoremIpsumGenerator,
   TextCounter,
   QrCodeGenerator,
+  JwtDecoder,
+  UuidGenerator,
+  YamlJsonConverter,
+  SqlFormatter,
+  MarkdownPreview,
 };

@@ -1416,6 +1416,328 @@ export const TOOLS: Tool[] = [
       },
     ],
   },
+  {
+    slug: "jwt-decoder",
+    title: {
+      ko: "JWT 디코더",
+      en: "JWT Decoder",
+    },
+    description: {
+      ko: "JWT 토큰의 Header, Payload, Signature를 디코딩하고 만료 시간을 확인합니다.",
+      en: "Decode JWT token Header, Payload, Signature and check expiration time.",
+    },
+    longDescription: {
+      ko: "JWT(JSON Web Token) 디코더는 토큰의 세 부분(Header, Payload, Signature)을 즉시 디코딩합니다. exp, iat, nbf 등 표준 클레임의 시간을 사람이 읽을 수 있는 형식으로 변환하고 토큰 만료 여부를 실시간으로 표시합니다. 인증 디버깅, API 개발, JWT 학습에 유용합니다. 모든 처리는 브라우저에서 수행되어 토큰이 서버로 전송되지 않습니다.",
+      en: "The JWT Decoder instantly decodes the three parts of a token (Header, Payload, Signature). It converts standard claims like exp, iat, and nbf to human-readable timestamps and shows token expiry status in real time. Useful for authentication debugging, API development, and learning JWT. All processing is done in the browser — your token is never sent to any server.",
+    },
+    category: "developer",
+    keywords: [
+      "jwt decoder",
+      "jwt debugger",
+      "json web token",
+      "jwt parser",
+      "decode jwt",
+      "jwt claims",
+      "jwt expiry",
+      "jwt token",
+      "bearer token",
+      "jwt 디코더",
+      "JWT 토큰",
+      "토큰 디코딩",
+      "인증 토큰",
+    ],
+    component: "JwtDecoder",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "JWT란 무엇인가요?",
+          en: "What is a JWT?",
+        },
+        answer: {
+          ko: "JWT(JSON Web Token)는 당사자 간에 정보를 안전하게 JSON 객체로 전송하기 위한 컴팩트하고 자가 포함된 방식입니다. Header.Payload.Signature 세 부분으로 구성되며, 각각 Base64URL로 인코딩됩니다.",
+          en: "A JWT (JSON Web Token) is a compact, self-contained way to securely transmit information between parties as a JSON object. It consists of three parts: Header.Payload.Signature, each Base64URL-encoded.",
+        },
+      },
+      {
+        question: {
+          ko: "브라우저에서 JWT 서명을 검증할 수 있나요?",
+          en: "Can JWT signatures be verified in the browser?",
+        },
+        answer: {
+          ko: "HMAC 서명 검증에는 시크릿 키가 필요하고, RSA/ECDSA 검증에는 공개 키가 필요합니다. 이 도구는 구조 파싱에 집중하며, 서명 검증은 서버 측에서 수행해야 합니다. 시크릿 키를 브라우저에 노출하지 마세요.",
+          en: "HMAC signature verification requires the secret key; RSA/ECDSA requires the public key. This tool focuses on structure parsing. Signature verification should be done server-side. Never expose secret keys in the browser.",
+        },
+      },
+      {
+        question: {
+          ko: "JWT의 exp 클레임은 무엇인가요?",
+          en: "What is the exp claim in a JWT?",
+        },
+        answer: {
+          ko: "exp(Expiration Time)는 토큰이 만료되는 Unix 타임스탬프(초)입니다. 이 시간 이후에는 토큰을 수락해서는 안 됩니다. 이 도구는 현재 시간과 비교하여 토큰의 유효성을 실시간으로 표시합니다.",
+          en: "exp (Expiration Time) is a Unix timestamp (in seconds) after which the token must not be accepted. This tool compares it against the current time and shows whether the token is valid or expired in real time.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "uuid-generator",
+    title: {
+      ko: "UUID / ULID 생성기",
+      en: "UUID / ULID Generator",
+    },
+    description: {
+      ko: "UUID v1/v4/v7 및 ULID를 생성합니다. 벌크 생성 및 복사 기능을 지원합니다.",
+      en: "Generate UUID v1/v4/v7 and ULID. Supports bulk generation and copy.",
+    },
+    longDescription: {
+      ko: "UUID/ULID 생성기는 다양한 버전의 고유 식별자를 즉시 생성합니다. UUID v4(완전 랜덤), v7(시간 정렬, 데이터베이스 인덱싱 최적), v1(타임스탬프 기반), ULID(26자 Crockford Base32, 시간 정렬)을 지원합니다. 최대 100개까지 벌크 생성하고 한 번에 복사할 수 있습니다. Web Crypto API를 사용해 브라우저에서 안전하게 생성됩니다.",
+      en: "The UUID/ULID Generator instantly creates various types of unique identifiers. Supports UUID v4 (fully random), v7 (time-ordered, optimal for database indexing), v1 (timestamp-based), and ULID (26-char Crockford Base32, time-sortable). Generate up to 100 at once and copy them all. Uses the Web Crypto API for secure generation in the browser.",
+    },
+    category: "developer",
+    keywords: [
+      "uuid generator",
+      "ulid generator",
+      "uuid v4",
+      "uuid v7",
+      "uuid v1",
+      "generate uuid",
+      "unique id",
+      "random uuid",
+      "time-ordered uuid",
+      "ulid",
+      "UUID 생성기",
+      "고유 식별자",
+      "랜덤 ID",
+    ],
+    component: "UuidGenerator",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "UUID v4와 v7의 차이점은?",
+          en: "What is the difference between UUID v4 and v7?",
+        },
+        answer: {
+          ko: "UUID v4는 완전히 랜덤한 128비트 값으로 정렬이 불가능합니다. v7은 Unix 밀리초 타임스탬프를 상위 48비트에 포함하여 시간 순으로 정렬됩니다. 데이터베이스 기본 키로 사용할 때는 v7이 인덱스 단편화를 줄여 성능이 더 좋습니다.",
+          en: "UUID v4 is a fully random 128-bit value with no inherent ordering. v7 embeds a 48-bit Unix millisecond timestamp in the high bits, making it time-sortable. When used as a database primary key, v7 reduces index fragmentation and improves performance.",
+        },
+      },
+      {
+        question: {
+          ko: "ULID는 UUID와 무엇이 다른가요?",
+          en: "How is ULID different from UUID?",
+        },
+        answer: {
+          ko: "ULID(Universally Unique Lexicographically Sortable Identifier)는 26자의 Crockford Base32 문자열입니다. UUID와 달리 대소문자를 구분하지 않고, 하이픈이 없으며, 시간 순으로 정렬됩니다. URL 친화적이고 가독성이 높습니다.",
+          en: "ULID (Universally Unique Lexicographically Sortable Identifier) is a 26-character Crockford Base32 string. Unlike UUID, it is case-insensitive, has no hyphens, and is time-sortable. It is URL-friendly and more readable.",
+        },
+      },
+      {
+        question: {
+          ko: "UUID 충돌 가능성이 있나요?",
+          en: "Is there a collision risk with UUIDs?",
+        },
+        answer: {
+          ko: "UUID v4의 충돌 확률은 극히 낮습니다. 10억 개의 UUID를 초당 1개씩 생성해도 약 85년이 지나야 50% 확률로 충돌이 발생합니다. 실제 사용에서는 충돌을 걱정할 필요가 없습니다.",
+          en: "The collision probability of UUID v4 is extremely low. Even generating 1 UUID per second for 85 years, the probability of a collision is only 50%. In practice, collisions are not a concern.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "yaml-json-converter",
+    title: {
+      ko: "YAML ↔ JSON 변환기",
+      en: "YAML ↔ JSON Converter",
+    },
+    description: {
+      ko: "YAML과 JSON을 양방향으로 변환합니다. 유효성 검사 및 에러 위치 표시를 지원합니다.",
+      en: "Convert between YAML and JSON in both directions. Includes validation and error location.",
+    },
+    longDescription: {
+      ko: "YAML/JSON 변환기는 설정 파일 작업에 필수적인 도구입니다. YAML을 JSON으로, JSON을 YAML로 즉시 변환합니다. 파싱 오류 발생 시 오류 위치와 메시지를 명확하게 표시합니다. Docker Compose, Kubernetes, GitHub Actions 설정 파일을 다룰 때 유용합니다. js-yaml 라이브러리를 사용하며 모든 처리는 브라우저에서 수행됩니다.",
+      en: "The YAML/JSON Converter is an essential tool for working with configuration files. Instantly convert YAML to JSON or JSON to YAML. When a parse error occurs, it clearly shows the error location and message. Useful when working with Docker Compose, Kubernetes, and GitHub Actions config files. Uses the js-yaml library — all processing is done in the browser.",
+    },
+    category: "developer",
+    keywords: [
+      "yaml to json",
+      "json to yaml",
+      "yaml converter",
+      "yaml parser",
+      "yaml validator",
+      "yaml json converter",
+      "config converter",
+      "kubernetes yaml",
+      "docker compose",
+      "YAML 변환기",
+      "YAML JSON",
+      "설정 파일 변환",
+    ],
+    component: "YamlJsonConverter",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "YAML과 JSON의 주요 차이점은?",
+          en: "What are the key differences between YAML and JSON?",
+        },
+        answer: {
+          ko: "YAML은 인간이 읽기 쉬운 형식으로 들여쓰기로 구조를 표현하고 주석을 지원합니다. JSON은 기계 친화적이며 모든 프로그래밍 언어에서 기본 지원됩니다. 설정 파일에는 YAML, API 통신에는 JSON이 주로 사용됩니다.",
+          en: "YAML is human-readable, using indentation for structure and supporting comments. JSON is machine-friendly and natively supported in all programming languages. YAML is commonly used for config files, while JSON is standard for API communication.",
+        },
+      },
+      {
+        question: {
+          ko: "YAML에서 주석은 변환 시 어떻게 되나요?",
+          en: "What happens to YAML comments during conversion?",
+        },
+        answer: {
+          ko: "YAML의 주석(# 로 시작)은 JSON으로 변환될 때 제거됩니다. JSON은 주석을 지원하지 않기 때문입니다. JSON을 YAML로 변환할 때도 주석은 추가되지 않습니다.",
+          en: "YAML comments (starting with #) are removed when converting to JSON, because JSON does not support comments. Comments are not added when converting JSON back to YAML either.",
+        },
+      },
+      {
+        question: {
+          ko: "멀티라인 문자열은 어떻게 처리되나요?",
+          en: "How are multi-line strings handled?",
+        },
+        answer: {
+          ko: "YAML의 리터럴 블록(|)과 폴디드 블록(>)은 JSON으로 변환 시 적절한 문자열로 처리됩니다. JSON의 \\n을 포함한 문자열은 YAML로 변환 시 리터럴 블록 형식으로 출력될 수 있습니다.",
+          en: "YAML literal blocks (|) and folded blocks (>) are properly converted to strings in JSON. JSON strings with \\n may be output as literal block scalars when converting to YAML.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "sql-formatter",
+    title: {
+      ko: "SQL 포맷터",
+      en: "SQL Formatter",
+    },
+    description: {
+      ko: "SQL 쿼리를 정렬하고 들여쓰기합니다. 미니파이 및 다양한 SQL 방언을 지원합니다.",
+      en: "Format and indent SQL queries. Supports minify and multiple SQL dialects.",
+    },
+    longDescription: {
+      ko: "SQL 포맷터는 읽기 어려운 SQL 쿼리를 깔끔하게 정리합니다. Standard SQL, PostgreSQL, MySQL, SQLite, MariaDB, BigQuery 등 다양한 방언을 지원합니다. 들여쓰기 크기, 키워드 대소문자(UPPER/lower/유지)를 설정할 수 있습니다. 미니파이 기능으로 공백을 제거할 수도 있습니다. sql-formatter 라이브러리를 사용하며 모든 처리는 브라우저에서 수행됩니다.",
+      en: "The SQL Formatter cleans up hard-to-read SQL queries. Supports Standard SQL, PostgreSQL, MySQL, SQLite, MariaDB, BigQuery, and more. Configure indent size and keyword case (UPPER/lower/preserve). A minify option removes extra whitespace. Uses the sql-formatter library — all processing is done in the browser.",
+    },
+    category: "developer",
+    keywords: [
+      "sql formatter",
+      "sql beautifier",
+      "sql pretty print",
+      "format sql",
+      "sql minifier",
+      "postgresql formatter",
+      "mysql formatter",
+      "sql indent",
+      "sql syntax",
+      "SQL 포맷터",
+      "SQL 정렬",
+      "쿼리 포맷",
+    ],
+    component: "SqlFormatter",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "어떤 SQL 방언을 지원하나요?",
+          en: "What SQL dialects are supported?",
+        },
+        answer: {
+          ko: "Standard SQL, PostgreSQL, MySQL, SQLite, MariaDB, BigQuery를 지원합니다. 방언에 따라 예약어와 함수 인식이 달라집니다. 범용적인 경우 Standard SQL을 선택하세요.",
+          en: "Supported dialects include Standard SQL, PostgreSQL, MySQL, SQLite, MariaDB, and BigQuery. Keyword and function recognition varies by dialect. For general use, choose Standard SQL.",
+        },
+      },
+      {
+        question: {
+          ko: "복잡한 서브쿼리도 포맷되나요?",
+          en: "Are complex subqueries formatted correctly?",
+        },
+        answer: {
+          ko: "네, 중첩된 서브쿼리, CTE(WITH 절), JOIN 체인, CASE WHEN 구문 등 복잡한 SQL 구조도 적절한 들여쓰기로 포맷됩니다.",
+          en: "Yes, complex SQL structures including nested subqueries, CTEs (WITH clauses), JOIN chains, and CASE WHEN expressions are formatted with proper indentation.",
+        },
+      },
+      {
+        question: {
+          ko: "SQL 구문 오류를 검증해주나요?",
+          en: "Does the formatter validate SQL syntax?",
+        },
+        answer: {
+          ko: "포맷터는 기본적인 구문 오류를 감지하지만 완전한 SQL 검증 도구는 아닙니다. 실제 데이터베이스 연결 없이 파싱 수준의 검사만 수행합니다. 완전한 검증은 실제 데이터베이스에서 실행해야 합니다.",
+          en: "The formatter detects basic syntax errors but is not a full SQL validator. It only performs parsing-level checks without a real database connection. For full validation, run the query against an actual database.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "markdown-preview",
+    title: {
+      ko: "마크다운 미리보기",
+      en: "Markdown Preview",
+    },
+    description: {
+      ko: "마크다운을 실시간으로 렌더링합니다. GFM(GitHub Flavored Markdown) 및 코드 하이라이팅을 지원합니다.",
+      en: "Real-time Markdown rendering with GFM and code highlighting support.",
+    },
+    longDescription: {
+      ko: "마크다운 미리보기는 마크다운 텍스트를 실시간으로 HTML로 렌더링합니다. GitHub Flavored Markdown(GFM)을 지원하여 테이블, 체크리스트, 코드 블록, 인용문 등을 처리합니다. 분할(Split), 편집기(Editor), 미리보기(Preview) 모드를 전환할 수 있습니다. README 작성, 기술 문서, 블로그 포스트 초안 작성에 유용합니다. marked 라이브러리를 사용하며 모든 처리는 브라우저에서 수행됩니다.",
+      en: "The Markdown Preview renders Markdown text to HTML in real time. Supports GitHub Flavored Markdown (GFM) including tables, checklists, code blocks, and blockquotes. Switch between Split, Editor, and Preview modes. Useful for writing READMEs, technical documents, and blog post drafts. Uses the marked library — all processing is done in the browser.",
+    },
+    category: "developer",
+    keywords: [
+      "markdown preview",
+      "markdown editor",
+      "markdown renderer",
+      "gfm",
+      "github flavored markdown",
+      "markdown to html",
+      "markdown live preview",
+      "readme editor",
+      "markdown viewer",
+      "마크다운 미리보기",
+      "마크다운 편집기",
+      "README 작성",
+    ],
+    component: "MarkdownPreview",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "GFM(GitHub Flavored Markdown)이란 무엇인가요?",
+          en: "What is GFM (GitHub Flavored Markdown)?",
+        },
+        answer: {
+          ko: "GFM은 GitHub이 표준 마크다운을 확장한 형식입니다. 테이블, 체크리스트(- [ ]), 취소선(~~text~~), 코드 펜스(```언어)를 추가로 지원합니다. GitHub README, GitHub Discussions, GitLab에서 널리 사용됩니다.",
+          en: "GFM is GitHub's extension of standard Markdown. It adds support for tables, task lists (- [ ]), strikethrough (~~text~~), and fenced code blocks (```language). Widely used in GitHub READMEs, GitHub Discussions, and GitLab.",
+        },
+      },
+      {
+        question: {
+          ko: "코드 하이라이팅이 지원되나요?",
+          en: "Is code syntax highlighting supported?",
+        },
+        answer: {
+          ko: "마크다운 코드 블록(```javascript 등)은 코드 블록으로 렌더링됩니다. 현재 구문별 색상 하이라이팅은 별도 라이브러리(highlight.js 등) 없이 기본 스타일로 표시됩니다.",
+          en: "Markdown code blocks (e.g., ```javascript) are rendered as code blocks. Currently, syntax-specific color highlighting is shown with basic styling without a separate library like highlight.js.",
+        },
+      },
+      {
+        question: {
+          ko: "HTML 직접 삽입이 가능한가요?",
+          en: "Can I embed raw HTML in the Markdown?",
+        },
+        answer: {
+          ko: "marked 라이브러리는 마크다운 내 HTML을 기본적으로 처리합니다. 하지만 XSS 보안을 위해 스크립트 태그 등 위험한 HTML은 필터링됩니다. 일반적인 HTML 태그는 미리보기에 렌더링됩니다.",
+          en: "The marked library processes HTML embedded in Markdown by default. However, dangerous HTML such as script tags is filtered for XSS security. Common HTML tags are rendered in the preview.",
+        },
+      },
+    ],
+  },
 ];
 
 // Helper functions
