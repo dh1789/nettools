@@ -35,6 +35,11 @@ import { UuidGenerator } from "./UuidGenerator";
 import { YamlJsonConverter } from "./YamlJsonConverter";
 import { SqlFormatter } from "./SqlFormatter";
 import { MarkdownPreview } from "./MarkdownPreview";
+import { HtmlEntityEncoder } from "./HtmlEntityEncoder";
+import { ByteUnitConverter } from "./ByteUnitConverter";
+import { TotpGenerator } from "./TotpGenerator";
+import { ImageBase64Converter } from "./ImageBase64Converter";
+import { HttpStatusDictionary } from "./HttpStatusDictionary";
 
 export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   SubnetCalculator,
@@ -65,4 +70,9 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   YamlJsonConverter,
   SqlFormatter,
   MarkdownPreview,
+  HtmlEntityEncoder,
+  ByteUnitConverter,
+  TotpGenerator,
+  ImageBase64Converter,
+  HttpStatusDictionary,
 };

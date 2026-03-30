@@ -1738,6 +1738,291 @@ export const TOOLS: Tool[] = [
       },
     ],
   },
+  {
+    slug: "html-entity-encoder",
+    title: {
+      ko: "HTML 엔티티 인코더/디코더",
+      en: "HTML Entity Encoder / Decoder",
+    },
+    description: {
+      ko: "HTML 특수문자를 엔티티(&amp; &lt; &gt; 등)로 인코딩하거나 디코딩합니다.",
+      en: "Encode HTML special characters to entities (&amp; &lt; &gt;) or decode them back.",
+    },
+    longDescription: {
+      ko: "HTML 엔티티 인코더/디코더는 웹 개발 시 필수 도구입니다. '<', '>', '&', '\"' 등 HTML 특수문자를 안전한 엔티티 형식으로 변환하거나 반대로 디코딩합니다. XSS 공격 방지, HTML 문자열 이스케이프, 서버 응답 디버깅에 활용됩니다. 이름 엔티티(&amp;copy; 등)와 숫자 엔티티(&#169; 등) 모두 디코딩을 지원합니다.",
+      en: "The HTML Entity Encoder/Decoder is an essential web development tool. It converts HTML special characters like '<', '>', '&', and '\"' to safe entity formats, or decodes them back. Useful for XSS prevention, HTML string escaping, and debugging server responses. Supports both named entities (&copy;) and numeric entities (&#169;).",
+    },
+    category: "developer",
+    keywords: [
+      "html entity encoder",
+      "html entity decoder",
+      "html escape",
+      "html unescape",
+      "html special characters",
+      "&amp; &lt; &gt;",
+      "xss prevention",
+      "html encoding",
+      "entity reference",
+      "html 엔티티",
+      "html 인코딩",
+      "html 디코딩",
+      "특수문자 변환",
+      "html 이스케이프",
+    ],
+    component: "HtmlEntityEncoder",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "HTML 엔티티가 필요한 이유는?", en: "Why do I need HTML entities?" },
+        answer: {
+          ko: "'<', '>', '&' 등의 문자는 HTML 문법에서 특수한 의미를 가집니다. 이 문자들을 그대로 사용하면 HTML 구조가 깨지거나 XSS 공격에 취약해질 수 있습니다. 엔티티로 변환하면 브라우저가 이를 문자로 표시하고 HTML 태그로 해석하지 않습니다.",
+          en: "Characters like '<', '>', '&' have special meaning in HTML. Using them directly can break HTML structure or create XSS vulnerabilities. Converting to entities tells the browser to display them as characters, not interpret them as HTML tags.",
+        },
+      },
+      {
+        question: { ko: "&amp;nbsp;는 무엇인가요?", en: "What is &amp;nbsp;?" },
+        answer: {
+          ko: "&amp;nbsp;는 Non-Breaking Space(줄바꿈 없는 공백)입니다. 일반 공백과 달리 단어 사이에서 줄바꿈이 일어나지 않습니다. 텍스트 들여쓰기나 특정 레이아웃 유지에 사용됩니다.",
+          en: "&nbsp; is a Non-Breaking Space character. Unlike a regular space, it prevents line breaks between words. Used for text indentation or maintaining specific layouts.",
+        },
+      },
+      {
+        question: { ko: "숫자 엔티티와 이름 엔티티의 차이는?", en: "What is the difference between numeric and named entities?" },
+        answer: {
+          ko: "이름 엔티티(&copy;, &amp; 등)는 기억하기 쉽지만 모든 문자를 지원하지 않습니다. 숫자 엔티티(&#169;, &#38;)는 유니코드의 모든 문자를 표현할 수 있습니다. 두 방식 모두 브라우저에서 동일하게 렌더링됩니다.",
+          en: "Named entities (&copy;, &amp;) are easy to remember but don't cover all characters. Numeric entities (&#169;, &#38;) can represent any Unicode character. Both render identically in browsers.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "byte-unit-converter",
+    title: {
+      ko: "바이트 단위 변환기",
+      en: "Byte Unit Converter",
+    },
+    description: {
+      ko: "B, KB, MB, GB, TB, PB 등 데이터 크기 단위를 SI(10진수)와 이진 방식으로 변환합니다.",
+      en: "Convert data size units between B, KB, MB, GB, TB, PB in both SI (decimal) and binary formats.",
+    },
+    longDescription: {
+      ko: "바이트 단위 변환기는 데이터 크기를 SI 단위(1 KB = 1,000 B)와 이진 단위(1 KiB = 1,024 B)로 동시에 변환합니다. 서버 용량 계획, 스토리지 비교, 네트워크 대역폭 계산에 필수입니다. 하드 드라이브 제조사는 SI 단위를 사용하고 운영체제는 이진 단위를 사용하는 차이를 이해하는 데 도움이 됩니다. B, KB, MB, GB, TB, PB, KiB, MiB, GiB, TiB, PiB를 모두 지원합니다.",
+      en: "The Byte Unit Converter converts data sizes to both SI units (1 KB = 1,000 B) and binary units (1 KiB = 1,024 B) simultaneously. Essential for server capacity planning, storage comparison, and network bandwidth calculations. Helps understand the difference between hard drive manufacturers (SI) and operating systems (binary). Supports B, KB, MB, GB, TB, PB, KiB, MiB, GiB, TiB, PiB.",
+    },
+    category: "general",
+    keywords: [
+      "byte converter",
+      "data size converter",
+      "kb mb gb converter",
+      "storage unit converter",
+      "binary units",
+      "kib mib gib",
+      "terabyte megabyte",
+      "data storage calculator",
+      "file size converter",
+      "바이트 변환",
+      "데이터 크기 변환",
+      "용량 단위 변환",
+      "메가바이트 기가바이트",
+      "이진 단위",
+    ],
+    component: "ByteUnitConverter",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "KB와 KiB의 차이는 무엇인가요?", en: "What is the difference between KB and KiB?" },
+        answer: {
+          ko: "KB(킬로바이트)는 SI 단위로 1,000 바이트입니다. KiB(키비바이트)는 이진 단위로 1,024 바이트입니다. 하드 드라이브 용량은 KB(1,000)를 사용하고, 운영체제는 KiB(1,024)를 기반으로 표시하기 때문에 1TB 드라이브가 약 931GiB로 표시됩니다.",
+          en: "KB (kilobyte) is a SI unit equal to 1,000 bytes. KiB (kibibyte) is a binary unit equal to 1,024 bytes. Hard drives use KB (1,000), while operating systems display in KiB (1,024), which is why a 1TB drive appears as about 931GiB.",
+        },
+      },
+      {
+        question: { ko: "1GB는 정확히 몇 바이트인가요?", en: "How many bytes are in exactly 1GB?" },
+        answer: {
+          ko: "SI 기준 1GB = 1,000,000,000 바이트(10억 바이트)입니다. 이진 기준 1GiB = 1,073,741,824 바이트(약 10.7억 바이트)입니다. 차이는 약 7.4%로, 대용량 스토리지에서 체감 가능한 차이가 발생합니다.",
+          en: "In SI: 1GB = 1,000,000,000 bytes (1 billion bytes). In binary: 1GiB = 1,073,741,824 bytes (about 1.07 billion bytes). The ~7.4% difference becomes noticeable with large storage devices.",
+        },
+      },
+      {
+        question: { ko: "인터넷 속도의 Mbps와 MB는 다른가요?", en: "Is Mbps the same as MB in internet speed?" },
+        answer: {
+          ko: "아닙니다. Mbps(메가비트/초)는 네트워크 속도 단위이고, MB(메가바이트)는 데이터 크기 단위입니다. 1 MB = 8 Mbps입니다. 100 Mbps 인터넷으로 파일을 다운로드하면 실제 속도는 약 12.5 MB/s입니다.",
+          en: "No. Mbps (megabits per second) is a network speed unit, while MB (megabytes) is a data size unit. 1 MB = 8 Mb. At 100 Mbps internet speed, you can download about 12.5 MB/s.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "totp-generator",
+    title: {
+      ko: "TOTP 코드 생성기",
+      en: "TOTP Code Generator",
+    },
+    description: {
+      ko: "RFC 6238 기반 TOTP(시간 기반 일회용 비밀번호) 코드를 생성합니다. Google Authenticator 호환.",
+      en: "Generate TOTP (Time-based One-Time Password) codes based on RFC 6238. Compatible with Google Authenticator.",
+    },
+    longDescription: {
+      ko: "TOTP 코드 생성기는 2단계 인증(2FA)에서 사용하는 시간 기반 일회용 비밀번호를 브라우저에서 직접 생성합니다. RFC 6238 표준을 따르며 Google Authenticator, Authy, Microsoft Authenticator와 완전히 호환됩니다. Base32 시크릿 키를 입력하면 30초마다 새로운 6자리 코드가 자동으로 생성됩니다. 모든 연산은 브라우저에서 처리되므로 시크릿 키가 서버로 전송되지 않습니다.",
+      en: "The TOTP Code Generator creates time-based one-time passwords for 2-factor authentication directly in the browser. Fully compatible with Google Authenticator, Authy, and Microsoft Authenticator. Enter a Base32 secret key to automatically generate a new 6-digit code every 30 seconds. All computations happen in your browser — your secret key is never sent to any server.",
+    },
+    category: "security",
+    keywords: [
+      "totp generator",
+      "2fa code",
+      "two factor authentication",
+      "google authenticator",
+      "otp generator",
+      "rfc 6238",
+      "one time password",
+      "authenticator code",
+      "2fa token",
+      "totp 생성기",
+      "2단계 인증",
+      "일회용 비밀번호",
+      "구글 인증앱",
+      "otp 코드",
+    ],
+    component: "TotpGenerator",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "TOTP는 안전한가요?", en: "Is TOTP secure?" },
+        answer: {
+          ko: "TOTP는 표준 2단계 인증 방식으로 비밀번호 도용만으로는 계정을 탈취하기 어렵게 만듭니다. 그러나 시크릿 키 자체가 노출되면 무력화됩니다. 시크릿 키는 암호화된 저장소에 안전하게 보관하세요. 이 도구는 시크릿 키를 서버로 전송하지 않습니다.",
+          en: "TOTP is a standard 2FA method that makes account theft much harder even if passwords are compromised. However, if the secret key itself is exposed, TOTP is defeated. Keep your secret key securely in encrypted storage. This tool never sends your secret key to any server.",
+        },
+      },
+      {
+        question: { ko: "시크릿 키는 어디서 찾나요?", en: "Where can I find the TOTP secret key?" },
+        answer: {
+          ko: "2FA 설정 시 QR코드와 함께 Base32 형식의 시크릿 키가 표시됩니다. 주로 '수동 입력' 또는 '키를 입력할 수 없나요?' 옵션에서 확인할 수 있습니다. 이 시크릿 키를 안전하게 백업해 두면 기기를 분실해도 복구할 수 있습니다.",
+          en: "When setting up 2FA, a Base32 secret key is displayed alongside the QR code. Look for a 'manual entry' or 'can't scan the QR code?' option. Safely backing up this key allows you to recover access if you lose your device.",
+        },
+      },
+      {
+        question: { ko: "코드가 맞지 않는 이유는?", en: "Why might my TOTP code not work?" },
+        answer: {
+          ko: "TOTP는 시간에 민감합니다. 기기의 시간이 정확해야 합니다. 시간이 30초 이상 어긋나면 코드가 맞지 않을 수 있습니다. NTP 서버와 동기화하거나 자동 시간 설정을 활성화하세요. 또한 Base32 시크릿 키가 정확한지 확인하세요.",
+          en: "TOTP is time-sensitive. Your device's clock must be accurate. If the time is off by more than 30 seconds, codes won't match. Sync with an NTP server or enable automatic time settings. Also verify that your Base32 secret key is correct.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "image-base64-converter",
+    title: {
+      ko: "이미지 ↔ Base64 변환기",
+      en: "Image ↔ Base64 Converter",
+    },
+    description: {
+      ko: "이미지 파일을 Base64 Data URL로 변환하거나 Base64를 이미지로 복원합니다.",
+      en: "Convert image files to Base64 Data URLs or restore Base64 strings back to images.",
+    },
+    longDescription: {
+      ko: "이미지 Base64 변환기는 PNG, JPG, GIF, WebP, SVG 등 이미지 파일을 Base64 인코딩된 Data URL로 변환합니다. CSS background-image 인라인 삽입, HTML img 태그 src 임베딩, JSON API 페이로드에 이미지 포함 시 활용됩니다. 반대로 Base64 문자열을 이미지로 복원하고 다운로드할 수 있습니다. 최대 5MB 이미지를 지원하며 모든 처리는 브라우저에서 수행됩니다.",
+      en: "The Image Base64 Converter transforms PNG, JPG, GIF, WebP, SVG and other image files into Base64-encoded Data URLs. Useful for inline CSS background images, HTML img src embedding, and including images in JSON API payloads. Conversely, restore Base64 strings back to images and download them. Supports images up to 5MB, all processed in the browser.",
+    },
+    category: "developer",
+    keywords: [
+      "image to base64",
+      "base64 to image",
+      "image encoder",
+      "data url",
+      "base64 image",
+      "inline image",
+      "image converter",
+      "png to base64",
+      "jpg to base64",
+      "이미지 base64 변환",
+      "이미지 인코딩",
+      "data url 변환",
+      "base64 이미지",
+      "인라인 이미지",
+    ],
+    component: "ImageBase64Converter",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "Base64 이미지는 언제 사용하나요?", en: "When should I use Base64 images?" },
+        answer: {
+          ko: "작은 아이콘이나 로고를 CSS나 HTML에 직접 인라인으로 포함할 때, 이메일 HTML 본문에 이미지를 삽입할 때, API 응답에 이미지를 JSON으로 전달할 때 유용합니다. 단, Base64 인코딩은 원본보다 약 33% 크기가 증가하므로 큰 이미지에는 비효율적입니다.",
+          en: "Useful for inlining small icons or logos in CSS/HTML, embedding images in email HTML bodies, and transmitting images as JSON in API responses. Note that Base64 encoding increases file size by ~33%, so it's inefficient for large images.",
+        },
+      },
+      {
+        question: { ko: "Data URL 형식은 무엇인가요?", en: "What is the Data URL format?" },
+        answer: {
+          ko: "Data URL은 `data:[MIME 타입];base64,[Base64 데이터]` 형식입니다. 예를 들어 PNG 이미지는 `data:image/png;base64,iVBOR...`로 시작합니다. 이를 img 태그의 src 속성이나 CSS의 url() 함수에 직접 사용할 수 있습니다.",
+          en: "Data URL format is `data:[MIME type];base64,[Base64 data]`. For example, a PNG image starts with `data:image/png;base64,iVBOR...`. This can be used directly in an img src attribute or CSS url() function.",
+        },
+      },
+      {
+        question: { ko: "어떤 이미지 형식을 지원하나요?", en: "What image formats are supported?" },
+        answer: {
+          ko: "PNG, JPG/JPEG, GIF, WebP, SVG, BMP, ICO 등 브라우저가 지원하는 모든 이미지 형식을 지원합니다. 최대 파일 크기는 5MB입니다. 모든 변환은 브라우저에서 처리되며 파일이 서버로 전송되지 않습니다.",
+          en: "Supports all browser-supported formats including PNG, JPG/JPEG, GIF, WebP, SVG, BMP, and ICO. Maximum file size is 5MB. All conversions happen in the browser — your files are never sent to any server.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "http-status-dictionary",
+    title: {
+      ko: "HTTP 상태 코드 사전",
+      en: "HTTP Status Code Dictionary",
+    },
+    description: {
+      ko: "HTTP 상태 코드(1xx~5xx)의 의미와 사용법을 검색합니다. 400, 404, 500 등 설명 제공.",
+      en: "Look up HTTP status codes (1xx–5xx) with descriptions and usage. Covers 400, 404, 500, and more.",
+    },
+    longDescription: {
+      ko: "HTTP 상태 코드 사전은 웹 개발과 API 디버깅에 필수적인 참조 도구입니다. 1xx(정보), 2xx(성공), 3xx(리다이렉트), 4xx(클라이언트 오류), 5xx(서버 오류) 범주의 30개 이상의 상태 코드를 한국어/영어로 검색하고 확인할 수 있습니다. 각 코드의 의미, 일반적인 사용 사례, 발생 원인을 상세히 설명합니다. API 오류 분석, 웹 서버 로그 해석, HTTP 클라이언트 구현에 활용하세요.",
+      en: "The HTTP Status Code Dictionary is an essential reference tool for web development and API debugging. Search and look up 30+ status codes across 1xx (informational), 2xx (success), 3xx (redirect), 4xx (client error), and 5xx (server error) categories in Korean/English. Each code includes meaning, common use cases, and root causes. Use it for API error analysis, web server log interpretation, and HTTP client implementation.",
+    },
+    category: "network",
+    keywords: [
+      "http status codes",
+      "http error codes",
+      "404 not found",
+      "500 internal server error",
+      "403 forbidden",
+      "http response codes",
+      "status code lookup",
+      "api error codes",
+      "rest api status",
+      "http 상태 코드",
+      "http 오류 코드",
+      "http 응답 코드",
+      "상태 코드 사전",
+      "api 오류",
+    ],
+    component: "HttpStatusDictionary",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "401과 403의 차이는?", en: "What is the difference between 401 and 403?" },
+        answer: {
+          ko: "401 Unauthorized는 인증이 필요하거나 실패했음을 의미합니다. 로그인하면 해결될 수 있습니다. 403 Forbidden은 인증했더라도 해당 리소스에 접근 권한이 없음을 의미합니다. 관리자 페이지에 일반 사용자가 접근할 때 반환됩니다.",
+          en: "401 Unauthorized means authentication is required or failed — logging in may resolve it. 403 Forbidden means you are authenticated but don't have permission to access the resource, such as a regular user trying to access an admin page.",
+        },
+      },
+      {
+        question: { ko: "301과 302 리다이렉트의 차이는?", en: "What is the difference between 301 and 302 redirects?" },
+        answer: {
+          ko: "301 Moved Permanently는 URL이 영구적으로 변경되었음을 나타냅니다. 검색 엔진은 새 URL로 색인을 업데이트하고 SEO 점수가 전달됩니다. 302 Found는 임시 이동으로, 검색 엔진은 원래 URL을 계속 유지합니다. SEO에서 영구 변경은 반드시 301을 사용해야 합니다.",
+          en: "301 Moved Permanently indicates the URL has permanently changed. Search engines update their index and pass SEO value to the new URL. 302 Found is temporary, so search engines keep the original URL. Always use 301 for permanent URL changes in SEO.",
+        },
+      },
+      {
+        question: { ko: "502와 504의 차이는?", en: "What is the difference between 502 and 504?" },
+        answer: {
+          ko: "502 Bad Gateway는 게이트웨이(예: Nginx)가 업스트림 서버로부터 유효하지 않은 응답을 받은 경우입니다. 504 Gateway Timeout은 업스트림 서버가 시간 내에 응답하지 않은 경우입니다. 둘 다 주로 리버스 프록시 설정 문제나 백엔드 서버 장애가 원인입니다.",
+          en: "502 Bad Gateway means the gateway (e.g., Nginx) received an invalid response from the upstream server. 504 Gateway Timeout means the upstream server did not respond in time. Both are typically caused by reverse proxy misconfigurations or backend server failures.",
+        },
+      },
+    ],
+  },
 ];
 
 // Helper functions
