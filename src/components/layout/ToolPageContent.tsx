@@ -15,7 +15,13 @@ export function ToolPageContent({ tool }: ToolPageContentProps) {
   if (!Component) return null;
 
   return (
-    <ToolLayout title={tool.title[locale]} description={tool.description[locale]}>
+    <ToolLayout
+      title={tool.title[locale]}
+      description={tool.description[locale]}
+      longDescription={tool.longDescription?.[locale]}
+      faqs={tool.faqs}
+      locale={locale}
+    >
       <Component />
     </ToolLayout>
   );

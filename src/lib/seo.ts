@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { type Tool, type Category, getCategoryById } from "@/data/tools";
+import { type Tool, type Category, type FAQ, getCategoryById } from "@/data/tools";
 import type { Locale } from "./i18n";
 import { t } from "./i18n";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://tools.example.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://beomanro.com";
+const SITE_NAME = "NetTools";
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 /**
  * Generate metadata for a tool page
@@ -13,24 +15,51 @@ export function generateToolMetadata(tool: Tool, locale: Locale): Metadata {
   const description = t(tool.description, locale);
   const category = getCategoryById(tool.category);
   const categoryName = category ? t(category.title, locale) : "";
+  const canonicalUrl = `${SITE_URL}/tools/net/${tool.slug}`;
 
   return {
-    title: `${title} | NetTools`,
+    title: `${title} — 무료 온라인 도구 | ${SITE_NAME}`,
     description,
     keywords: tool.keywords.join(", "),
+    authors: [{ name: SITE_NAME }],
     openGraph: {
-      title,
+      title: `${title} | ${SITE_NAME}`,
       description,
-      url: `${SITE_URL}/tools/net/${tool.slug}`,
-      siteName: "NetTools",
+      url: canonicalUrl,
+      siteName: SITE_NAME,
       type: "website",
       locale: locale === "ko" ? "ko_KR" : "en_US",
+      images: [
+        {
+          url: DEFAULT_OG_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: `${title} - ${SITE_NAME}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      images: [DEFAULT_OG_IMAGE],
     },
     alternates: {
-      canonical: `${SITE_URL}/tools/net/${tool.slug}`,
+      canonical: canonicalUrl,
       languages: {
         ko: `${SITE_URL}/ko/tools/net/${tool.slug}`,
         en: `${SITE_URL}/en/tools/net/${tool.slug}`,
+      },
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
       },
     },
   };
@@ -38,30 +67,98 @@ export function generateToolMetadata(tool: Tool, locale: Locale): Metadata {
 
 /**
  * Generate JSON-LD structured data for a tool
- * (Helps with Google rich results)
+ * Includes WebApplication + BreadcrumbList + FAQPage schemas
  */
 export function generateToolJsonLd(tool: Tool, locale: Locale): string {
   const title = t(tool.title, locale);
   const description = t(tool.description, locale);
+  const category = getCategoryById(tool.category);
+  const categoryName = category ? t(category.title, locale) : "";
+  const canonicalUrl = `${SITE_URL}/tools/net/${tool.slug}`;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
+  const webApp = {
     "@type": "WebApplication",
+    "@id": `${canonicalUrl}#webapp`,
     name: title,
     description,
-    url: `${SITE_URL}/tools/net/${tool.slug}`,
+    url: canonicalUrl,
     applicationCategory: "UtilityApplication",
     operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript",
+    inLanguage: ["ko", "en"],
+    isAccessibleForFree: true,
     offers: {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
     },
+    provider: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
     ...(tool.datePublished && { datePublished: tool.datePublished }),
     ...(tool.dateModified && { dateModified: tool.dateModified }),
   };
 
-  return JSON.stringify(jsonLd);
+  const breadcrumb = {
+    "@type": "BreadcrumbList",
+    "@id": `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: SITE_NAME,
+        item: SITE_URL,
+      },
+      ...(categoryName
+        ? [
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: categoryName,
+              item: `${SITE_URL}/category/${tool.category}`,
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: title,
+              item: canonicalUrl,
+            },
+          ]
+        : [
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: title,
+              item: canonicalUrl,
+            },
+          ]),
+    ],
+  };
+
+  const graph: object[] = [webApp, breadcrumb];
+
+  if (tool.faqs && tool.faqs.length > 0) {
+    const faqPage = {
+      "@type": "FAQPage",
+      "@id": `${canonicalUrl}#faq`,
+      mainEntity: tool.faqs.map((faq: FAQ) => ({
+        "@type": "Question",
+        name: t(faq.question, locale),
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: t(faq.answer, locale),
+        },
+      })),
+    };
+    graph.push(faqPage);
+  }
+
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": graph,
+  });
 }
 
 /**
@@ -73,17 +170,83 @@ export function generateCategoryMetadata(
 ): Metadata {
   const title = t(category.title, locale);
   const description = t(category.description, locale);
+  const canonicalUrl = `${SITE_URL}/category/${category.id}`;
 
   return {
-    title: `${title} | NetTools`,
+    title: `${title} 도구 모음 | ${SITE_NAME}`,
     description,
     openGraph: {
-      title: `${title} - NetTools`,
+      title: `${title} 도구 모음 — ${SITE_NAME}`,
       description,
-      url: `${SITE_URL}/category/${category.id}`,
-      siteName: "NetTools",
+      url: canonicalUrl,
+      siteName: SITE_NAME,
+      type: "website",
+      images: [
+        {
+          url: DEFAULT_OG_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: `${title} - ${SITE_NAME}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} 도구 모음 | ${SITE_NAME}`,
+      description,
+      images: [DEFAULT_OG_IMAGE],
+    },
+    alternates: {
+      canonical: canonicalUrl,
     },
   };
+}
+
+/**
+ * Generate JSON-LD for category pages
+ */
+export function generateCategoryJsonLd(
+  category: Category,
+  locale: Locale,
+  toolCount: number,
+): string {
+  const title = t(category.title, locale);
+  const description = t(category.description, locale);
+
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        name: `${title} 도구 모음`,
+        description,
+        url: `${SITE_URL}/category/${category.id}`,
+        numberOfItems: toolCount,
+        provider: {
+          "@type": "Organization",
+          name: SITE_NAME,
+          url: SITE_URL,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: SITE_NAME,
+            item: SITE_URL,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: title,
+            item: `${SITE_URL}/category/${category.id}`,
+          },
+        ],
+      },
+    ],
+  });
 }
 
 /**

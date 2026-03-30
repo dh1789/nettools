@@ -4,16 +4,58 @@ import { ClientHeader } from "@/components/layout/ClientHeader";
 import { ClientFooter } from "@/components/layout/ClientFooter";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://beomanro.com";
+
 export const metadata: Metadata = {
   title: {
     template: "%s | NetTools",
-    default: "NetTools — Free Network & Security Tools",
+    default: "NetTools — 무료 네트워크 & 보안 온라인 도구",
   },
   description:
-    "Free online tools for network engineers and security professionals.",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://tools.example.com",
-  ),
+    "네트워크 엔지니어와 개발자를 위한 무료 온라인 도구 모음. 서브넷 계산기, DNS 조회, SSL 인증서 확인, Base64, JSON 포매터 등 18개 이상의 도구를 무료로 사용하세요.",
+  metadataBase: new URL(SITE_URL),
+  keywords: [
+    "네트워크 도구",
+    "보안 도구",
+    "서브넷 계산기",
+    "DNS 조회",
+    "SSL 인증서",
+    "Base64",
+    "JSON 포매터",
+    "무료 온라인 도구",
+    "개발자 도구",
+    "network tools",
+    "free online tools",
+  ].join(", "),
+  authors: [{ name: "NetTools" }],
+  openGraph: {
+    type: "website",
+    siteName: "NetTools",
+    locale: "ko_KR",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "NetTools — 무료 네트워크 & 보안 도구",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [`${SITE_URL}/og-image.png`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
