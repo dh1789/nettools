@@ -105,7 +105,6 @@ const PRIVATE_RANGES: PrivateRange[] = [
 
 interface IpInfo {
   ip: string;
-  success: boolean;
   country: string;
   country_code: string;
   region: string;
@@ -113,8 +112,102 @@ interface IpInfo {
   postal: string;
   latitude: number;
   longitude: number;
-  timezone: { id: string };
-  connection: { isp: string; org: string; asn: number; domain: string };
+  timezone: string;
+  isp: string;
+  org: string;
+  asn: number;
+}
+
+async function fetchIpInfo(ip: string): Promise<IpInfo> {
+  // 1차: ipwho.is
+  try {
+    const res = await fetch(`https://ipwho.is/${ip}`);
+    if (res.ok) {
+      const d = await res.json();
+      if (d.success) {
+        return {
+          ip: d.ip,
+          country: d.country || "",
+          country_code: d.country_code || "",
+          region: d.region || "",
+          city: d.city || "",
+          postal: d.postal || "",
+          latitude: d.latitude || 0,
+          longitude: d.longitude || 0,
+          timezone: d.timezone?.id || "",
+          isp: d.connection?.isp || "",
+          org: d.connection?.org || "",
+          asn: d.connection?.asn || 0,
+        };
+      }
+    }
+  } catch { /* fallback */ }
+  // 2차: ip.guide
+  const res = await fetch(`https://ip.guide/${ip}`, {
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const d = await res.json();
+  return {
+    ip: d.ip,
+    country: d.location?.country || "",
+    country_code: d.network?.autonomous_system?.country || "",
+    region: "",
+    city: d.location?.city || "",
+    postal: "",
+    latitude: d.location?.latitude || 0,
+    longitude: d.location?.longitude || 0,
+    timezone: d.location?.timezone || "",
+    isp: d.network?.autonomous_system?.name || "",
+    org: d.network?.autonomous_system?.organization || "",
+    asn: d.network?.autonomous_system?.asn || 0,
+  };
+}
+
+async function fetchMyIp(): Promise<IpInfo> {
+  // 1차: ipwho.is
+  try {
+    const res = await fetch("https://ipwho.is/");
+    if (res.ok) {
+      const d = await res.json();
+      if (d.success) {
+        return {
+          ip: d.ip,
+          country: d.country || "",
+          country_code: d.country_code || "",
+          region: d.region || "",
+          city: d.city || "",
+          postal: d.postal || "",
+          latitude: d.latitude || 0,
+          longitude: d.longitude || 0,
+          timezone: d.timezone?.id || "",
+          isp: d.connection?.isp || "",
+          org: d.connection?.org || "",
+          asn: d.connection?.asn || 0,
+        };
+      }
+    }
+  } catch { /* fallback */ }
+  // 2차: ip.guide
+  const res = await fetch("https://ip.guide/", {
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const d = await res.json();
+  return {
+    ip: d.ip,
+    country: d.location?.country || "",
+    country_code: d.network?.autonomous_system?.country || "",
+    region: "",
+    city: d.location?.city || "",
+    postal: "",
+    latitude: d.location?.latitude || 0,
+    longitude: d.location?.longitude || 0,
+    timezone: d.location?.timezone || "",
+    isp: d.network?.autonomous_system?.name || "",
+    org: d.network?.autonomous_system?.organization || "",
+    asn: d.network?.autonomous_system?.asn || 0,
+  };
 }
 
 function ipToInt(ip: string): number {
@@ -224,10 +317,7 @@ export function IpLookup() {
     async (ipInput: string) => {
       const ip = parseIp(ipInput);
       if (!ip) {
-        setState({
-          type: "error",
-          message: t(T.ipLookupInvalidIp),
-        });
+        setState({ type: "error", message: t(T.ipLookupInvalidIp) });
         return;
       }
 
@@ -239,13 +329,8 @@ export function IpLookup() {
 
       setState({ type: "loading" });
       try {
-        const res = await fetch(`https://ipwho.is/${ip}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data: IpInfo = await res.json();
-        if (!data.success) {
-          throw new Error("Lookup failed");
-        }
-        setState({ type: "public", ip, info: data });
+        const info = await fetchIpInfo(ip);
+        setState({ type: "public", ip, info });
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         setState({
@@ -254,7 +339,7 @@ export function IpLookup() {
         });
       }
     },
-    [t]
+    [t],
   );
 
   const handleLookup = () => lookup(input);
@@ -263,12 +348,9 @@ export function IpLookup() {
     setMyIpLoading(true);
     setState({ type: "loading" });
     try {
-      const res = await fetch("https://ipwho.is/");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data: IpInfo = await res.json();
-      if (!data.success) throw new Error("Lookup failed");
-      setInput(data.ip);
-      setState({ type: "public", ip: data.ip, info: data });
+      const info = await fetchMyIp();
+      setInput(info.ip);
+      setState({ type: "public", ip: info.ip, info });
     } catch {
       setState({ type: "error", message: t(T.ipLookupMyIpError) });
     } finally {
@@ -293,15 +375,15 @@ export function IpLookup() {
         `IP: ${info.ip}`,
         `Type: Public`,
         `Country: ${info.country} (${info.country_code})`,
-        `Region: ${info.region}`,
-        `City: ${info.city}`,
-        `ZIP: ${info.postal}`,
-        `Timezone: ${info.timezone.id}`,
-        `ISP: ${info.connection.isp}`,
-        `Org: ${info.connection.org}`,
-        `AS: AS${info.connection.asn}`,
+        info.region && `Region: ${info.region}`,
+        info.city && `City: ${info.city}`,
+        info.postal && `ZIP: ${info.postal}`,
+        info.timezone && `Timezone: ${info.timezone}`,
+        info.isp && `ISP: ${info.isp}`,
+        info.org && `Org: ${info.org}`,
+        info.asn && `AS: AS${info.asn}`,
         `Location: ${info.latitude}, ${info.longitude}`,
-      ].join("\n");
+      ].filter(Boolean).join("\n");
     }
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -583,45 +665,51 @@ export function IpLookup() {
             <div style={resultRowStyle}>
               <span style={resultLabelStyle}>{t(T.ipLookupCountry)}</span>
               <span style={resultValueStyle}>
-                {state.info.country} ({state.info.country_code})
+                {state.info.country}{state.info.country_code ? ` (${state.info.country_code})` : ""}
               </span>
             </div>
-            <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>{t(T.ipLookupRegion)}</span>
-              <span style={resultValueStyle}>
-                {state.info.region}
-              </span>
-            </div>
-            <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>{t(T.ipLookupCity)}</span>
-              <span style={resultValueStyle}>{state.info.city}</span>
-            </div>
+            {state.info.region && (
+              <div style={resultRowStyle}>
+                <span style={resultLabelStyle}>{t(T.ipLookupRegion)}</span>
+                <span style={resultValueStyle}>{state.info.region}</span>
+              </div>
+            )}
+            {state.info.city && (
+              <div style={resultRowStyle}>
+                <span style={resultLabelStyle}>{t(T.ipLookupCity)}</span>
+                <span style={resultValueStyle}>{state.info.city}</span>
+              </div>
+            )}
             {state.info.postal && (
               <div style={resultRowStyle}>
                 <span style={resultLabelStyle}>{t(T.ipLookupZip)}</span>
                 <span style={resultValueStyle}>{state.info.postal}</span>
               </div>
             )}
-            <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>
-                {t(T.ipLookupTimezone)}
-              </span>
-              <span style={resultValueStyle}>
-                {state.info.timezone.id}
-              </span>
-            </div>
-            <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>{t(T.ipLookupIsp)}</span>
-              <span style={resultValueStyle}>{state.info.connection.isp}</span>
-            </div>
-            <div style={resultRowStyle}>
-              <span style={resultLabelStyle}>{t(T.ipLookupOrg)}</span>
-              <span style={resultValueStyle}>{state.info.connection.org}</span>
-            </div>
-            <div style={{ ...resultRowStyle, borderBottom: "none" }}>
-              <span style={resultLabelStyle}>{t(T.ipLookupAs)}</span>
-              <span style={resultValueStyle}>AS{state.info.connection.asn}</span>
-            </div>
+            {state.info.timezone && (
+              <div style={resultRowStyle}>
+                <span style={resultLabelStyle}>{t(T.ipLookupTimezone)}</span>
+                <span style={resultValueStyle}>{state.info.timezone}</span>
+              </div>
+            )}
+            {state.info.isp && (
+              <div style={resultRowStyle}>
+                <span style={resultLabelStyle}>{t(T.ipLookupIsp)}</span>
+                <span style={resultValueStyle}>{state.info.isp}</span>
+              </div>
+            )}
+            {state.info.org && (
+              <div style={resultRowStyle}>
+                <span style={resultLabelStyle}>{t(T.ipLookupOrg)}</span>
+                <span style={resultValueStyle}>{state.info.org}</span>
+              </div>
+            )}
+            {state.info.asn > 0 && (
+              <div style={resultRowStyle}>
+                <span style={resultLabelStyle}>{t(T.ipLookupAs)}</span>
+                <span style={resultValueStyle}>AS{state.info.asn}</span>
+              </div>
+            )}
           </div>
 
           {/* Location */}
