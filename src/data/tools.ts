@@ -280,6 +280,96 @@ export const TOOLS: Tool[] = [
     component: "SslChecker",
     datePublished: "2026-03-30",
   },
+  {
+    slug: "url-encoder",
+    title: {
+      ko: "URL 인코더/디코더",
+      en: "URL Encoder / Decoder",
+    },
+    description: {
+      ko: "텍스트를 URL 인코딩(퍼센트 인코딩)하거나 URL 인코딩된 문자열을 디코딩합니다.",
+      en: "Encode text to URL encoding (percent encoding) or decode URL-encoded strings.",
+    },
+    category: "developer",
+    keywords: ["url", "encode", "decode", "percent", "uri", "인코딩", "디코딩", "퍼센트"],
+    component: "UrlEncoder",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "unix-timestamp",
+    title: {
+      ko: "Unix Timestamp 변환기",
+      en: "Unix Timestamp Converter",
+    },
+    description: {
+      ko: "Unix 타임스탬프와 날짜/시간을 상호 변환합니다. 로컬, UTC, ISO 8601 형식을 지원합니다.",
+      en: "Convert between Unix timestamps and human-readable date/time. Supports local, UTC, and ISO 8601 formats.",
+    },
+    category: "developer",
+    keywords: ["unix", "timestamp", "epoch", "datetime", "date", "time", "convert", "타임스탬프", "날짜", "변환"],
+    component: "UnixTimestamp",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "regex-tester",
+    title: {
+      ko: "정규표현식 테스터",
+      en: "Regex Tester",
+    },
+    description: {
+      ko: "정규표현식을 실시간으로 테스트합니다. 매칭 결과 하이라이트, 캡처 그룹, 플래그 지원.",
+      en: "Test regular expressions in real time. Highlights matches, shows capture groups, supports flags.",
+    },
+    category: "linux",
+    keywords: ["regex", "regexp", "pattern", "match", "test", "정규표현식", "정규식", "패턴"],
+    component: "RegexTester",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "hash-generator",
+    title: {
+      ko: "해시 생성기",
+      en: "Hash Generator",
+    },
+    description: {
+      ko: "텍스트의 SHA-1, SHA-256, SHA-384, SHA-512 해시를 생성합니다. 브라우저 Web Crypto API 사용.",
+      en: "Generate SHA-1, SHA-256, SHA-384, SHA-512 hashes for any text using the browser Web Crypto API.",
+    },
+    category: "security",
+    keywords: ["hash", "sha256", "sha512", "sha1", "crypto", "digest", "해시", "암호화"],
+    component: "HashGenerator",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "text-case-converter",
+    title: {
+      ko: "텍스트 케이스 변환기",
+      en: "Text Case Converter",
+    },
+    description: {
+      ko: "텍스트를 대문자, 소문자, 카멜케이스, 스네이크케이스, 케밥케이스 등 다양한 형식으로 변환합니다.",
+      en: "Convert text between UPPER CASE, lower case, camelCase, snake_case, kebab-case, and more.",
+    },
+    category: "developer",
+    keywords: ["case", "camel", "snake", "kebab", "pascal", "upper", "lower", "title", "변환", "케이스"],
+    component: "TextCaseConverter",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "number-base-converter",
+    title: {
+      ko: "진수 변환기",
+      en: "Number Base Converter",
+    },
+    description: {
+      ko: "2진수, 8진수, 10진수, 16진수를 상호 변환합니다. 비트 시각화 기능을 제공합니다.",
+      en: "Convert between binary, octal, decimal, and hexadecimal. Includes bit visualization.",
+    },
+    category: "developer",
+    keywords: ["binary", "octal", "decimal", "hexadecimal", "hex", "base", "convert", "진수", "변환", "2진수", "16진수"],
+    component: "NumberBaseConverter",
+    datePublished: "2026-03-30",
+  },
 ];
 
 // Helper functions

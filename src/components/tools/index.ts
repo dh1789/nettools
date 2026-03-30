@@ -19,6 +19,12 @@ import { JsonFormatter } from "./JsonFormatter";
 import { CronParser } from "./CronParser";
 import { ChmodCalculator } from "./ChmodCalculator";
 import { SslChecker } from "./SslChecker";
+import { UrlEncoder } from "./UrlEncoder";
+import { UnixTimestamp } from "./UnixTimestamp";
+import { RegexTester } from "./RegexTester";
+import { HashGenerator } from "./HashGenerator";
+import { TextCaseConverter } from "./TextCaseConverter";
+import { NumberBaseConverter } from "./NumberBaseConverter";
 
 export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   SubnetCalculator,
@@ -33,4 +39,10 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   CronParser,
   ChmodCalculator,
   SslChecker,
+  UrlEncoder,
+  UnixTimestamp,
+  RegexTester,
+  HashGenerator,
+  TextCaseConverter,
+  NumberBaseConverter,
 };
