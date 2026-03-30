@@ -19,7 +19,6 @@ interface SslResult {
   httpError: string | null;
   cert: CertInfo | null;
   certError: string | null;
-  corsBlocked: boolean;
 }
 
 function isValidDomain(input: string): boolean {
@@ -124,101 +123,31 @@ export function SslChecker() {
     setLoading(true);
     setResult(null);
 
-    const sslResult: SslResult = {
-      domain: parsed,
-      httpsReachable: false,
-      responseTimeMs: null,
-      httpError: null,
-      cert: null,
-      certError: null,
-      corsBlocked: false,
-    };
-
-    // Step 1: HTTPS connection test
-    try {
-      const start = performance.now();
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10000);
-      await fetch(`https://${parsed}`, {
-        mode: "no-cors",
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      const elapsed = performance.now() - start;
-      sslResult.httpsReachable = true;
-      sslResult.responseTimeMs = Math.round(elapsed);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      if (msg.includes("abort")) {
-        sslResult.httpError = t({
-          ko: "연결 시간 초과 (10초)",
-          en: "Connection timed out (10s)",
-        });
-      } else {
-        sslResult.httpError = msg;
-      }
-    }
-
-    // Step 2: crt.sh Certificate Transparency lookup
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
+      const timeout = setTimeout(() => controller.abort(), 25000);
       const res = await fetch(
-        `https://crt.sh/?q=${encodeURIComponent(parsed)}&output=json`,
+        `/api/ssl-check?domain=${encodeURIComponent(parsed)}`,
         { signal: controller.signal },
       );
       clearTimeout(timeout);
 
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          // Sort by id descending to get the most recent certificate
-          const sorted = data.sort(
-            (a: Record<string, number>, b: Record<string, number>) => b.id - a.id,
-          );
-          const latest = sorted[0];
-          const notAfter = latest.not_after || "";
-          const days = calcDaysUntilExpiry(notAfter);
-          sslResult.cert = {
-            commonName: latest.common_name || parsed,
-            issuerName: latest.issuer_name || "N/A",
-            notBefore: latest.not_before || "N/A",
-            notAfter,
-            daysUntilExpiry: days,
-          };
-        } else {
-          sslResult.certError = t({
-            ko: "이 도메인에 대한 인증서 투명성 로그를 찾을 수 없습니다.",
-            en: "No Certificate Transparency logs found for this domain.",
-          });
-        }
-      } else {
-        sslResult.certError = t({
-          ko: "crt.sh API 요청 실패",
-          en: "crt.sh API request failed",
-        });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
       }
+
+      const data: SslResult = await res.json();
+      setResult(data);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      if (
-        msg.includes("CORS") ||
-        msg.includes("NetworkError") ||
-        msg.includes("Failed to fetch") ||
-        msg.includes("Load failed")
-      ) {
-        sslResult.corsBlocked = true;
-      } else if (msg.includes("abort")) {
-        sslResult.certError = t({
-          ko: "crt.sh 응답 시간 초과",
-          en: "crt.sh request timed out",
-        });
-      } else {
-        sslResult.certError = msg;
-      }
+      setError(
+        msg.includes("abort")
+          ? t({ ko: "요청 시간 초과 (25초)", en: "Request timed out (25s)" })
+          : t({ ko: "SSL 확인 중 오류가 발생했습니다.", en: "Error during SSL check." }),
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setResult(sslResult);
-    setLoading(false);
   }, [domain, t]);
 
   const copyResults = () => {
@@ -239,9 +168,6 @@ export function SslChecker() {
       lines.push(`Not Before: ${result.cert.notBefore}`);
       lines.push(`Not After: ${result.cert.notAfter}`);
       lines.push(`Days Until Expiry: ${result.cert.daysUntilExpiry}`);
-    }
-    if (result.corsBlocked) {
-      lines.push("Certificate details: CORS blocked (check manually at crt.sh)");
     }
     navigator.clipboard.writeText(lines.join("\n"));
     setCopied(true);
@@ -481,8 +407,8 @@ export function SslChecker() {
             </div>
           )}
 
-          {/* Certificate error (non-CORS) */}
-          {result.certError && !result.corsBlocked && (
+          {/* Certificate error */}
+          {result.certError && (
             <div
               style={{
                 background: "#fef2f2",
@@ -494,47 +420,6 @@ export function SslChecker() {
               }}
             >
               {result.certError}
-            </div>
-          )}
-
-          {/* CORS blocked message */}
-          {result.corsBlocked && (
-            <div
-              style={{
-                background: "var(--info-bg, #eff6ff)",
-                borderRadius: "8px",
-                padding: "1rem",
-                marginBottom: "1rem",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--text-secondary, #6b7280)",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                {t({
-                  ko: "브라우저의 CORS 제한으로 인해 인증서 세부 정보를 직접 가져올 수 없습니다.",
-                  en: "Certificate details cannot be retrieved directly from browser due to CORS restrictions.",
-                })}
-              </div>
-              <div style={{ fontSize: "0.875rem" }}>
-                {t({ ko: "수동으로 확인:", en: "Check manually:" })}{" "}
-                <a
-                  href={`https://crt.sh/?q=${encodeURIComponent(result.domain)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    color: "#3b82f6",
-                    textDecoration: "underline",
-                    fontFamily: "monospace",
-                    fontSize: "0.8125rem",
-                  }}
-                >
-                  crt.sh/?q={result.domain}
-                </a>
-              </div>
             </div>
           )}
         </div>

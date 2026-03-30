@@ -2,7 +2,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nettools",
   "compatibility_date": "2025-03-22",
+  "main": "worker.ts",
   "assets": {
-    "directory": "out"
+    "directory": "out",
+    "binding": "ASSETS"
   }
 }
