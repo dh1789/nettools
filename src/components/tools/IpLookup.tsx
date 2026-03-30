@@ -261,13 +261,14 @@ export function IpLookup() {
 
   const handleMyIp = async () => {
     setMyIpLoading(true);
+    setState({ type: "loading" });
     try {
-      const res = await fetch("https://api.ipify.org?format=json");
+      const res = await fetch("https://ipwho.is/");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      const ip = data.ip as string;
-      setInput(ip);
-      await lookup(ip);
+      const data: IpInfo = await res.json();
+      if (!data.success) throw new Error("Lookup failed");
+      setInput(data.ip);
+      setState({ type: "public", ip: data.ip, info: data });
     } catch {
       setState({ type: "error", message: t(T.ipLookupMyIpError) });
     } finally {
