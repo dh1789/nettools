@@ -160,6 +160,126 @@ export const TOOLS: Tool[] = [
     component: "IpLookup",
     datePublished: "2026-03-29",
   },
+  {
+    slug: "dns-lookup",
+    title: {
+      ko: "DNS 조회기",
+      en: "DNS Lookup",
+    },
+    description: {
+      ko: "도메인의 A, AAAA, MX, NS, TXT, CNAME, SOA 등 DNS 레코드를 조회합니다. (Cloudflare DoH API 활용)",
+      en: "Look up DNS records (A, AAAA, MX, NS, TXT, CNAME, SOA) for any domain using Cloudflare DoH API.",
+    },
+    category: "network",
+    keywords: ["dns", "domain", "lookup", "a record", "mx", "ns", "txt", "cname", "soa", "도메인", "조회"],
+    component: "DnsLookup",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "port-dictionary",
+    title: {
+      ko: "포트 번호 사전",
+      en: "Port Number Dictionary",
+    },
+    description: {
+      ko: "잘 알려진 포트 번호(0~65535)를 검색합니다. 서비스명, 프로토콜, 용도를 확인할 수 있습니다.",
+      en: "Search well-known port numbers (0-65535). Find service names, protocols, and descriptions.",
+    },
+    category: "network",
+    keywords: ["port", "tcp", "udp", "service", "well-known", "포트", "번호", "서비스"],
+    component: "PortDictionary",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "password-generator",
+    title: {
+      ko: "비밀번호 생성기",
+      en: "Password Generator",
+    },
+    description: {
+      ko: "안전한 비밀번호를 생성합니다. 길이, 문자 종류를 설정하고 강도를 확인할 수 있습니다.",
+      en: "Generate secure passwords with customizable length, character types, and strength indicator.",
+    },
+    category: "security",
+    keywords: ["password", "generator", "random", "secure", "strength", "비밀번호", "생성", "보안"],
+    component: "PasswordGenerator",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "base64",
+    title: {
+      ko: "Base64 인코더/디코더",
+      en: "Base64 Encoder/Decoder",
+    },
+    description: {
+      ko: "텍스트를 Base64로 인코딩하거나 Base64를 텍스트로 디코딩합니다. UTF-8을 지원합니다.",
+      en: "Encode text to Base64 or decode Base64 to text. Supports UTF-8 characters.",
+    },
+    category: "developer",
+    keywords: ["base64", "encode", "decode", "convert", "인코딩", "디코딩", "변환"],
+    component: "Base64Tool",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "json-formatter",
+    title: {
+      ko: "JSON 포매터",
+      en: "JSON Formatter",
+    },
+    description: {
+      ko: "JSON을 정리(Pretty Print), 축소(Minify), 검증(Validate)합니다.",
+      en: "Format (pretty print), minify, and validate JSON data.",
+    },
+    category: "developer",
+    keywords: ["json", "format", "prettify", "minify", "validate", "정리", "축소", "검증"],
+    component: "JsonFormatter",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "cron-parser",
+    title: {
+      ko: "Cron 표현식 해석기",
+      en: "Cron Expression Parser",
+    },
+    description: {
+      ko: "Cron 표현식을 사람이 읽을 수 있는 설명으로 변환합니다.",
+      en: "Convert cron expressions to human-readable descriptions.",
+    },
+    category: "linux",
+    keywords: ["cron", "crontab", "schedule", "expression", "parser", "크론", "스케줄"],
+    component: "CronParser",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "chmod-calculator",
+    title: {
+      ko: "chmod 계산기",
+      en: "chmod Calculator",
+    },
+    description: {
+      ko: "Unix 파일 권한을 숫자(8진수)와 기호(rwx) 형식으로 상호 변환합니다.",
+      en: "Convert between numeric (octal) and symbolic (rwx) Unix file permissions.",
+    },
+    category: "linux",
+    keywords: ["chmod", "permission", "rwx", "octal", "unix", "linux", "권한", "파일"],
+    component: "ChmodCalculator",
+    datePublished: "2026-03-30",
+  },
+  {
+    slug: "ssl-checker",
+    title: {
+      ko: "SSL 인증서 확인",
+      en: "SSL Certificate Checker",
+    },
+    description: {
+      ko: "도메인의 SSL 인증서 만료일과 발급자 정보를 확인합니다.",
+      en: "Check SSL certificate expiration date and issuer information for any domain.",
+    },
+    category: "security",
+    keywords: ["ssl", "tls", "certificate", "https", "expiry", "인증서", "만료", "보안"],
+    component: "SslChecker",
+    datePublished: "2026-03-30",
+  },
 ];
 
 // Helper functions

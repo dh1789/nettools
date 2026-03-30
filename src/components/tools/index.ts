@@ -11,10 +11,26 @@ import { SubnetCalculator } from "./SubnetCalculator";
 import { MacOuiLookup } from "./MacOuiLookup";
 import { CidrToRange } from "./CidrToRange";
 import { IpLookup } from "./IpLookup";
+import { DnsLookup } from "./DnsLookup";
+import { PortDictionary } from "./PortDictionary";
+import { PasswordGenerator } from "./PasswordGenerator";
+import { Base64Tool } from "./Base64Tool";
+import { JsonFormatter } from "./JsonFormatter";
+import { CronParser } from "./CronParser";
+import { ChmodCalculator } from "./ChmodCalculator";
+import { SslChecker } from "./SslChecker";
 
 export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   SubnetCalculator,
   MacOuiLookup,
   CidrToRange,
   IpLookup,
+  DnsLookup,
+  PortDictionary,
+  PasswordGenerator,
+  Base64Tool,
+  JsonFormatter,
+  CronParser,
+  ChmodCalculator,
+  SslChecker,
 };
