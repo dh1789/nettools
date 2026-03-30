@@ -70,6 +70,8 @@ export const T = {
     ko: "모든 도구는 브라우저에서 실행됩니다. 서버로 전송되는 데이터가 없습니다.",
     en: "All tools run entirely in your browser. No data is sent to any server.",
   },
+  footerLinkPrivacy: { ko: "개인정보처리방침", en: "Privacy Policy" },
+  footerLinkTerms: { ko: "이용약관", en: "Terms of Service" },
   results: { ko: "결과", en: "Results" },
   copied: { ko: "복사됨!", en: "Copied!" },
   copyAll: { ko: "전체 복사", en: "Copy All" },

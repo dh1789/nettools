@@ -19,6 +19,17 @@ export function ClientFooter() {
     >
       <p>{t(T.footerBuiltBy)}</p>
       <p style={{ marginTop: "0.25rem" }}>{t(T.footerPrivacy)}</p>
+      <p style={{ marginTop: "0.75rem", fontSize: "0.75rem" }}>
+        <a href="/about" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
+          {t(T.navAbout)}
+        </a>
+        <a href="/privacy" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
+          {t(T.footerLinkPrivacy)}
+        </a>
+        <a href="/terms" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>
+          {t(T.footerLinkTerms)}
+        </a>
+      </p>
       <p
         style={{
           marginTop: "0.5rem",
