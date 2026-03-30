@@ -1,0 +1,5 @@
+# Google AdSense ads.txt
+# 에드센스 승인 후 아래 형식으로 내용을 채우세요:
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+#
+# publisher ID는 에드센스 계정 > 계정 > 계정 정보에서 확인 가능합니다.

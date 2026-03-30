@@ -58,6 +58,8 @@ export const metadata: Metadata = {
   },
 };
 
+const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID;
+
 export default function RootLayout({
   children,
 }: {
@@ -66,6 +68,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Google AdSense — publisher ID는 에드센스 승인 후 NEXT_PUBLIC_ADSENSE_ID 환경변수로 설정 */}
+        {ADSENSE_ID && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}`}
+            crossOrigin="anonymous"
+          />
+        )}
         <style
           dangerouslySetInnerHTML={{
             __html: `
