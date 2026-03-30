@@ -25,6 +25,11 @@ import { RegexTester } from "./RegexTester";
 import { HashGenerator } from "./HashGenerator";
 import { TextCaseConverter } from "./TextCaseConverter";
 import { NumberBaseConverter } from "./NumberBaseConverter";
+import { ColorConverter } from "./ColorConverter";
+import { TextDiff } from "./TextDiff";
+import { LoremIpsumGenerator } from "./LoremIpsumGenerator";
+import { TextCounter } from "./TextCounter";
+import { QrCodeGenerator } from "./QrCodeGenerator";
 
 export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   SubnetCalculator,
@@ -45,4 +50,9 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   HashGenerator,
   TextCaseConverter,
   NumberBaseConverter,
+  ColorConverter,
+  TextDiff,
+  LoremIpsumGenerator,
+  TextCounter,
+  QrCodeGenerator,
 };

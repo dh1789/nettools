@@ -1190,6 +1190,232 @@ export const TOOLS: Tool[] = [
       },
     ],
   },
+  {
+    slug: "color-converter",
+    title: {
+      ko: "색상 코드 변환기",
+      en: "Color Converter",
+    },
+    description: {
+      ko: "HEX, RGB, HSL 색상 코드를 상호 변환합니다. 색상 미리보기와 클립보드 복사 기능을 제공합니다.",
+      en: "Convert between HEX, RGB, and HSL color codes with live preview and clipboard copy.",
+    },
+    longDescription: {
+      ko: "색상 코드 변환기는 웹 개발과 디자인에서 필수적인 HEX(#FF5733), RGB(rgb(255,87,51)), HSL(hsl(11,100%,60%)) 색상 형식을 실시간으로 상호 변환합니다. 색상 미리보기를 통해 변환된 색상을 즉시 확인할 수 있으며, 각 형식을 클립보드에 복사하여 CSS, Tailwind, Figma 등 다양한 도구에 바로 사용할 수 있습니다.",
+      en: "The Color Converter provides real-time conversion between HEX (#FF5733), RGB (rgb(255,87,51)), and HSL (hsl(11,100%,60%)) color formats, essential for web development and design. A live preview shows the converted color instantly, and each format can be copied to the clipboard for immediate use in CSS, Tailwind, Figma, and other tools.",
+    },
+    category: "general",
+    keywords: [
+      "color converter",
+      "hex to rgb",
+      "rgb to hex",
+      "hsl converter",
+      "color code",
+      "css color",
+      "color picker",
+      "hex color",
+      "색상 변환기",
+      "색상 코드",
+      "HEX RGB",
+      "HSL 변환",
+      "CSS 색상",
+    ],
+    component: "ColorConverter",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "HEX와 RGB의 차이는 무엇인가요?",
+          en: "What is the difference between HEX and RGB?",
+        },
+        answer: {
+          ko: "HEX는 #RRGGBB 형식의 16진수 표현으로 CSS에서 가장 많이 사용됩니다. RGB는 rgb(R, G, B) 형식으로 각 채널값(0-255)을 10진수로 표현합니다. 둘 다 동일한 색상을 나타내며 서로 완전히 변환 가능합니다.",
+          en: "HEX is a hexadecimal representation in #RRGGBB format, most commonly used in CSS. RGB uses the rgb(R, G, B) format with each channel value (0-255) in decimal. Both represent the same color and are fully interconvertible.",
+        },
+      },
+      {
+        question: {
+          ko: "HSL은 어떤 경우에 유용한가요?",
+          en: "When is HSL useful?",
+        },
+        answer: {
+          ko: "HSL(Hue, Saturation, Lightness)은 색조(0-360°), 채도(0-100%), 명도(0-100%)로 색상을 표현합니다. 색상의 밝기나 채도를 직관적으로 조절할 때 유용합니다. 예: hsl(120, 100%, 50%)는 순수 초록색입니다.",
+          en: "HSL (Hue, Saturation, Lightness) expresses color as hue (0-360°), saturation (0-100%), and lightness (0-100%). It's useful when you want to intuitively adjust brightness or saturation. Example: hsl(120, 100%, 50%) is pure green.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "text-diff",
+    title: {
+      ko: "텍스트 비교기",
+      en: "Text Diff",
+    },
+    description: {
+      ko: "두 텍스트를 비교하여 추가, 삭제, 변경된 부분을 시각적으로 표시합니다.",
+      en: "Compare two texts and visually highlight added, removed, and changed lines.",
+    },
+    longDescription: {
+      ko: "텍스트 비교기(Diff Tool)는 두 텍스트 블록을 줄 단위로 비교하여 추가된 줄(초록), 삭제된 줄(빨강), 변경된 줄을 시각적으로 표시합니다. 코드 리뷰, 문서 개정 확인, 설정 파일 비교 등에 유용합니다. 브라우저에서 직접 실행되어 텍스트가 서버로 전송되지 않습니다.",
+      en: "The Text Diff tool compares two text blocks line by line, visually highlighting added lines (green), removed lines (red), and changes. Useful for code review, document revision checking, and configuration file comparison. Runs entirely in the browser — your text is never sent to a server.",
+    },
+    category: "general",
+    keywords: [
+      "text diff",
+      "text compare",
+      "diff tool",
+      "compare text",
+      "line diff",
+      "code diff",
+      "text comparison",
+      "텍스트 비교",
+      "텍스트 차이",
+      "diff 도구",
+      "코드 비교",
+      "문서 비교",
+    ],
+    component: "TextDiff",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "텍스트 비교 결과는 서버에 저장되나요?",
+          en: "Is the text comparison stored on a server?",
+        },
+        answer: {
+          ko: "아니요. 비교는 전적으로 브라우저에서 실행됩니다. 입력한 텍스트는 어떤 서버로도 전송되지 않으며 외부에 저장되지 않습니다.",
+          en: "No. The comparison runs entirely in your browser. The text you enter is never sent to any server or stored externally.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "lorem-ipsum-generator",
+    title: {
+      ko: "Lorem Ipsum 생성기",
+      en: "Lorem Ipsum Generator",
+    },
+    description: {
+      ko: "단락, 문장, 단어 수를 지정하여 Lorem Ipsum 더미 텍스트를 생성합니다.",
+      en: "Generate Lorem Ipsum placeholder text by specifying paragraphs, sentences, or word count.",
+    },
+    longDescription: {
+      ko: "Lorem Ipsum 생성기는 웹 디자인, UI 목업, 인쇄물 레이아웃 테스트에 사용되는 더미 텍스트를 빠르게 생성합니다. 단락 수, 문장 수, 단어 수를 지정할 수 있으며 HTML 태그 포함 여부도 선택할 수 있습니다. 키케로의 De Finibus Bonorum et Malorum에서 유래한 전통적인 Lorem Ipsum 텍스트를 사용합니다.",
+      en: "The Lorem Ipsum Generator quickly produces placeholder text used in web design, UI mockups, and print layout testing. You can specify the number of paragraphs, sentences, or words, and optionally include HTML tags. Uses traditional Lorem Ipsum text derived from Cicero's De Finibus Bonorum et Malorum.",
+    },
+    category: "general",
+    keywords: [
+      "lorem ipsum",
+      "lorem ipsum generator",
+      "placeholder text",
+      "dummy text",
+      "filler text",
+      "lipsum",
+      "더미 텍스트",
+      "Lorem Ipsum 생성기",
+      "플레이스홀더",
+      "더미 컨텐츠",
+    ],
+    component: "LoremIpsumGenerator",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "Lorem Ipsum은 어디서 유래했나요?",
+          en: "Where does Lorem Ipsum come from?",
+        },
+        answer: {
+          ko: "Lorem Ipsum은 키케로(Cicero)의 철학 논문 'De Finibus Bonorum et Malorum'(기원전 45년)에서 유래했습니다. 1500년대 인쇄업자들이 식자 샘플로 사용하면서 표준 더미 텍스트가 되었고, 현재도 디자인/레이아웃 테스트에 널리 사용됩니다.",
+          en: "Lorem Ipsum originates from Cicero's philosophical treatise 'De Finibus Bonorum et Malorum' (45 BC). Printers began using it as a typesetting sample in the 1500s, and it has since become the standard placeholder text, still widely used today for design and layout testing.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "text-counter",
+    title: {
+      ko: "텍스트 카운터",
+      en: "Text Counter",
+    },
+    description: {
+      ko: "텍스트의 글자 수, 단어 수, 줄 수, 공백 제외 글자 수를 실시간으로 계산합니다.",
+      en: "Count characters, words, lines, and non-space characters in real time.",
+    },
+    longDescription: {
+      ko: "텍스트 카운터는 입력한 텍스트의 글자 수(공백 포함/제외), 단어 수, 문장 수, 단락 수, 줄 수를 실시간으로 계산합니다. 블로그 글 작성, SNS 게시물 글자 수 제한 확인, 원고 분량 체크 등에 유용합니다. 한글을 포함한 모든 언어를 지원합니다.",
+      en: "The Text Counter calculates characters (with/without spaces), words, sentences, paragraphs, and lines in real time. Useful for writing blog posts, checking SNS character limits, and measuring manuscript length. Supports all languages including Korean.",
+    },
+    category: "general",
+    keywords: [
+      "text counter",
+      "character count",
+      "word count",
+      "line count",
+      "character counter",
+      "word counter",
+      "글자 수",
+      "단어 수",
+      "텍스트 카운터",
+      "글자수 세기",
+      "문자 수 계산",
+    ],
+    component: "TextCounter",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "한글도 정확히 카운트되나요?",
+          en: "Does it accurately count Korean characters?",
+        },
+        answer: {
+          ko: "네. 한글 글자 하나는 1글자로 계산됩니다. 영문과 한글이 혼합된 텍스트도 정확히 처리합니다. 이모지는 유니코드 코드포인트 단위로 계산됩니다.",
+          en: "Yes. Each Korean character is counted as 1 character. Mixed Korean-English text is handled correctly. Emojis are counted by Unicode code point.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "qr-code-generator",
+    title: {
+      ko: "QR 코드 생성기",
+      en: "QR Code Generator",
+    },
+    description: {
+      ko: "URL, 텍스트, 연락처 등을 QR 코드로 변환합니다. PNG로 다운로드할 수 있습니다.",
+      en: "Convert URLs, text, and contact info into QR codes. Download as PNG.",
+    },
+    longDescription: {
+      ko: "QR 코드 생성기는 URL, 텍스트, 연락처 정보 등을 QR 코드 이미지로 즉시 변환합니다. 생성된 QR 코드는 PNG 형식으로 다운로드하거나 클립보드에 복사할 수 있습니다. 오류 수정 레벨 설정, 크기 조절 기능을 제공합니다. 브라우저에서 완전히 실행되어 개인 정보가 서버에 전송되지 않습니다.",
+      en: "The QR Code Generator instantly converts URLs, text, and contact information into QR code images. Generated QR codes can be downloaded as PNG or copied to the clipboard. Supports error correction level and size adjustment. Runs entirely in the browser — your data is never sent to a server.",
+    },
+    category: "general",
+    keywords: [
+      "qr code generator",
+      "qr code",
+      "qr code maker",
+      "generate qr code",
+      "qr code download",
+      "url to qr",
+      "QR 코드 생성기",
+      "QR코드",
+      "QR 코드 만들기",
+      "URL QR",
+    ],
+    component: "QrCodeGenerator",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: {
+          ko: "QR 코드에 저장할 수 있는 최대 데이터 크기는?",
+          en: "What is the maximum data size a QR code can store?",
+        },
+        answer: {
+          ko: "QR 코드 버전과 오류 수정 레벨에 따라 다릅니다. 숫자만: 최대 7,089자, 영숫자: 최대 4,296자, 바이너리(텍스트): 최대 2,953바이트입니다. URL은 가능한 짧게 유지하는 것이 QR 코드 스캔 성능에 좋습니다.",
+          en: "It depends on the QR version and error correction level. Numeric only: up to 7,089 characters; alphanumeric: up to 4,296 characters; binary (text): up to 2,953 bytes. Keeping URLs short improves QR code scan performance.",
+        },
+      },
+    ],
+  },
 ];
 
 // Helper functions
