@@ -45,6 +45,11 @@ import { SshConfigGenerator } from "./SshConfigGenerator";
 import { VlsmCalculator } from "./VlsmCalculator";
 import { JsonSchemaValidator } from "./JsonSchemaValidator";
 import { AsciiUnicodeTable } from "./AsciiUnicodeTable";
+import { WhoisLookup } from "./WhoisLookup";
+import { HttpHeadersChecker } from "./HttpHeadersChecker";
+import { BcryptGenerator } from "./BcryptGenerator";
+import { UfwRulesBuilder } from "./UfwRulesBuilder";
+import { CodeMinifier } from "./CodeMinifier";
 
 export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   SubnetCalculator,
@@ -85,4 +90,9 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   VlsmCalculator,
   JsonSchemaValidator,
   AsciiUnicodeTable,
+  WhoisLookup,
+  HttpHeadersChecker,
+  BcryptGenerator,
+  UfwRulesBuilder,
+  CodeMinifier,
 };

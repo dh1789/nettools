@@ -2354,6 +2354,284 @@ export const TOOLS: Tool[] = [
       },
     ],
   },
+  {
+    slug: "whois-lookup",
+    title: {
+      ko: "WHOIS 조회",
+      en: "WHOIS Lookup",
+    },
+    description: {
+      ko: "도메인 등록 정보(등록자, 등록일, 만료일, 네임서버)를 조회합니다.",
+      en: "Look up domain registration details including registrant, dates, and nameservers.",
+    },
+    longDescription: {
+      ko: "WHOIS 조회 도구는 도메인 이름의 등록 정보를 RDAP(Registration Data Access Protocol)을 통해 실시간으로 조회합니다. 도메인 등록자 정보, 등록 기관(레지스트라), 등록일, 갱신일, 만료일, 네임서버 목록, 도메인 상태 등을 확인할 수 있습니다. RDAP는 전통적인 WHOIS의 현대화된 표준으로, 더 구조화된 데이터를 제공합니다.",
+      en: "The WHOIS Lookup tool queries domain registration information in real time using RDAP (Registration Data Access Protocol). Look up registrant details, registrar name, registration date, update date, expiry date, nameservers, and domain status. RDAP is the modernized standard replacing legacy WHOIS, providing more structured data.",
+    },
+    category: "network",
+    keywords: [
+      "whois",
+      "whois lookup",
+      "domain lookup",
+      "domain registration",
+      "domain info",
+      "rdap",
+      "domain expiry",
+      "nameserver lookup",
+      "whois 조회",
+      "도메인 조회",
+      "도메인 등록 정보",
+      "도메인 만료일",
+      "네임서버",
+    ],
+    component: "WhoisLookup",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "WHOIS란 무엇인가요?", en: "What is WHOIS?" },
+        answer: {
+          ko: "WHOIS는 인터넷 도메인 이름, IP 주소 블록, 자율 시스템에 대한 등록 정보를 조회하는 프로토콜입니다. 도메인 소유자, 등록 기관, 등록/만료 날짜, 네임서버 등의 정보를 확인할 수 있습니다.",
+          en: "WHOIS is a protocol for querying registration information about internet domain names, IP address blocks, and autonomous systems. It provides details like domain owner, registrar, registration/expiry dates, and nameservers.",
+        },
+      },
+      {
+        question: { ko: "RDAP와 전통적인 WHOIS의 차이점은?", en: "What is the difference between RDAP and traditional WHOIS?" },
+        answer: {
+          ko: "RDAP(Registration Data Access Protocol)는 전통적인 WHOIS의 현대화된 대안입니다. JSON 형식의 구조화된 데이터를 반환하고, HTTPS를 사용하며, 국제화 지원이 향상되었습니다. ICANN은 점점 더 RDAP를 표준으로 채택하고 있습니다.",
+          en: "RDAP (Registration Data Access Protocol) is the modernized replacement for traditional WHOIS. It returns structured JSON data, uses HTTPS, and offers improved internationalization support. ICANN is increasingly adopting RDAP as the standard.",
+        },
+      },
+      {
+        question: { ko: "일부 도메인에서 등록자 정보가 표시되지 않는 이유는?", en: "Why is registrant info sometimes hidden?" },
+        answer: {
+          ko: "GDPR(개인정보 보호 규정)과 기타 개인정보 보호 규정으로 인해 많은 도메인 등록자 정보가 익명화(redacted)됩니다. 특히 .com, .net 등 일반 최상위 도메인(gTLD)에서 개인 정보가 마스킹되는 경우가 많습니다.",
+          en: "Due to GDPR and other privacy regulations, many domain registrant details are anonymized (redacted). This is especially common for generic TLDs like .com and .net where personal information is often masked.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "http-headers-checker",
+    title: {
+      ko: "HTTP 헤더 확인",
+      en: "HTTP Headers Checker",
+    },
+    description: {
+      ko: "URL의 HTTP 응답 헤더를 조회하고 보안 헤더 누락 여부를 확인합니다.",
+      en: "Fetch and inspect HTTP response headers for any URL, with security header analysis.",
+    },
+    longDescription: {
+      ko: "HTTP 헤더 확인 도구는 입력한 URL에 HEAD 요청을 보내 HTTP 응답 헤더 전체를 표시합니다. 응답 상태 코드, 응답 시간과 함께 Content-Type, Cache-Control, Server 등 모든 헤더를 확인할 수 있습니다. 특히 HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy 등 보안 관련 헤더의 존재 여부를 하이라이트하여 웹사이트의 보안 설정을 빠르게 점검할 수 있습니다.",
+      en: "The HTTP Headers Checker tool sends a HEAD request to the specified URL and displays all HTTP response headers. View the response status code, response time, and headers like Content-Type, Cache-Control, and Server. Security-relevant headers such as HSTS, CSP, X-Frame-Options, X-Content-Type-Options, and Referrer-Policy are highlighted so you can quickly audit your website's security configuration.",
+    },
+    category: "network",
+    keywords: [
+      "http headers",
+      "response headers",
+      "security headers",
+      "hsts checker",
+      "csp checker",
+      "x-frame-options",
+      "content-security-policy",
+      "http header checker",
+      "http 헤더",
+      "응답 헤더",
+      "보안 헤더",
+      "헤더 확인",
+    ],
+    component: "HttpHeadersChecker",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "HTTP 보안 헤더가 중요한 이유는?", en: "Why are HTTP security headers important?" },
+        answer: {
+          ko: "HTTP 보안 헤더는 XSS(Cross-Site Scripting), 클릭재킹, MIME 타입 스니핑 등의 공격으로부터 웹사이트를 보호합니다. HSTS는 HTTPS 연결을 강제하고, CSP는 허용된 콘텐츠 소스를 제한하며, X-Frame-Options는 클릭재킹을 방지합니다.",
+          en: "HTTP security headers protect websites from attacks like XSS (Cross-Site Scripting), clickjacking, and MIME type sniffing. HSTS enforces HTTPS connections, CSP restricts allowed content sources, and X-Frame-Options prevents clickjacking.",
+        },
+      },
+      {
+        question: { ko: "HSTS란 무엇인가요?", en: "What is HSTS?" },
+        answer: {
+          ko: "HSTS(HTTP Strict Transport Security)는 브라우저에게 해당 도메인에 항상 HTTPS로만 접속하도록 지시하는 헤더입니다. max-age 값(초 단위)으로 적용 기간을 설정하고, includeSubDomains로 서브도메인에도 적용할 수 있습니다.",
+          en: "HSTS (HTTP Strict Transport Security) is a header that instructs browsers to only connect to the domain using HTTPS. The max-age value (in seconds) sets the enforcement duration, and includeSubDomains extends it to subdomains.",
+        },
+      },
+      {
+        question: { ko: "HEAD 요청이란 무엇인가요?", en: "What is a HEAD request?" },
+        answer: {
+          ko: "HTTP HEAD 요청은 GET 요청과 동일하지만 응답 본문(body)을 반환하지 않고 헤더만 반환합니다. 따라서 페이지 전체를 다운로드하지 않고도 헤더 정보를 빠르게 확인할 수 있어 대역폭을 절약합니다.",
+          en: "An HTTP HEAD request is identical to a GET request but returns only headers without the response body. This allows you to quickly check header information without downloading the entire page, saving bandwidth.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "bcrypt-generator",
+    title: {
+      ko: "BCrypt 해시 생성기",
+      en: "BCrypt Hash Generator",
+    },
+    description: {
+      ko: "브라우저에서 bcrypt 해시를 생성하고 비밀번호를 검증합니다.",
+      en: "Generate and verify bcrypt password hashes entirely in your browser.",
+    },
+    longDescription: {
+      ko: "BCrypt 해시 생성기는 브라우저에서 완전히 실행되는 bcrypt 해시 도구입니다. 비밀번호를 서버로 전송하지 않고 안전하게 bcrypt 해시를 생성할 수 있습니다. 라운드 수(cost factor)를 4~14 사이에서 선택하여 보안 강도와 계산 속도의 균형을 조정할 수 있습니다. 또한 기존 bcrypt 해시에 대해 비밀번호 일치 여부를 검증하는 기능도 제공합니다. Node.js, PHP, Python 등 대부분의 언어에서 bcrypt 라이브러리와 호환됩니다.",
+      en: "The BCrypt Hash Generator runs entirely in your browser — your password is never sent to any server. Generate bcrypt hashes with a configurable cost factor (rounds) from 4 to 14 to balance security and computation speed. Also verify whether a password matches an existing bcrypt hash. Compatible with bcrypt libraries in Node.js, PHP, Python, and most other languages.",
+    },
+    category: "security",
+    keywords: [
+      "bcrypt",
+      "bcrypt generator",
+      "password hash",
+      "bcrypt hash",
+      "password hashing",
+      "bcrypt verify",
+      "hash generator",
+      "bcrypt online",
+      "bcrypt 해시",
+      "비밀번호 해시",
+      "해시 생성",
+      "비밀번호 암호화",
+    ],
+    component: "BcryptGenerator",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "bcrypt란 무엇인가요?", en: "What is bcrypt?" },
+        answer: {
+          ko: "bcrypt는 Blowfish 암호화 알고리즘을 기반으로 한 비밀번호 해싱 함수입니다. 1999년 Niels Provos와 David Mazières가 설계했으며, cost factor(라운드 수)를 통해 계산 비용을 조절할 수 있어 하드웨어가 발전해도 brute-force 공격에 강합니다. SHA-256과 달리 느리게 설계되어 있어 비밀번호 저장에 특히 적합합니다.",
+          en: "bcrypt is a password hashing function based on the Blowfish cipher algorithm, designed by Niels Provos and David Mazières in 1999. Its configurable cost factor (rounds) allows you to increase computation cost as hardware improves, making it resistant to brute-force attacks. Unlike SHA-256, bcrypt is intentionally slow, making it especially suitable for password storage.",
+        },
+      },
+      {
+        question: { ko: "cost factor(라운드 수)는 얼마로 설정해야 하나요?", en: "What cost factor (rounds) should I use?" },
+        answer: {
+          ko: "일반적으로 10~12를 권장합니다. 12는 현재 하드웨어에서 약 250ms 정도 소요되어 UX와 보안의 균형이 좋습니다. 라운드가 1 증가할 때마다 계산 시간이 2배로 늘어납니다. 보안이 매우 중요한 경우 13~14를, 빠른 응답이 필요한 경우 10을 사용합니다.",
+          en: "Generally 10–12 is recommended. Round 12 takes about 250ms on modern hardware, striking a good balance between UX and security. Each additional round doubles the computation time. Use 13–14 for high-security cases, or 10 when fast response is needed.",
+        },
+      },
+      {
+        question: { ko: "bcrypt 해시는 매번 달라지나요?", en: "Why does bcrypt produce a different hash each time?" },
+        answer: {
+          ko: "bcrypt는 해시 생성 시 랜덤 salt를 사용합니다. 같은 비밀번호라도 매번 다른 해시가 생성되며, 이는 rainbow table 공격을 방지합니다. 검증 시에는 해시 문자열 내에 salt 정보가 포함되어 있어 올바르게 비교할 수 있습니다.",
+          en: "bcrypt uses a random salt when generating a hash, so the same password produces a different hash each time. This prevents rainbow table attacks. During verification, the salt is embedded in the hash string, allowing correct comparison.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "ufw-rules-builder",
+    title: {
+      ko: "UFW 규칙 빌더",
+      en: "UFW Rules Builder",
+    },
+    description: {
+      ko: "GUI로 ufw 방화벽 규칙 명령어를 쉽게 생성합니다.",
+      en: "Visually build ufw firewall rule commands without memorizing syntax.",
+    },
+    longDescription: {
+      ko: "UFW 규칙 빌더는 Linux 방화벽 도구 ufw(Uncomplicated Firewall)의 규칙 생성을 GUI로 지원합니다. 허용/거부/거절/속도제한 동작, 인바운드/아웃바운드 방향, TCP/UDP 프로토콜, 포트 번호, 출발지/목적지 IP, 설명을 폼에 입력하면 즉시 실행 가능한 ufw 명령어가 생성됩니다. SSH, HTTP, HTTPS, MySQL 등 자주 사용하는 포트 단축 버튼도 제공합니다. IPv6 규칙도 동시에 생성할 수 있습니다.",
+      en: "The UFW Rules Builder provides a GUI for creating ufw (Uncomplicated Firewall) rule commands on Linux. Fill in the action (allow/deny/reject/limit), direction (in/out), protocol (tcp/udp), port, source/destination IP, and comment, and instantly get a ready-to-run ufw command. Shortcut buttons for common ports like SSH, HTTP, HTTPS, and MySQL are included. IPv6 rules can also be generated simultaneously.",
+    },
+    category: "linux",
+    keywords: [
+      "ufw",
+      "ufw rules",
+      "ufw builder",
+      "firewall rules",
+      "linux firewall",
+      "ufw allow",
+      "ufw deny",
+      "iptables",
+      "ufw 규칙",
+      "방화벽",
+      "리눅스 방화벽",
+      "포트 허용",
+      "포트 차단",
+    ],
+    component: "UfwRulesBuilder",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "UFW란 무엇인가요?", en: "What is UFW?" },
+        answer: {
+          ko: "UFW(Uncomplicated Firewall)는 Ubuntu/Debian 계열 Linux에서 iptables를 쉽게 관리하기 위한 프론트엔드 도구입니다. 복잡한 iptables 문법 없이 간단한 명령으로 방화벽 규칙을 설정할 수 있습니다. 기본적으로 비활성화되어 있으며 sudo ufw enable로 활성화합니다.",
+          en: "UFW (Uncomplicated Firewall) is a frontend tool for managing iptables on Ubuntu/Debian Linux systems. It allows you to configure firewall rules with simple commands instead of complex iptables syntax. It is disabled by default and can be activated with sudo ufw enable.",
+        },
+      },
+      {
+        question: { ko: "ufw limit 규칙은 무엇인가요?", en: "What is a ufw limit rule?" },
+        answer: {
+          ko: "ufw limit는 rate limiting 규칙으로, 특정 포트에 대한 연결 시도를 제한합니다. 기본적으로 30초 내에 6번 이상 연결 시도 시 차단합니다. SSH 포트(22)에 대한 brute-force 공격을 방어하는 데 효과적입니다.",
+          en: "ufw limit is a rate limiting rule that restricts connection attempts to a specific port. By default, it blocks connections when more than 6 attempts are made within 30 seconds. It is effective for defending against brute-force attacks on the SSH port (22).",
+        },
+      },
+      {
+        question: { ko: "deny와 reject의 차이점은?", en: "What is the difference between deny and reject?" },
+        answer: {
+          ko: "deny는 패킷을 조용히 버리고(DROP) 응답을 보내지 않습니다. reject는 패킷을 거부하고 ICMP 오류 메시지를 발신자에게 돌려보냅니다. deny는 공격자에게 방화벽 존재를 숨길 수 있지만 timeout이 길어질 수 있고, reject는 정당한 사용자에게 더 빠른 피드백을 줍니다.",
+          en: "deny silently drops packets (DROP) without sending any response. reject refuses the packet and sends back an ICMP error message to the sender. deny can hide the firewall's presence from attackers but may cause longer timeouts, while reject gives legitimate users faster feedback.",
+        },
+      },
+    ],
+  },
+  {
+    slug: "code-minifier",
+    title: {
+      ko: "CSS/JS 코드 압축기",
+      en: "CSS/JS Minifier",
+    },
+    description: {
+      ko: "CSS 및 JavaScript 코드를 브라우저에서 압축하고 파일 크기를 줄입니다.",
+      en: "Minify CSS and JavaScript code in your browser to reduce file size.",
+    },
+    longDescription: {
+      ko: "CSS/JS 코드 압축기는 CSS와 JavaScript 코드를 브라우저에서 직접 압축합니다. 주석 제거, 공백 최소화, 불필요한 세미콜론 제거 등을 통해 파일 크기를 줄입니다. 압축 전후의 바이트 크기와 압축률을 실시간으로 표시합니다. 서버로 코드가 전송되지 않아 안전하며, 웹 성능 최적화, CDN 배포, 페이지 로딩 속도 개선에 활용할 수 있습니다.",
+      en: "The CSS/JS Minifier compresses CSS and JavaScript code directly in your browser. It reduces file size by removing comments, collapsing whitespace, and eliminating unnecessary semicolons. Before and after byte sizes plus compression ratio are shown in real time. Since code never leaves your browser, it is completely private — use it for web performance optimization, CDN deployment, and improving page load speed.",
+    },
+    category: "developer",
+    keywords: [
+      "css minifier",
+      "js minifier",
+      "javascript minifier",
+      "minify css",
+      "minify javascript",
+      "code minifier",
+      "minify code",
+      "compress css",
+      "compress js",
+      "css 압축",
+      "js 압축",
+      "코드 압축",
+      "자바스크립트 압축",
+    ],
+    component: "CodeMinifier",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "코드 압축(minification)이란?", en: "What is code minification?" },
+        answer: {
+          ko: "코드 압축(minification)은 코드의 동작을 변경하지 않으면서 불필요한 문자(공백, 주석, 줄바꿈)를 제거하여 파일 크기를 줄이는 과정입니다. 웹 페이지 로딩 속도를 향상시키고 대역폭 사용을 줄입니다. 프로덕션 환경에서는 항상 압축된 코드를 사용하는 것이 권장됩니다.",
+          en: "Code minification is the process of removing unnecessary characters (whitespace, comments, newlines) from code without changing its behavior, reducing file size. It improves web page loading speed and reduces bandwidth usage. Using minified code in production environments is always recommended.",
+        },
+      },
+      {
+        question: { ko: "압축된 코드는 디버깅이 어렵지 않나요?", en: "Is debugging minified code difficult?" },
+        answer: {
+          ko: "네, 압축된 코드는 읽기 어렵습니다. 그래서 개발 환경에서는 원본 코드를 사용하고 프로덕션에서만 압축 코드를 사용합니다. Source Map 파일을 함께 배포하면 브라우저 개발자 도구에서 압축된 코드를 원본 코드와 매핑하여 디버깅할 수 있습니다.",
+          en: "Yes, minified code is hard to read. That's why original code is used in development and minified code only in production. Deploying Source Map files alongside minified files allows browser developer tools to map minified code back to the original source for debugging.",
+        },
+      },
+      {
+        question: { ko: "CSS 압축 시 주의할 점이 있나요?", en: "What should I watch out for when minifying CSS?" },
+        answer: {
+          ko: "단순 압축 도구는 CSS calc(), 미디어 쿼리, 복잡한 선택자에서 예상치 못한 결과를 만들 수 있습니다. 중요한 프로덕션 코드에는 webpack, Vite, PostCSS와 같은 검증된 빌드 도구의 압축 플러그인을 사용하는 것을 권장합니다.",
+          en: "Simple minification tools may produce unexpected results with CSS calc(), media queries, and complex selectors. For critical production code, it is recommended to use compression plugins from established build tools like webpack, Vite, or PostCSS.",
+        },
+      },
+    ],
+  },
 ];
 
 // Helper functions

@@ -136,9 +136,146 @@ async function getCertFromCrtSh(domain: string): Promise<{
   }
 }
 
+interface RdapEntity {
+  roles?: string[];
+  vcardArray?: [string, [string, Record<string, string>, string, string][]] | null;
+}
+
+interface RdapResponse {
+  ldhName?: string;
+  unicodeName?: string;
+  entities?: RdapEntity[];
+  events?: { eventAction: string; eventDate: string }[];
+  nameservers?: { ldhName: string }[];
+  status?: string[];
+  links?: { href: string; rel: string }[];
+}
+
+function extractVcard(entity: RdapEntity, field: string): string | undefined {
+  if (!entity.vcardArray) return undefined;
+  const props = entity.vcardArray[1];
+  for (const prop of props) {
+    if (prop[0] === field) return prop[3];
+  }
+  return undefined;
+}
+
+async function rdapLookup(domain: string): Promise<Record<string, unknown>> {
+  const controller = new AbortController();
+  const tid = setTimeout(() => controller.abort(), 10000);
+  try {
+    const res = await fetch(`https://rdap.org/domain/${domain}`, {
+      signal: controller.signal,
+      headers: { Accept: 'application/rdap+json' },
+    });
+    clearTimeout(tid);
+    if (!res.ok) throw new Error(`RDAP returned ${res.status}`);
+    const data: RdapResponse = await res.json();
+    const result: Record<string, unknown> = { domain };
+
+    // Registrar
+    const registrarEntity = data.entities?.find((e) => e.roles?.includes('registrar'));
+    if (registrarEntity) {
+      result.registrar = extractVcard(registrarEntity, 'fn');
+    }
+
+    // Registrant
+    const registrantEntity = data.entities?.find((e) => e.roles?.includes('registrant'));
+    if (registrantEntity) {
+      result.registrantName = extractVcard(registrantEntity, 'fn');
+      result.registrantOrg = extractVcard(registrantEntity, 'org');
+      result.registrantEmail = extractVcard(registrantEntity, 'email');
+      const adr = extractVcard(registrantEntity, 'adr');
+      if (adr) result.registrantCountry = adr;
+    }
+
+    // Events
+    for (const ev of data.events ?? []) {
+      if (ev.eventAction === 'registration') result.createdDate = ev.eventDate;
+      if (ev.eventAction === 'last changed') result.updatedDate = ev.eventDate;
+      if (ev.eventAction === 'expiration') result.expiryDate = ev.eventDate;
+    }
+
+    // Nameservers
+    if (data.nameservers?.length) {
+      result.nameservers = data.nameservers.map((ns) => ns.ldhName);
+    }
+
+    // Status
+    if (data.status?.length) result.status = data.status;
+
+    return result;
+  } catch (err) {
+    clearTimeout(tid);
+    throw err;
+  }
+}
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Cache-Control': 'no-store',
+};
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === '/api/whois') {
+      const domain = url.searchParams.get('domain') || '';
+      if (!domain) {
+        return Response.json({ error: 'domain parameter is required' }, { status: 400 });
+      }
+      try {
+        const data = await rdapLookup(domain);
+        return Response.json(data, { headers: CORS_HEADERS });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        return Response.json({ error: msg }, { status: 502, headers: CORS_HEADERS });
+      }
+    }
+
+    if (url.pathname === '/api/http-headers') {
+      const targetUrl = url.searchParams.get('url') || '';
+      if (!targetUrl) {
+        return Response.json({ error: 'url parameter is required' }, { status: 400 });
+      }
+      let parsedUrl: URL;
+      try {
+        parsedUrl = new URL(targetUrl);
+        if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+          throw new Error('Only http/https allowed');
+        }
+      } catch {
+        return Response.json({ error: 'Invalid URL' }, { status: 400, headers: CORS_HEADERS });
+      }
+      const controller = new AbortController();
+      const tid = setTimeout(() => controller.abort(), 10000);
+      const start = Date.now();
+      try {
+        const res = await fetch(parsedUrl.toString(), {
+          method: 'HEAD',
+          signal: controller.signal,
+          redirect: 'follow',
+        });
+        clearTimeout(tid);
+        const responseTimeMs = Date.now() - start;
+        const headers: Record<string, string> = {};
+        res.headers.forEach((value, key) => {
+          headers[key] = value;
+        });
+        return Response.json(
+          { url: parsedUrl.toString(), status: res.status, statusText: res.statusText, responseTimeMs, headers },
+          { headers: CORS_HEADERS }
+        );
+      } catch (err) {
+        clearTimeout(tid);
+        const msg = err instanceof Error ? err.message : String(err);
+        return Response.json(
+          { error: msg.includes('abort') ? 'Request timed out (10s)' : msg },
+          { status: 502, headers: CORS_HEADERS }
+        );
+      }
+    }
 
     if (url.pathname === '/api/ssl-check') {
       const domain = url.searchParams.get('domain') || '';
@@ -161,12 +298,7 @@ export default {
         certError: certResult.error,
       };
 
-      return Response.json(result, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'no-store',
-        },
-      });
+      return Response.json(result, { headers: CORS_HEADERS });
     }
 
     return env.ASSETS.fetch(request);

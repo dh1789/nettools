@@ -12,7 +12,9 @@
     "new-tool": "node scripts/new-tool.mjs"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/js-yaml": "^4.0.9",
+    "bcryptjs": "^3.0.3",
     "js-yaml": "^4.1.1",
     "marked": "^17.0.5",
     "next": "15.4.11",
