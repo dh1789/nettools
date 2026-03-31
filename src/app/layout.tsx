@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     default: "NetTools — 무료 네트워크 & 보안 온라인 도구",
   },
   description:
-    "네트워크 엔지니어와 개발자를 위한 무료 온라인 도구 모음. 서브넷 계산기, DNS 조회, SSL 인증서 확인, Base64, JSON 포매터 등 18개 이상의 도구를 무료로 사용하세요.",
+    "네트워크 엔지니어와 개발자를 위한 무료 온라인 도구 모음. 서브넷 계산기, DNS 조회, SSL 인증서 확인, Base64, JSON 포매터 등 38개 이상의 도구를 무료로 사용하세요.",
   metadataBase: new URL(SITE_URL),
   keywords: [
     "네트워크 도구",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "NetTools — 무료 네트워크 & 보안 도구",
+        alt: "NetTools — 무료 네트워크 & 개발자 도구",
       },
     ],
   },
