@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const tool = getToolBySlug(slug);
   if (!tool) return {};
-  return generateToolMetadata(tool, "en");
+  return generateToolMetadata(tool, "ko");
 }
 
 export default async function ToolPage({ params }: PageProps) {
@@ -25,7 +25,7 @@ export default async function ToolPage({ params }: PageProps) {
 
   if (!tool) notFound();
 
-  const jsonLd = generateToolJsonLd(tool, "en");
+  const jsonLd = generateToolJsonLd(tool, "ko");
 
   return (
     <>

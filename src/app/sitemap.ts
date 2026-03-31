@@ -1,4 +1,4 @@
-import { TOOLS } from "@/data/tools";
+import { TOOLS, CATEGORIES } from "@/data/tools";
 import { generateSitemapEntries } from "@/lib/seo";
 import type { MetadataRoute } from "next";
 
@@ -30,8 +30,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
+  const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((cat) => ({
+    url: `${SITE_URL}/category/${cat.id}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
   return [
     ...staticPages,
+    ...categoryPages,
     ...entries.map((entry) => ({
       url: entry.url,
       lastModified: entry.lastmod ? new Date(entry.lastmod) : new Date(),
