@@ -9,7 +9,9 @@
     "fetch-oui": "node scripts/fetch-oui.mjs",
     "start": "next start",
     "lint": "next lint",
-    "new-tool": "node scripts/new-tool.mjs"
+    "new-tool": "node scripts/new-tool.mjs",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -24,9 +26,15 @@
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "tailwindcss": "^4.0.0",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.7.0"
   }
 }
