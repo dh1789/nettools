@@ -50,6 +50,7 @@ import { HttpHeadersChecker } from "./HttpHeadersChecker";
 import { BcryptGenerator } from "./BcryptGenerator";
 import { UfwRulesBuilder } from "./UfwRulesBuilder";
 import { CodeMinifier } from "./CodeMinifier";
+import { JsonCsvConverter } from "./JsonCsvConverter";
 
 export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   SubnetCalculator,
@@ -95,4 +96,5 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   BcryptGenerator,
   UfwRulesBuilder,
   CodeMinifier,
+  JsonCsvConverter,
 };

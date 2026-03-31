@@ -2632,6 +2632,59 @@ export const TOOLS: Tool[] = [
       },
     ],
   },
+  {
+    slug: "json-csv-converter",
+    title: {
+      ko: "JSON to CSV 변환기",
+      en: "JSON to CSV Converter",
+    },
+    description: {
+      ko: "JSON 배열을 CSV 파일로 변환합니다. 중첩 객체 평탄화 및 다양한 구분자를 지원합니다.",
+      en: "Convert JSON arrays to CSV format. Supports nested object flattening and multiple delimiters.",
+    },
+    longDescription: {
+      ko: "JSON to CSV 변환기는 JSON 배열 데이터를 CSV(쉼표로 구분된 값) 형식으로 변환합니다. 중첩 객체를 점 표기법(dot notation)으로 자동 평탄화하고, 쉼표·탭·세미콜론 구분자를 지원합니다. RFC 4180 표준을 준수하여 특수 문자가 포함된 값을 올바르게 이스케이프합니다. 변환된 CSV를 클립보드에 복사하거나 파일로 다운로드할 수 있으며, 행·열 수를 실시간으로 표시합니다. 모든 변환은 브라우저 내에서 처리되어 데이터가 외부로 전송되지 않습니다.",
+      en: "The JSON to CSV Converter transforms JSON array data into CSV (Comma-Separated Values) format. It automatically flattens nested objects using dot notation and supports comma, tab, and semicolon delimiters. Values containing special characters are properly escaped according to RFC 4180. The converted CSV can be copied to clipboard or downloaded as a file, with row and column counts shown in real time. All conversion happens in the browser, so no data is ever sent to a server.",
+    },
+    category: "developer",
+    keywords: [
+      "json to csv",
+      "json csv converter",
+      "convert json to csv",
+      "json csv 변환",
+      "json 배열 csv",
+      "csv converter",
+      "json array to csv",
+      "csv download",
+      "데이터 변환",
+      "json 변환기",
+    ],
+    component: "JsonCsvConverter",
+    datePublished: "2026-03-31",
+    faqs: [
+      {
+        question: { ko: "어떤 형식의 JSON을 입력해야 하나요?", en: "What JSON format is accepted?" },
+        answer: {
+          ko: "최상위 값이 객체의 배열이어야 합니다. 예: [{\"name\": \"Alice\", \"age\": 30}, {\"name\": \"Bob\", \"age\": 25}]. 단순 숫자·문자열 배열이나 단일 객체는 지원하지 않습니다.",
+          en: "The top-level value must be an array of objects. Example: [{\"name\": \"Alice\", \"age\": 30}, {\"name\": \"Bob\", \"age\": 25}]. Simple arrays of numbers or strings, or single objects, are not supported.",
+        },
+      },
+      {
+        question: { ko: "중첩 객체는 어떻게 처리되나요?", en: "How are nested objects handled?" },
+        answer: {
+          ko: "중첩 객체는 점 표기법(dot notation)으로 자동 평탄화됩니다. 예를 들어 {\"addr\": {\"city\": \"Seoul\"}}은 addr.city 열로 변환됩니다.",
+          en: "Nested objects are automatically flattened using dot notation. For example, {\"addr\": {\"city\": \"Seoul\"}} becomes an addr.city column.",
+        },
+      },
+      {
+        question: { ko: "값에 쉼표나 줄바꿈이 포함된 경우 어떻게 되나요?", en: "What happens if values contain commas or newlines?" },
+        answer: {
+          ko: "RFC 4180 표준에 따라 구분자, 개행 문자, 큰따옴표가 포함된 값은 자동으로 큰따옴표로 감싸집니다. 큰따옴표 자체는 두 개로 이스케이프됩니다.",
+          en: "Values containing the delimiter, newlines, or double quotes are automatically wrapped in double quotes per RFC 4180. Double quotes within values are escaped as two consecutive double quotes.",
+        },
+      },
+    ],
+  },
 ];
 
 // Helper functions
