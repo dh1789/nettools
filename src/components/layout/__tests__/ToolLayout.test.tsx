@@ -13,9 +13,11 @@ jest.mock("../AdSlot", () => ({
 
 // next/link mock
 jest.mock("next/link", () => {
-  return ({ href, children, ...props }: { href: string; children: React.ReactNode }) => (
+  const MockLink = ({ href, children, ...props }: { href: string; children: React.ReactNode }) => (
     <a href={href} {...props}>{children}</a>
   );
+  MockLink.displayName = "MockLink";
+  return MockLink;
 });
 
 // tools data mock
@@ -36,13 +38,6 @@ jest.mock("@/data/tools", () => ({
     return mockTools[slug] || null;
   },
 }));
-
-const baseFaqs = [
-  {
-    question: { ko: "FAQ 질문 1", en: "FAQ Question 1" },
-    answer: { ko: "FAQ 답변 1", en: "FAQ Answer 1" },
-  },
-];
 
 const sampleHowTo = {
   steps: [
