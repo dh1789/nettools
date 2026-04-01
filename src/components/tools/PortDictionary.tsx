@@ -93,37 +93,6 @@ const labelStyle: React.CSSProperties = {
   display: "block",
 };
 
-const resultRowStyle: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "0.5rem 0",
-  borderBottom: "1px solid var(--border-light, #f3f4f6)",
-};
-
-const resultLabelStyle: React.CSSProperties = {
-  fontSize: "0.875rem",
-  color: "var(--text-secondary, #6b7280)",
-};
-
-const resultValueStyle: React.CSSProperties = {
-  fontSize: "0.875rem",
-  fontFamily: "monospace",
-  fontWeight: 600,
-  color: "var(--text-primary, #111)",
-};
-
-const buttonStyle: React.CSSProperties = {
-  padding: "0.625rem 1.5rem",
-  fontSize: "0.875rem",
-  fontWeight: 600,
-  border: "none",
-  borderRadius: "8px",
-  background: "var(--text-primary, #111)",
-  color: "var(--surface, #fff)",
-  cursor: "pointer",
-};
-
 const thStyle: React.CSSProperties = {
   padding: "0.5rem 0.75rem",
   fontSize: "0.75rem",

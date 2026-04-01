@@ -2,6 +2,7 @@
 
 import { useLocale } from "@/lib/LocaleProvider";
 import { T } from "@/lib/i18n";
+import Link from "next/link";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function ClientHeader() {
@@ -23,7 +24,7 @@ export function ClientHeader() {
           alignItems: "center",
         }}
       >
-        <a
+        <Link
           href="/tools/net/"
           style={{
             fontWeight: 700,
@@ -33,14 +34,14 @@ export function ClientHeader() {
           }}
         >
           NetTools
-        </a>
+        </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", fontSize: "0.875rem" }}>
-          <a
+          <Link
             href="/tools/net/"
             style={{ textDecoration: "none", color: "var(--text-secondary)" }}
           >
             {t(T.navTools)}
-          </a>
+          </Link>
           <a
             href="/about"
             style={{ textDecoration: "none", color: "var(--text-secondary)" }}

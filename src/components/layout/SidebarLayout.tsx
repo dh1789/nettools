@@ -21,7 +21,7 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
 
   // 페이지 이동 시 모바일 사이드바 닫기
   useEffect(() => {
-    setMobileOpen(false);
+    setMobileOpen(false); // eslint-disable-line react-hooks/set-state-in-effect
   }, [pathname]);
 
   return (

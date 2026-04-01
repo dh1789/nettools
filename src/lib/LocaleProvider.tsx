@@ -36,7 +36,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setLocaleState(detectBrowserLocale());
+    setLocaleState(detectBrowserLocale()); // eslint-disable-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

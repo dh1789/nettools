@@ -75,17 +75,6 @@ const resultValueStyle: React.CSSProperties = {
   color: "var(--text-primary, #111)",
 };
 
-const buttonStyle: React.CSSProperties = {
-  padding: "0.625rem 1.5rem",
-  fontSize: "0.875rem",
-  fontWeight: 600,
-  border: "none",
-  borderRadius: "8px",
-  background: "var(--text-primary, #111)",
-  color: "var(--surface, #fff)",
-  cursor: "pointer",
-};
-
 const presetButtonStyle: React.CSSProperties = {
   padding: "0.375rem 0.75rem",
   fontSize: "0.75rem",

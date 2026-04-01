@@ -83,12 +83,6 @@ export function ImageBase64Converter() {
 
   const handleDragLeave = () => setIsDragging(false);
 
-  const copyBase64 = () => {
-    navigator.clipboard.writeText(base64Output);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const copyDataUrl = () => {
     navigator.clipboard.writeText(base64Output);
     setCopied(true);
@@ -209,6 +203,7 @@ export function ImageBase64Converter() {
                   alignItems: "center",
                   gap: "0.5rem",
                 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={previewSrc}
                     alt="preview"
@@ -311,6 +306,7 @@ export function ImageBase64Converter() {
                 alignItems: "center",
                 gap: "0.75rem",
               }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={previewSrc}
                   alt="converted"

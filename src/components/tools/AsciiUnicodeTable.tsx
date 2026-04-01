@@ -149,7 +149,7 @@ export function AsciiUnicodeTable() {
       result.push(buildCharInfo(i));
     }
     return result;
-  }, [search, selectedRange, range, isLargeRange]);
+  }, [search, range, isLargeRange]);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);

@@ -36,13 +36,6 @@ function parseDomain(input: string): string {
   return domain;
 }
 
-function calcDaysUntilExpiry(notAfter: string): number {
-  const expiry = new Date(notAfter);
-  const now = new Date();
-  const diff = expiry.getTime() - now.getTime();
-  return Math.floor(diff / (1000 * 60 * 60 * 24));
-}
-
 function expiryColor(days: number): string {
   if (days < 7) return "#ef4444";
   if (days <= 30) return "#f59e0b";

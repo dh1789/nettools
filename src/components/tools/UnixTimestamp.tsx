@@ -119,7 +119,7 @@ export function UnixTimestamp() {
   const [now, setNow] = useState(0);
 
   useEffect(() => {
-    setNow(Math.floor(Date.now() / 1000));
+    setNow(Math.floor(Date.now() / 1000)); // eslint-disable-line react-hooks/set-state-in-effect
     const id = setInterval(() => setNow(Math.floor(Date.now() / 1000)), 1000);
     return () => clearInterval(id);
   }, []);

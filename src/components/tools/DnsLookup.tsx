@@ -57,14 +57,6 @@ const labelStyle: React.CSSProperties = {
   display: "block",
 };
 
-const resultRowStyle: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "0.5rem 0",
-  borderBottom: "1px solid var(--border-light, #f3f4f6)",
-};
-
 const resultLabelStyle: React.CSSProperties = {
   fontSize: "0.875rem",
   color: "var(--text-secondary, #6b7280)",

@@ -137,7 +137,7 @@ export function PasswordGenerator() {
   }, [length, useUpper, useLower, useNumbers, useSpecial, multiple]);
 
   useEffect(() => {
-    generate();
+    generate(); // eslint-disable-line react-hooks/set-state-in-effect
   }, [generate]);
 
   const copyPassword = (index: number) => {

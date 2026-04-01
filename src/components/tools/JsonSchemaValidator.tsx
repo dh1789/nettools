@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import { useLocale } from "@/lib/LocaleProvider";
-import { T } from "@/lib/i18n";
 
 const textareaStyle: React.CSSProperties = {
   padding: "0.75rem 0.875rem",
@@ -264,7 +263,7 @@ const SAMPLE_JSON = JSON.stringify({
 }, null, 2);
 
 export function JsonSchemaValidator() {
-  const { locale, t } = useLocale();
+  const { locale } = useLocale();
   const [jsonInput, setJsonInput] = useState(SAMPLE_JSON);
   const [schemaInput, setSchemaInput] = useState(SAMPLE_SCHEMA);
   const [result, setResult] = useState<ValidationResult | null>(null);

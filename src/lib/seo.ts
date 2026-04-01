@@ -13,8 +13,6 @@ const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 export function generateToolMetadata(tool: Tool, locale: Locale): Metadata {
   const title = t(tool.title, locale);
   const description = t(tool.description, locale);
-  const category = getCategoryById(tool.category);
-  const categoryName = category ? t(category.title, locale) : "";
   const canonicalUrl = `${SITE_URL}/tools/net/${tool.slug}`;
 
   return {

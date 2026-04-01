@@ -96,6 +96,7 @@ export function MacOuiLookup() {
   const [error, setError] = useState("");
   const [dbLoading, setDbLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [dbEntryCount, setDbEntryCount] = useState(0);
   const dbRef = useRef<OuiDB | null>(null);
 
   useEffect(() => {
@@ -103,6 +104,11 @@ export function MacOuiLookup() {
       .then((res) => res.json())
       .then((data: OuiDB) => {
         dbRef.current = data;
+        setDbEntryCount(
+          Object.keys(data.l).length +
+          Object.keys(data.m).length +
+          Object.keys(data.s).length
+        );
         setDbLoading(false);
       })
       .catch(() => setDbLoading(false));
@@ -149,12 +155,6 @@ export function MacOuiLookup() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  const dbEntryCount = dbRef.current
-    ? Object.keys(dbRef.current.l).length +
-      Object.keys(dbRef.current.m).length +
-      Object.keys(dbRef.current.s).length
-    : 0;
 
   return (
     <div>

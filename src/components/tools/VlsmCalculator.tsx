@@ -127,8 +127,6 @@ function calculateVlsm(baseNetwork: string, subnets: VlsmSubnet[]): VlsmResult[]
   return results;
 }
 
-let rowId = 1;
-
 export function VlsmCalculator() {
   const { locale, t } = useLocale();
   const [baseNetwork, setBaseNetwork] = useState("192.168.1.0/24");
@@ -142,7 +140,6 @@ export function VlsmCalculator() {
   const [copied, setCopied] = useState(false);
 
   const addRow = () => {
-    rowId++;
     setSubnets(prev => [...prev, { name: "", requiredHosts: "" }]);
   };
 
