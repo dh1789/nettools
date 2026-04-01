@@ -10,6 +10,12 @@
  * 또는: npm run new-tool 스크립트 사용 (자동 생성)
  */
 
+import { NETWORK_ENHANCEMENTS } from "./enhancements/network";
+import { SECURITY_ENHANCEMENTS } from "./enhancements/security";
+import { LINUX_ENHANCEMENTS } from "./enhancements/linux";
+import { DEVELOPER_ENHANCEMENTS } from "./enhancements/developer";
+import { GENERAL_ENHANCEMENTS } from "./enhancements/general";
+
 export interface FAQ {
   question: { ko: string; en: string };
   answer: { ko: string; en: string };
@@ -22,6 +28,13 @@ export interface HowTo {
 export interface RelatedConcept {
   title: { ko: string; en: string };
   description: { ko: string; en: string };
+}
+
+export interface ToolEnhancement {
+  howTo: HowTo;
+  relatedConcepts: RelatedConcept[];
+  relatedTools: string[];
+  extraFaqs: FAQ[];
 }
 
 export interface Tool {
@@ -70,8 +83,8 @@ export const CATEGORIES: Category[] = [
     id: "network",
     title: { ko: "네트워크", en: "Network" },
     description: {
-      ko: "IP, 서브넷, MAC 주소 등 네트워크 관련 도구",
-      en: "IP, subnet, MAC address and other network tools",
+      ko: "서브넷 계산, IP 조회, DNS 분석, MAC 주소 제조사 식별, CIDR 변환, VLSM 설계 등 네트워크 엔지니어와 시스템 관리자를 위한 필수 네트워크 도구 모음입니다. IPv4 네트워크 설계부터 트러블슈팅까지 실무에서 바로 활용할 수 있습니다.",
+      en: "Essential network tools for engineers and sysadmins: subnet calculation, IP lookup, DNS analysis, MAC OUI identification, CIDR conversion, and VLSM design. Practical utilities for IPv4 network planning, troubleshooting, and day-to-day administration.",
     },
     icon: "🌐",
   },
@@ -79,8 +92,8 @@ export const CATEGORIES: Category[] = [
     id: "security",
     title: { ko: "보안", en: "Security" },
     description: {
-      ko: "SSL, 암호화, 비밀번호 등 보안 관련 도구",
-      en: "SSL, encryption, password and other security tools",
+      ko: "SSL 인증서 검증, 비밀번호 생성, 해시 계산, TOTP 인증, CSP 헤더 생성, bcrypt 해싱 등 웹 보안과 인증에 필요한 도구 모음입니다. 개발자와 보안 담당자가 안전한 애플리케이션을 구축하는 데 활용할 수 있습니다.",
+      en: "Security tools for developers and security professionals: SSL certificate validation, password generation, hash computation, TOTP authentication, CSP header generation, and bcrypt hashing. Build secure applications with practical cryptography and authentication utilities.",
     },
     icon: "🔒",
   },
@@ -88,8 +101,8 @@ export const CATEGORIES: Category[] = [
     id: "linux",
     title: { ko: "리눅스", en: "Linux" },
     description: {
-      ko: "Cron, chmod, systemd 등 리눅스 관련 도구",
-      en: "Cron, chmod, systemd and other Linux tools",
+      ko: "Cron 표현식 파싱, chmod 권한 계산, 정규식 테스트, SSH 설정 생성, UFW 방화벽 규칙 작성 등 리눅스 서버 관리에 필수적인 도구 모음입니다. 시스템 관리자와 DevOps 엔지니어의 일상 업무를 효율적으로 지원합니다.",
+      en: "Essential Linux administration tools: cron expression parsing, chmod permission calculation, regex testing, SSH config generation, and UFW firewall rule building. Streamline daily tasks for sysadmins and DevOps engineers managing Linux servers.",
     },
     icon: "🐧",
   },
@@ -97,8 +110,8 @@ export const CATEGORIES: Category[] = [
     id: "developer",
     title: { ko: "개발자", en: "Developer" },
     description: {
-      ko: "JSON, Base64, 정규식 등 개발자 유틸리티",
-      en: "JSON, Base64, regex and other developer utilities",
+      ko: "JSON 포매팅, Base64 인코딩, JWT 디코딩, UUID 생성, YAML 변환, SQL 정리, 코드 압축 등 소프트웨어 개발에 필수적인 유틸리티 모음입니다. 프론트엔드부터 백엔드까지 개발 워크플로우의 생산성을 높여줍니다.",
+      en: "Developer utilities for everyday coding: JSON formatting, Base64 encoding, JWT decoding, UUID generation, YAML conversion, SQL formatting, and code minification. Boost productivity across frontend and backend development workflows.",
     },
     icon: "💻",
   },
@@ -106,8 +119,8 @@ export const CATEGORIES: Category[] = [
     id: "general",
     title: { ko: "일반", en: "General" },
     description: {
-      ko: "QR코드, 비밀번호 생성기 등 범용 도구",
-      en: "QR code, password generator and other general tools",
+      ko: "QR코드 생성, 색상 코드 변환, 텍스트 비교, 글자수 세기, 마크다운 미리보기, 바이트 단위 변환 등 개발자뿐 아니라 누구나 유용하게 사용할 수 있는 범용 도구 모음입니다. 일상적인 데이터 변환과 텍스트 작업을 빠르게 처리합니다.",
+      en: "General-purpose tools for everyone: QR code generation, color code conversion, text comparison, character counting, Markdown preview, and byte unit conversion. Handle everyday data conversion and text processing tasks quickly and efficiently.",
     },
     icon: "🔧",
   },
@@ -2698,6 +2711,35 @@ export const TOOLS: Tool[] = [
     ],
   },
 ];
+
+// Enhancement 데이터 통합: howTo, relatedConcepts, relatedTools, extraFaqs 머지
+const ALL_ENHANCEMENTS: Record<
+  string,
+  {
+    howTo: HowTo;
+    relatedConcepts: RelatedConcept[];
+    relatedTools: string[];
+    extraFaqs: FAQ[];
+  }
+> = {
+  ...NETWORK_ENHANCEMENTS,
+  ...SECURITY_ENHANCEMENTS,
+  ...LINUX_ENHANCEMENTS,
+  ...DEVELOPER_ENHANCEMENTS,
+  ...GENERAL_ENHANCEMENTS,
+};
+
+for (const tool of TOOLS) {
+  const enhancement = ALL_ENHANCEMENTS[tool.slug];
+  if (enhancement) {
+    tool.howTo = enhancement.howTo;
+    tool.relatedConcepts = enhancement.relatedConcepts;
+    tool.relatedTools = enhancement.relatedTools;
+    if (enhancement.extraFaqs.length > 0) {
+      tool.faqs = [...(tool.faqs || []), ...enhancement.extraFaqs];
+    }
+  }
+}
 
 // Helper functions
 export function getToolsByCategory(category: ToolCategory): Tool[] {
