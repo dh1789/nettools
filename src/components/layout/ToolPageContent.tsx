@@ -20,6 +20,9 @@ export function ToolPageContent({ tool }: ToolPageContentProps) {
       description={tool.description[locale]}
       longDescription={tool.longDescription?.[locale]}
       faqs={tool.faqs}
+      howTo={tool.howTo}
+      relatedConcepts={tool.relatedConcepts}
+      relatedTools={tool.relatedTools}
       locale={locale}
     >
       <Component />

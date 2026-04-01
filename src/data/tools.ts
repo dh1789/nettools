@@ -15,6 +15,15 @@ export interface FAQ {
   answer: { ko: string; en: string };
 }
 
+export interface HowTo {
+  steps: Array<{ ko: string; en: string }>;
+}
+
+export interface RelatedConcept {
+  title: { ko: string; en: string };
+  description: { ko: string; en: string };
+}
+
 export interface Tool {
   slug: string;
   title: {
@@ -32,6 +41,9 @@ export interface Tool {
   category: ToolCategory;
   keywords: string[];
   faqs?: FAQ[];
+  howTo?: HowTo;
+  relatedConcepts?: RelatedConcept[];
+  relatedTools?: string[];
   /** Component name in src/components/tools/index.ts */
   component: string;
   /** For structured data (schema.org) */

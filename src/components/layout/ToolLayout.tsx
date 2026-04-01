@@ -1,14 +1,19 @@
 "use client";
 
 import { type ReactNode, useState } from "react";
+import Link from "next/link";
 import { AdSlot } from "./AdSlot";
-import type { FAQ } from "@/data/tools";
+import type { FAQ, HowTo, RelatedConcept } from "@/data/tools";
+import { getToolBySlug } from "@/data/tools";
 
 interface ToolLayoutProps {
   title: string;
   description: string;
   longDescription?: string;
   faqs?: FAQ[];
+  howTo?: HowTo;
+  relatedConcepts?: RelatedConcept[];
+  relatedTools?: string[];
   locale?: "ko" | "en";
   children: ReactNode;
 }
@@ -103,11 +108,161 @@ function FaqSection({ faqs, locale }: { faqs: FAQ[]; locale: "ko" | "en" }) {
   );
 }
 
+function HowToSection({ howTo, locale }: { howTo: HowTo; locale: "ko" | "en" }) {
+  const heading = locale === "ko" ? "사용 방법" : "How to Use";
+  return (
+    <section style={{ marginTop: "1rem" }}>
+      <h2
+        style={{
+          fontSize: "1.25rem",
+          fontWeight: 700,
+          color: "var(--text-primary, #111)",
+          marginBottom: "1rem",
+        }}
+      >
+        {heading}
+      </h2>
+      <ol
+        style={{
+          paddingLeft: "1.25rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.625rem",
+        }}
+      >
+        {howTo.steps.map((step, i) => (
+          <li
+            key={i}
+            style={{
+              fontSize: "0.9375rem",
+              color: "var(--text-secondary, #6b7280)",
+              lineHeight: 1.7,
+            }}
+          >
+            {step[locale]}
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function RelatedConceptsSection({
+  concepts,
+  locale,
+}: {
+  concepts: RelatedConcept[];
+  locale: "ko" | "en";
+}) {
+  const heading = locale === "ko" ? "관련 개념" : "Related Concepts";
+  return (
+    <section style={{ marginTop: "1rem" }}>
+      <h2
+        style={{
+          fontSize: "1.25rem",
+          fontWeight: 700,
+          color: "var(--text-primary, #111)",
+          marginBottom: "1rem",
+        }}
+      >
+        {heading}
+      </h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        {concepts.map((concept, i) => (
+          <div key={i}>
+            <h3
+              style={{
+                fontSize: "1rem",
+                fontWeight: 600,
+                color: "var(--text-primary, #111)",
+                marginBottom: "0.25rem",
+              }}
+            >
+              {concept.title[locale]}
+            </h3>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                color: "var(--text-secondary, #6b7280)",
+                lineHeight: 1.7,
+              }}
+            >
+              {concept.description[locale]}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RelatedToolsSection({
+  slugs,
+  locale,
+}: {
+  slugs: string[];
+  locale: "ko" | "en";
+}) {
+  const heading = locale === "ko" ? "관련 도구" : "Related Tools";
+  const tools = slugs
+    .map((s) => {
+      const t = getToolBySlug(s);
+      return t ? { slug: t.slug, title: t.title[locale], category: t.category } : null;
+    })
+    .filter(Boolean) as Array<{ slug: string; title: string; category: string }>;
+
+  if (tools.length === 0) return null;
+
+  return (
+    <section style={{ marginTop: "1rem" }}>
+      <h2
+        style={{
+          fontSize: "1.25rem",
+          fontWeight: 700,
+          color: "var(--text-primary, #111)",
+          marginBottom: "1rem",
+        }}
+      >
+        {heading}
+      </h2>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "0.5rem",
+        }}
+      >
+        {tools.map((t) => (
+          <Link
+            key={t.slug}
+            href={`/tools/net/${t.slug}`}
+            style={{
+              display: "inline-block",
+              padding: "0.5rem 0.875rem",
+              fontSize: "0.875rem",
+              color: "var(--info-text, #1d4ed8)",
+              background: "var(--info-bg, #eff6ff)",
+              border: "1px solid var(--border, #e5e7eb)",
+              borderRadius: "8px",
+              textDecoration: "none",
+            }}
+          >
+            {t.title}
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function ToolLayout({
   title,
   description,
   longDescription,
   faqs,
+  howTo,
+  relatedConcepts,
+  relatedTools,
   locale = "ko",
   children,
 }: ToolLayoutProps) {
@@ -185,6 +340,21 @@ export function ToolLayout({
         </section>
       )}
 
+      {/* 사용 방법 */}
+      {howTo && howTo.steps.length > 0 && (
+        <section
+          style={{
+            background: "var(--surface, #fff)",
+            border: "1px solid var(--border, #e5e5e5)",
+            borderRadius: "12px",
+            padding: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <HowToSection howTo={howTo} locale={locale} />
+        </section>
+      )}
+
       {/* FAQ 섹션 */}
       {faqs && faqs.length > 0 && (
         <section
@@ -197,6 +367,36 @@ export function ToolLayout({
           }}
         >
           <FaqSection faqs={faqs} locale={locale} />
+        </section>
+      )}
+
+      {/* 관련 개념 */}
+      {relatedConcepts && relatedConcepts.length > 0 && (
+        <section
+          style={{
+            background: "var(--surface, #fff)",
+            border: "1px solid var(--border, #e5e5e5)",
+            borderRadius: "12px",
+            padding: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <RelatedConceptsSection concepts={relatedConcepts} locale={locale} />
+        </section>
+      )}
+
+      {/* 관련 도구 */}
+      {relatedTools && relatedTools.length > 0 && (
+        <section
+          style={{
+            background: "var(--surface, #fff)",
+            border: "1px solid var(--border, #e5e5e5)",
+            borderRadius: "12px",
+            padding: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <RelatedToolsSection slugs={relatedTools} locale={locale} />
         </section>
       )}
 

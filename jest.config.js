@@ -9,5 +9,6 @@ module.exports = createJestConfig({
   collectCoverageFrom: [
     'src/lib/json-csv.ts',
     'src/components/tools/JsonCsvConverter.tsx',
+    'src/components/layout/ToolLayout.tsx',
   ],
 })
