@@ -44,10 +44,6 @@ export function generateToolMetadata(tool: Tool, locale: Locale): Metadata {
     },
     alternates: {
       canonical: canonicalUrl,
-      languages: {
-        ko: `${SITE_URL}/ko/tools/net/${tool.slug}`,
-        en: `${SITE_URL}/en/tools/net/${tool.slug}`,
-      },
     },
     robots: {
       index: true,
