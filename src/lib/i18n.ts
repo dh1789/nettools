@@ -210,6 +210,23 @@ export const T = {
     ko: "공인 IP 등록 정보는 ipwho.is 또는 ip.guide에서 제공됩니다. 위치 정보는 대략적이며, 실제 물리적 위치와 다를 수 있습니다.",
     en: "Public IP data is provided by ipwho.is or ip.guide. Location is approximate and may not reflect the actual physical location.",
   },
+
+  // Blog
+  blogTitle: { ko: "블로그", en: "Blog" },
+  blogDescription: {
+    ko: "네트워크, 보안, 개발 관련 기술 블로그",
+    en: "Technical blog about networking, security, and development",
+  },
+  blogReadingTime: { ko: "{minutes}분 읽기", en: "{minutes} min read" },
+  blogPublishedAt: { ko: "게시일", en: "Published" },
+  blogTableOfContents: { ko: "목차", en: "Table of Contents" },
+  blogRelatedTools: { ko: "관련 도구", en: "Related Tools" },
+  blogAllPosts: { ko: "전체 포스트", en: "All Posts" },
+  blogNoPosts: {
+    ko: "아직 포스트가 없습니다.",
+    en: "No posts yet.",
+  },
+  blogBackToList: { ko: "블로그 목록", en: "Back to Blog" },
 } as const satisfies Record<string, Translatable>;
 
 /** 템플릿 문자열 치환 */

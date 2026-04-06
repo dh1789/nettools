@@ -1,5 +1,6 @@
 import { TOOLS, CATEGORIES } from "@/data/tools";
-import { generateSitemapEntries } from "@/lib/seo";
+import { generateSitemapEntries, generateBlogSitemapEntries } from "@/lib/seo";
+import { getAllPosts } from "@/lib/blog";
 import type { MetadataRoute } from "next";
 
 export const dynamic = "force-static";
@@ -37,10 +38,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  const blogPosts = getAllPosts("ko");
+  const blogEntries = generateBlogSitemapEntries(blogPosts);
+
+  const blogListPage: MetadataRoute.Sitemap = blogPosts.length > 0
+    ? [{
+        url: `${SITE_URL}/blog`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }]
+    : [];
+
   return [
     ...staticPages,
     ...categoryPages,
     ...entries.map((entry) => ({
+      url: entry.url,
+      lastModified: entry.lastmod ? new Date(entry.lastmod) : new Date(),
+      changeFrequency: "monthly" as const,
+      priority: entry.priority,
+    })),
+    ...blogListPage,
+    ...blogEntries.map((entry) => ({
       url: entry.url,
       lastModified: entry.lastmod ? new Date(entry.lastmod) : new Date(),
       changeFrequency: "monthly" as const,

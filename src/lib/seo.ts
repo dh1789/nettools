@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { type Tool, type Category, type FAQ, getCategoryById } from "@/data/tools";
+import { type Tool, type Category, type FAQ, type UsageExample, getCategoryById } from "@/data/tools";
 import type { Locale } from "./i18n";
 import { t } from "./i18n";
+import type { BlogPost } from "./blog";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://beomanro.com";
 const SITE_NAME = "NetTools";
@@ -149,6 +150,23 @@ export function generateToolJsonLd(tool: Tool, locale: Locale): string {
     graph.push(faqPage);
   }
 
+  if (tool.usageExamples && tool.usageExamples.length > 0) {
+    for (const example of tool.usageExamples) {
+      const howTo = {
+        "@type": "HowTo" as const,
+        "@id": `${canonicalUrl}#howto-${tool.usageExamples.indexOf(example)}`,
+        name: t(example.title, locale),
+        description: t(example.scenario, locale),
+        step: example.steps.map((step, i) => ({
+          "@type": "HowToStep" as const,
+          position: i + 1,
+          text: t(step, locale),
+        })),
+      };
+      graph.push(howTo);
+    }
+  }
+
   return JSON.stringify({
     "@context": "https://schema.org",
     "@graph": graph,
@@ -241,6 +259,142 @@ export function generateCategoryJsonLd(
       },
     ],
   });
+}
+
+/**
+ * Generate metadata for a blog post
+ */
+export function generateBlogMetadata(
+  post: BlogPost,
+  locale: Locale,
+): Metadata {
+  const { title, description, keywords, publishedAt } = post.frontmatter;
+  const canonicalUrl = `${SITE_URL}/blog/${post.slug}`;
+
+  return {
+    title: `${title} | ${SITE_NAME}`,
+    description,
+    keywords: keywords.join(", "),
+    authors: [{ name: post.frontmatter.author || SITE_NAME }],
+    openGraph: {
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      url: canonicalUrl,
+      siteName: SITE_NAME,
+      type: "article",
+      locale: locale === "ko" ? "ko_KR" : "en_US",
+      publishedTime: publishedAt,
+      ...(post.frontmatter.updatedAt && {
+        modifiedTime: post.frontmatter.updatedAt,
+      }),
+      images: [
+        {
+          url: DEFAULT_OG_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: `${title} - ${SITE_NAME}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      images: [DEFAULT_OG_IMAGE],
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+  };
+}
+
+/**
+ * Generate JSON-LD structured data for a blog post (BlogPosting schema)
+ */
+export function generateBlogJsonLd(post: BlogPost, locale: Locale): string {
+  const { title, description, publishedAt, updatedAt, keywords } =
+    post.frontmatter;
+  const canonicalUrl = `${SITE_URL}/blog/${post.slug}`;
+
+  const blogPosting = {
+    "@type": "BlogPosting",
+    "@id": `${canonicalUrl}#article`,
+    headline: title,
+    description,
+    url: canonicalUrl,
+    inLanguage: locale,
+    datePublished: publishedAt,
+    ...(updatedAt && { dateModified: updatedAt }),
+    keywords: keywords.join(", "),
+    author: {
+      "@type": "Organization",
+      name: post.frontmatter.author || SITE_NAME,
+      url: SITE_URL,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+  };
+
+  const breadcrumb = {
+    "@type": "BreadcrumbList",
+    "@id": `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: SITE_NAME,
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: locale === "ko" ? "블로그" : "Blog",
+        item: `${SITE_URL}/blog`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: title,
+        item: canonicalUrl,
+      },
+    ],
+  };
+
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [blogPosting, breadcrumb],
+  });
+}
+
+/**
+ * Generate sitemap entries for blog posts
+ */
+export function generateBlogSitemapEntries(
+  posts: BlogPost[],
+): { url: string; lastmod?: string; priority: number }[] {
+  return posts.map((post) => ({
+    url: `${SITE_URL}/blog/${post.slug}`,
+    lastmod: post.frontmatter.updatedAt || post.frontmatter.publishedAt,
+    priority: 0.7,
+  }));
 }
 
 /**
