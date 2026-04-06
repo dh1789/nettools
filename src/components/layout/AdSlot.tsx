@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
- * AdSlot — Google AdSense 통합 광고 슬롯.
- * NEXT_PUBLIC_ADSENSE_ID 환경변수가 설정되면 실제 광고를 표시합니다.
- * 미설정 시 개발 환경에서는 플레이스홀더를 표시합니다.
+ * AdSlot — Google AdSense 통합 광고 슬롯 (Intersection Observer 지연 로딩)
  *
- * 각 슬롯에 AdSense 광고 단위 ID를 adSlotId prop으로 전달하거나,
- * 자동 광고(auto ads)를 사용하는 경우 adSlotId 생략 가능합니다.
+ * 뷰포트에 진입할 때만 광고 스크립트를 로딩하여 Core Web Vitals를 개선합니다.
+ * 고정 크기 placeholder로 레이아웃 시프트(CLS)를 방지합니다.
  */
 
 interface AdSlotProps {
@@ -29,34 +27,63 @@ const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID;
 export function AdSlot({ position, adSlotId, className = "" }: AdSlotProps) {
   const ref = useRef<HTMLDivElement>(null);
   const size = SLOT_SIZES[position];
+  const [isVisible, setIsVisible] = useState(false);
 
+  // Intersection Observer로 뷰포트 진입 감지
   useEffect(() => {
     if (!ADSENSE_ID || !adSlotId) return;
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [adSlotId]);
+
+  // 뷰포트 진입 시 광고 로드
+  useEffect(() => {
+    if (!isVisible || !ADSENSE_ID || !adSlotId) return;
     try {
-      // AdSense 광고 단위 로드
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
     } catch {
       // 광고 로드 실패 시 조용히 무시
     }
-  }, [adSlotId]);
+  }, [isVisible, adSlotId]);
 
-  // AdSense ID와 슬롯 ID가 모두 있을 때 실제 광고 표시
+  // 프로덕션: AdSense ID와 슬롯 ID가 모두 있을 때
   if (ADSENSE_ID && adSlotId) {
     return (
       <div
+        ref={ref}
         className={className}
         data-ad-position={position}
-        style={{ width: "100%", maxWidth: size.w, margin: "1rem auto", overflow: "hidden" }}
+        style={{
+          width: "100%",
+          maxWidth: size.w,
+          minHeight: size.h,
+          margin: "1rem auto",
+          overflow: "hidden",
+        }}
       >
-        <ins
-          className="adsbygoogle"
-          style={{ display: "block" }}
-          data-ad-client={ADSENSE_ID}
-          data-ad-slot={adSlotId}
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        />
+        {isVisible && (
+          <ins
+            className="adsbygoogle"
+            style={{ display: "block" }}
+            data-ad-client={ADSENSE_ID}
+            data-ad-slot={adSlotId}
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          />
+        )}
       </div>
     );
   }

@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 50000 -H 0.0.0.0",
-    "prebuild": "node scripts/fetch-oui.mjs",
+    "prebuild": "node scripts/fetch-oui.mjs && node scripts/generate-og-images.mjs",
+    "generate-og": "node scripts/generate-og-images.mjs",
     "build": "next build",
     "fetch-oui": "node scripts/fetch-oui.mjs",
     "start": "next start",
@@ -42,6 +43,8 @@
     "globals": "^17.4.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
+    "satori": "^0.26.0",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.0.0",
     "ts-jest": "^29.4.6",
     "typescript": "^5.7.0"
