@@ -1,11 +1,14 @@
 import type { MDXComponents } from "mdx/types";
 import { generateHeadingId } from "./blog";
+import { ComparisonTable } from "@/components/blog/ComparisonTable";
 
 /**
  * MDX 렌더링용 커스텀 컴포넌트.
  * 헤딩에 ID를 부여하여 TOC 링크와 연결한다.
  */
 export const mdxComponents: MDXComponents = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ComparisonTable: ComparisonTable as any,
   h2: ({ children, ...props }) => {
     const id = generateHeadingId(String(children));
     return (
