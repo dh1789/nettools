@@ -1,0 +1,84 @@
+---
+title: "Understanding Subnet Masks — From Bit Operations to IP Classes"
+description: "Learn how subnet masks actually work at the bit level. Understand network classes, AND operations, and subnetting principles."
+category: network
+keywords:
+  - subnet mask
+  - network mask
+  - bit operation
+  - IP class
+  - subnetting principle
+  - network address
+publishedAt: "2026-04-06"
+relatedTools:
+  - subnet-calculator
+  - cidr-to-range
+author: NetTools Team
+---
+
+## The Role of Subnet Masks
+
+When two devices communicate on a network, the operating system first determines: "Is the destination on the same network?" The tool used for this decision is the **subnet mask**.
+
+A subnet mask divides an IP address into two parts:
+
+- **Network portion**: the shared address for all devices in the same network
+- **Host portion**: the unique identifier for each device within the network
+
+## Understanding at the Bit Level
+
+Converting the subnet mask `255.255.255.0` to binary:
+
+```
+11111111.11111111.11111111.00000000
+```
+
+Consecutive `1`s mark the network portion; consecutive `0`s mark the host portion. **AND-ing** an IP address with its subnet mask yields the network address:
+
+```
+IP Address:  192.168.1.100  = 11000000.10101000.00000001.01100100
+Subnet Mask: 255.255.255.0  = 11111111.11111111.11111111.00000000
+──────────────────────────────────────────────────────────────────
+Network:     192.168.1.0    = 11000000.10101000.00000001.00000000
+```
+
+If two devices produce the same network address, they are on the same subnet.
+
+## IP Address Classes
+
+The early Internet allocated IPs using a classful system:
+
+| Class | First Octet | Default Mask | Networks | Hosts per Network |
+|-------|------------|-------------|----------|------------------|
+| A     | 1–126      | /8          | 126      | 16,777,214 |
+| B     | 128–191    | /16         | 16,384   | 65,534 |
+| C     | 192–223    | /24         | 2,097,152| 254 |
+
+Classful allocation wasted many IPs, so today **CIDR** (Classless Inter-Domain Routing) is the standard.
+
+## Why Subnetting Matters
+
+Putting all devices in a single /24 network (254 hosts) causes:
+
+1. **Broadcast storms**: Every device receives all broadcast packets
+2. **Security risks**: Easier sniffing within the same network
+3. **Management difficulty**: Issues affect the entire network
+
+Subnetting solves these problems by dividing the network into smaller segments.
+
+## Common Subnet Masks
+
+| CIDR | Mask | Hosts | Use Case |
+|------|------|-------|----------|
+| /30  | 255.255.255.252 | 2 | Point-to-point links |
+| /27  | 255.255.255.224 | 30 | Small departments |
+| /24  | 255.255.255.0 | 254 | General LAN |
+| /16  | 255.255.0.0 | 65,534 | Large networks |
+
+## Try It Yourself
+
+See how networks are divided based on subnet masks using the [Subnet Calculator](/tools/net/subnet-calculator). Enter an IP and prefix to instantly view the network address, broadcast address, and usable range.
+
+To convert CIDR notation to an IP range, use the [CIDR Range Converter](/tools/net/cidr-to-range).
+
+For a practical guide on designing subnets in real-world scenarios, see the [Complete Subnet Calculation Guide](/blog/subnet-calculation-guide).

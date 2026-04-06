@@ -1,0 +1,113 @@
+---
+title: "JWT 토큰 디코딩 및 검증 방법 — 개발자 필수 가이드"
+description: "JWT(JSON Web Token)의 구조를 이해하고, 토큰을 디코딩·검증하는 방법을 단계별로 설명합니다. 인증 디버깅에 필수인 실무 지식."
+category: developer
+keywords:
+  - JWT 디코딩
+  - jwt decoder
+  - JSON Web Token
+  - JWT 검증
+  - JWT 구조
+  - 토큰 인증
+publishedAt: "2026-04-06"
+relatedTools:
+  - jwt-decoder
+  - base64
+author: NetTools Team
+---
+
+## JWT가 필요한 순간
+
+API를 개발하다 보면 "로그인은 되는데 인가가 안 된다", "토큰이 만료됐다는 에러가 나온다"는 문제를 자주 마주합니다. 이런 상황에서 가장 먼저 해야 할 일은 JWT 토큰을 열어보는 것입니다.
+
+JWT(JSON Web Token)는 사용자 인증 정보를 JSON 형태로 담아 서명한 토큰입니다. OAuth 2.0, OpenID Connect 등 현대 인증 시스템의 핵심이며, 서버 간 통신에서도 널리 사용됩니다.
+
+## JWT의 구조
+
+JWT는 점(`.`)으로 구분된 3개 부분으로 구성됩니다:
+
+```
+xxxxx.yyyyy.zzzzz
+Header.Payload.Signature
+```
+
+### Header
+
+서명 알고리즘과 토큰 타입을 정의합니다:
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+### Payload
+
+실제 데이터(클레임)를 담고 있습니다:
+
+```json
+{
+  "sub": "1234567890",
+  "name": "홍길동",
+  "iat": 1714003200,
+  "exp": 1714089600
+}
+```
+
+주요 표준 클레임:
+
+| 클레임 | 의미 | 설명 |
+|--------|------|------|
+| `sub` | Subject | 토큰의 주체 (사용자 ID) |
+| `iat` | Issued At | 토큰 발급 시각 (Unix timestamp) |
+| `exp` | Expiration | 토큰 만료 시각 |
+| `iss` | Issuer | 토큰 발급자 |
+| `aud` | Audience | 토큰 수신자 |
+
+### Signature
+
+Header와 Payload를 비밀키로 서명한 값입니다. 토큰이 변조되지 않았음을 보장합니다.
+
+```
+HMACSHA256(
+  base64UrlEncode(header) + "." + base64UrlEncode(payload),
+  secret
+)
+```
+
+## 디코딩 vs 검증
+
+이 두 가지는 자주 혼동되지만 완전히 다른 작업입니다:
+
+- **디코딩**: Base64URL로 인코딩된 Header와 Payload를 읽는 것. 비밀키 없이도 가능합니다
+- **검증**: Signature가 유효한지, 토큰이 만료되지 않았는지 확인하는 것. 비밀키(또는 공개키)가 필요합니다
+
+> JWT의 Payload는 암호화된 것이 아닙니다. 누구나 디코딩할 수 있으므로 민감한 정보(비밀번호, 카드번호 등)를 절대 넣지 마세요.
+
+## 실전 디버깅 시나리오
+
+### 401 Unauthorized 에러
+
+1. 토큰의 `exp` 클레임을 확인하여 만료 여부 점검
+2. `iss`와 `aud` 클레임이 서버 설정과 일치하는지 확인
+3. 토큰이 올바른 알고리즘(`alg`)으로 서명되었는지 확인
+
+### 403 Forbidden 에러
+
+1. Payload의 `role`이나 `scope` 클레임 확인
+2. 필요한 권한이 토큰에 포함되어 있는지 점검
+3. 리소스별 접근 권한 매핑이 정확한지 확인
+
+## 보안 주의사항
+
+1. **비밀키 노출 금지** — 비밀키를 클라이언트 코드나 Git에 절대 포함하지 마세요
+2. **알고리즘 고정** — 서버에서 허용하는 알고리즘을 명시적으로 지정하세요. `"alg": "none"` 공격에 취약해질 수 있습니다
+3. **만료 시간 설정** — `exp` 클레임 없는 토큰은 영구 유효하므로 반드시 설정하세요
+4. **HTTPS 필수** — 토큰이 평문 전송되면 중간자 공격에 노출됩니다
+
+## 도구로 빠르게 디코딩하기
+
+[JWT 디코더](/tools/net/jwt-decoder)에 토큰을 붙여넣으면 Header, Payload, Signature를 즉시 분리하여 보여줍니다. 만료 시각은 사람이 읽을 수 있는 형식으로 자동 변환되며, 토큰 만료 여부를 실시간으로 확인할 수 있습니다. 모든 처리가 브라우저에서 이루어지므로 토큰이 외부로 전송되지 않습니다.
+
+JWT의 각 부분은 Base64URL로 인코딩되어 있으므로, 인코딩 원리를 이해하고 싶다면 [Base64 인코더/디코더](/tools/net/base64)도 함께 살펴보세요.

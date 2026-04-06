@@ -1,0 +1,85 @@
+---
+title: "Complete Subnet Calculation Guide — Practical Methods for Real-World Use"
+description: "Learn subnet calculation from principles to practical application. Step-by-step guide for IP address allocation and network segmentation."
+category: network
+keywords:
+  - subnet calculation
+  - subnet calculator
+  - IP address calculation
+  - network address calculation
+  - CIDR calculation
+  - subnetting guide
+publishedAt: "2026-04-06"
+relatedTools:
+  - subnet-calculator
+  - cidr-to-range
+  - vlsm-calculator
+author: NetTools Team
+---
+
+## When You Need Subnet Calculation
+
+When building server infrastructure or configuring cloud VPCs, you inevitably face the question: "How many hosts can fit in this network?" Subnet calculation is essential not just for network engineers, but also for DevOps engineers and cloud architects.
+
+## Core Formulas
+
+The two most important formulas in subnet calculation:
+
+- **Usable hosts** = 2^(32 - prefix) - 2
+- **Number of subnets** = 2^(borrowed bits)
+
+The `-2` excludes the network address (first) and broadcast address (last).
+
+## Step-by-Step Calculation
+
+### Step 1: Determine Required Hosts
+
+Count all devices that need network connectivity: workstations, servers, printers, etc. Include a growth margin of 20–30%.
+
+### Step 2: Choose the Right Prefix
+
+| Hosts Needed | Prefix | Actual Hosts |
+|-------------|--------|-------------|
+| 1–2         | /30    | 2           |
+| 3–14        | /28    | 14          |
+| 15–30       | /27    | 30          |
+| 31–62       | /26    | 62          |
+| 63–126      | /25    | 126         |
+| 127–254     | /24    | 254         |
+
+### Step 3: Verify Network Range
+
+Using `192.168.1.0/26` as an example:
+
+- **Network address**: 192.168.1.0
+- **First host**: 192.168.1.1
+- **Last host**: 192.168.1.62
+- **Broadcast**: 192.168.1.63
+- **Next subnet starts**: 192.168.1.64
+
+## Real-World Example: AWS VPC Subnet Design
+
+Deploying public/private subnets across 3 availability zones in a `10.0.0.0/16` VPC:
+
+```
+AZ-a Public:  10.0.1.0/24  (254 hosts)
+AZ-a Private: 10.0.11.0/24 (254 hosts)
+AZ-b Public:  10.0.2.0/24  (254 hosts)
+AZ-b Private: 10.0.12.0/24 (254 hosts)
+AZ-c Public:  10.0.3.0/24  (254 hosts)
+AZ-c Private: 10.0.13.0/24 (254 hosts)
+```
+
+> AWS reserves 5 IPs per subnet, so actual usable hosts are 251.
+
+## Common Mistakes
+
+1. **Assigning hosts to network/broadcast addresses** — causes conflicts
+2. **Overlapping subnets** — creates routing issues with VPC peering or VPN
+3. **No room for growth** — makes future expansion impossible
+
+## Verify with Tools
+
+Validate your calculations instantly using the [Subnet Calculator](/tools/net/subnet-calculator). For designing multiple subnets at once, the [VLSM Calculator](/tools/net/vlsm-calculator) is convenient, and to visually verify CIDR ranges, try the [CIDR Range Converter](/tools/net/cidr-to-range).
+
+To understand how subnet masks work at the bit level, check out [Understanding Subnet Masks](/blog/subnet-mask-explained).

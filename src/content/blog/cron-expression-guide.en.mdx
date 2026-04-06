@@ -1,0 +1,98 @@
+---
+title: "Cron Expression Guide — A Complete Beginner's Tutorial"
+description: "Understand cron expression syntax and learn common scheduling patterns with practical examples. Your first step to server automation."
+category: linux
+keywords:
+  - cron expression
+  - crontab
+  - cron job
+  - linux scheduler
+  - cron syntax
+  - task scheduling
+publishedAt: "2026-04-06"
+relatedTools:
+  - cron-parser
+  - unix-timestamp
+author: NetTools Team
+---
+
+## What is a Cron Expression?
+
+Cron is a scheduler in Unix/Linux systems that runs tasks at specified times. A cron expression defines **"when to execute"** using 5 fields.
+
+```
+┌───────── Minute (0-59)
+│ ┌─────── Hour (0-23)
+│ │ ┌───── Day of Month (1-31)
+│ │ │ ┌─── Month (1-12)
+│ │ │ │ ┌─ Day of Week (0-7, both 0 and 7 = Sunday)
+│ │ │ │ │
+* * * * *
+```
+
+## Special Characters
+
+| Char | Meaning | Example |
+|------|---------|---------|
+| `*`  | Any value | `* * * * *` = every minute |
+| `,`  | List | `1,15 * * * *` = at minute 1 and 15 |
+| `-`  | Range | `1-5 * * * *` = minutes 1 through 5 |
+| `/`  | Step | `*/10 * * * *` = every 10 minutes |
+
+## Common Patterns in Practice
+
+### Run at Midnight Daily
+
+```
+0 0 * * *
+```
+
+The most popular pattern, used for database backups and log cleanup.
+
+### Weekdays at 9 AM
+
+```
+0 9 * * 1-5
+```
+
+Great for generating reports or sending notifications at the start of business hours.
+
+### Every 5 Minutes
+
+```
+*/5 * * * *
+```
+
+Ideal for health checks and monitoring data collection.
+
+### First Day of Every Month at 3 AM
+
+```
+0 3 1 * *
+```
+
+Used for monthly billing reconciliation and report generation.
+
+### Every Sunday at 2 AM
+
+```
+0 2 * * 0
+```
+
+Perfect for weekly backups or system maintenance tasks.
+
+## Common Mistakes
+
+1. **Timezone confusion** — Always check your server's timezone (UTC vs local)
+2. **Setting both day-of-month and day-of-week** — When both are specified, they work as an OR condition, running more often than expected
+3. **Misunderstanding `/` start values** — `5/15` means "every 15 minutes starting at minute 5," not "at minutes 5 and 15"
+
+## Validate Your Cron Expressions
+
+Always verify your cron expressions before deploying. Enter your expression in the [Cron Parser](/tools/net/cron-parser) to see the next execution times and a human-readable description.
+
+If you need timestamp conversion for your scheduling work, the [Unix Timestamp Converter](/tools/net/unix-timestamp) is a handy companion tool.
+
+## Summary
+
+Cron expressions only require remembering 5 fields: minute, hour, day, month, and weekday. While they may seem complex at first, learning a few common patterns will make you comfortable in no time.

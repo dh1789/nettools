@@ -1,0 +1,113 @@
+---
+title: "How to Decode and Verify JWT Tokens — A Developer's Essential Guide"
+description: "Understand the structure of JWT (JSON Web Token) and learn how to decode and verify tokens step by step. Essential knowledge for authentication debugging."
+category: developer
+keywords:
+  - JWT decoding
+  - jwt decoder
+  - JSON Web Token
+  - JWT verification
+  - JWT structure
+  - token authentication
+publishedAt: "2026-04-06"
+relatedTools:
+  - jwt-decoder
+  - base64
+author: NetTools Team
+---
+
+## When You Need to Inspect a JWT
+
+While developing APIs, you often encounter issues like "login works but authorization fails" or "getting a token expired error." The first thing to do in these situations is to crack open the JWT token and examine its contents.
+
+JWT (JSON Web Token) is a signed token that carries user authentication data in JSON format. It is central to modern authentication systems like OAuth 2.0 and OpenID Connect, and is widely used for server-to-server communication.
+
+## JWT Structure
+
+A JWT consists of three parts separated by dots (`.`):
+
+```
+xxxxx.yyyyy.zzzzz
+Header.Payload.Signature
+```
+
+### Header
+
+Defines the signing algorithm and token type:
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+### Payload
+
+Contains the actual data (claims):
+
+```json
+{
+  "sub": "1234567890",
+  "name": "Jane Doe",
+  "iat": 1714003200,
+  "exp": 1714089600
+}
+```
+
+Key standard claims:
+
+| Claim | Full Name | Description |
+|-------|-----------|-------------|
+| `sub` | Subject | Token subject (user ID) |
+| `iat` | Issued At | Token issue time (Unix timestamp) |
+| `exp` | Expiration | Token expiration time |
+| `iss` | Issuer | Token issuer |
+| `aud` | Audience | Token recipient |
+
+### Signature
+
+The Header and Payload signed with a secret key. It guarantees the token has not been tampered with.
+
+```
+HMACSHA256(
+  base64UrlEncode(header) + "." + base64UrlEncode(payload),
+  secret
+)
+```
+
+## Decoding vs Verification
+
+These two operations are frequently confused but are entirely different:
+
+- **Decoding**: Reading the Base64URL-encoded Header and Payload. No secret key required
+- **Verification**: Checking that the Signature is valid and the token has not expired. Requires a secret key (or public key)
+
+> The JWT Payload is not encrypted. Anyone can decode it, so never include sensitive information like passwords or credit card numbers.
+
+## Real-World Debugging Scenarios
+
+### 401 Unauthorized Error
+
+1. Check the `exp` claim to see if the token has expired
+2. Verify that `iss` and `aud` claims match your server configuration
+3. Confirm the token was signed with the correct algorithm (`alg`)
+
+### 403 Forbidden Error
+
+1. Inspect the `role` or `scope` claims in the Payload
+2. Verify the required permissions are included in the token
+3. Check that resource-level access mappings are correct
+
+## Security Best Practices
+
+1. **Never expose secret keys** — Do not include them in client code or commit them to Git
+2. **Pin the algorithm** — Explicitly specify allowed algorithms on the server. The `"alg": "none"` attack can bypass signature verification
+3. **Always set expiration** — Tokens without `exp` are valid indefinitely
+4. **Require HTTPS** — Tokens transmitted in plaintext are vulnerable to man-in-the-middle attacks
+
+## Decode Tokens Instantly with Tools
+
+Paste your token into the [JWT Decoder](/tools/net/jwt-decoder) to instantly split and display the Header, Payload, and Signature. Expiration times are automatically converted to human-readable format, and token expiry status is shown in real time. All processing happens in your browser, so your token is never sent to any external server.
+
+Since each part of a JWT is Base64URL-encoded, you can also explore the [Base64 Encoder/Decoder](/tools/net/base64) to understand the underlying encoding mechanism.
