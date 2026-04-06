@@ -68,6 +68,40 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
+    usageExamples: [
+      {
+        title: { ko: "회사 네트워크 서브넷 분할", en: "Corporate Network Subnet Division" },
+        scenario: {
+          ko: "100명 규모의 회사에서 부서별로 네트워크를 분리해야 하는 상황입니다.",
+          en: "A 100-person company needs to separate networks by department.",
+        },
+        steps: [
+          { ko: "10.0.0.0/8 대역에서 /24 프리픽스로 계산합니다.", en: "Calculate with /24 prefix from the 10.0.0.0/8 range." },
+          { ko: "각 부서에 필요한 호스트 수(약 30대)를 확인합니다.", en: "Verify the number of hosts needed per department (about 30)." },
+          { ko: "서브넷 마스크 255.255.255.0으로 254개 호스트 확보를 확인합니다.", en: "Confirm 254 usable hosts with subnet mask 255.255.255.0." },
+        ],
+        result: {
+          ko: "개발팀 10.0.1.0/24, 영업팀 10.0.2.0/24, 관리팀 10.0.3.0/24로 분할 완료.",
+          en: "Dev team 10.0.1.0/24, Sales 10.0.2.0/24, Admin 10.0.3.0/24 allocated.",
+        },
+      },
+      {
+        title: { ko: "AWS VPC 서브넷 설계", en: "AWS VPC Subnet Design" },
+        scenario: {
+          ko: "AWS VPC에서 퍼블릭/프라이빗 서브넷을 설계해야 합니다.",
+          en: "You need to design public/private subnets in an AWS VPC.",
+        },
+        steps: [
+          { ko: "VPC CIDR 172.31.0.0/16을 입력합니다.", en: "Enter VPC CIDR 172.31.0.0/16." },
+          { ko: "/20 단위로 서브넷을 분할하여 각 서브넷당 4094개 IP를 확보합니다.", en: "Split into /20 subnets for 4094 IPs each." },
+          { ko: "가용 영역별 퍼블릭/프라이빗 쌍을 구성합니다.", en: "Set up public/private pairs per availability zone." },
+        ],
+        result: {
+          ko: "AZ-a 퍼블릭 172.31.0.0/20, AZ-a 프라이빗 172.31.16.0/20 등 체계적 할당 완료.",
+          en: "AZ-a public 172.31.0.0/20, AZ-a private 172.31.16.0/20 systematically allocated.",
+        },
+      },
+    ],
   },
 
   "mac-oui-lookup": {
@@ -222,6 +256,39 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "AWS VPC, Azure VNet, GCP VPC 등 클라우드 가상 네트워크에서 CIDR 블록을 사용하여 네트워크 범위를 정의합니다. VPC 생성 시 10.0.0.0/16과 같은 CIDR을 지정하고, 서브넷은 그 안에서 /24 등으로 분할합니다.",
           en: "Cloud virtual networks like AWS VPC, Azure VNet, and GCP VPC use CIDR blocks to define network ranges. When creating a VPC, you specify a CIDR like 10.0.0.0/16, then divide it into subnets such as /24 within that range.",
+        },
+      },
+    ],
+    usageExamples: [
+      {
+        title: { ko: "방화벽 규칙용 IP 범위 확인", en: "Check IP Range for Firewall Rules" },
+        scenario: {
+          ko: "AWS Security Group에 특정 CIDR 블록의 IP 범위를 허용해야 합니다.",
+          en: "You need to allow a specific CIDR block's IP range in AWS Security Group.",
+        },
+        steps: [
+          { ko: "허용할 CIDR 블록(예: 203.0.113.0/28)을 입력합니다.", en: "Enter the CIDR block to allow (e.g., 203.0.113.0/28)." },
+          { ko: "시작 IP(203.0.113.0)와 종료 IP(203.0.113.15)를 확인합니다.", en: "Verify start IP (203.0.113.0) and end IP (203.0.113.15)." },
+          { ko: "총 16개 IP가 포함됨을 확인하고 방화벽에 적용합니다.", en: "Confirm 16 total IPs and apply to the firewall." },
+        ],
+        result: {
+          ko: "정확한 IP 범위를 확인하여 최소 권한 원칙에 맞는 방화벽 규칙 설정 완료.",
+          en: "Verified exact IP range for a least-privilege firewall rule.",
+        },
+      },
+      {
+        title: { ko: "ISP 할당 대역 분석", en: "Analyze ISP Allocated Block" },
+        scenario: {
+          ko: "ISP로부터 할당받은 공인 IP 대역의 실제 사용 가능 범위를 확인합니다.",
+          en: "Check the usable range of a public IP block allocated by your ISP.",
+        },
+        steps: [
+          { ko: "할당받은 CIDR(예: 211.234.100.0/22)을 입력합니다.", en: "Enter the allocated CIDR (e.g., 211.234.100.0/22)." },
+          { ko: "시작-종료 IP와 총 1024개 주소를 확인합니다.", en: "Check start-end IPs and the total of 1024 addresses." },
+        ],
+        result: {
+          ko: "211.234.100.0~211.234.103.255 범위에서 실제 사용 가능한 IP 1022개 확인.",
+          en: "Confirmed 1022 usable IPs in the range 211.234.100.0-211.234.103.255.",
         },
       },
     ],

@@ -91,6 +91,39 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
+    usageExamples: [
+      {
+        title: { ko: "보안 정책 충족 비밀번호 생성", en: "Generate Policy-Compliant Password" },
+        scenario: {
+          ko: "회사 보안 정책에서 대문자, 소문자, 숫자, 특수문자 포함 16자 이상을 요구합니다.",
+          en: "Company policy requires uppercase, lowercase, numbers, and special characters, minimum 16 characters.",
+        },
+        steps: [
+          { ko: "비밀번호 길이를 16으로 설정합니다.", en: "Set password length to 16." },
+          { ko: "대문자, 소문자, 숫자, 특수문자 옵션을 모두 활성화합니다.", en: "Enable uppercase, lowercase, numbers, and special characters." },
+          { ko: "생성 버튼을 클릭하고 비밀번호를 복사합니다.", en: "Click generate and copy the password." },
+        ],
+        result: {
+          ko: "보안 정책을 충족하는 약 105비트 엔트로피의 강력한 비밀번호 생성 완료.",
+          en: "Generated a strong password with ~105 bits of entropy meeting security policy.",
+        },
+      },
+      {
+        title: { ko: "데이터베이스 접속 비밀번호 생성", en: "Generate Database Connection Password" },
+        scenario: {
+          ko: "신규 데이터베이스 서버의 접속 비밀번호를 안전하게 생성해야 합니다.",
+          en: "You need to securely generate a password for a new database server.",
+        },
+        steps: [
+          { ko: "길이를 32자로 설정합니다.", en: "Set length to 32 characters." },
+          { ko: "특수문자 중 DB 연결 문자열에 문제가 될 수 있는 문자를 제외합니다.", en: "Exclude special characters that may cause issues in DB connection strings." },
+        ],
+        result: {
+          ko: "DB 연결 문자열 호환 가능한 32자 고엔트로피 비밀번호 생성.",
+          en: "Generated a 32-character high-entropy password compatible with DB connection strings.",
+        },
+      },
+    ],
   },
 
   "ssl-checker": {
@@ -274,6 +307,39 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "권장하지 않습니다. SHA-256은 속도가 빨라 GPU를 이용한 대규모 brute-force 공격에 취약합니다. 비밀번호 저장에는 의도적으로 느리게 설계된 bcrypt, scrypt, Argon2를 사용해야 합니다. 이들은 cost factor를 통해 계산 비용을 조절할 수 있어 하드웨어 발전에 대응할 수 있습니다.",
           en: "Not recommended. SHA-256 is fast, making it vulnerable to large-scale GPU brute-force attacks. For password storage, use intentionally slow algorithms like bcrypt, scrypt, or Argon2. These allow adjustable cost factors to keep pace with hardware improvements.",
+        },
+      },
+    ],
+    usageExamples: [
+      {
+        title: { ko: "파일 무결성 검증", en: "File Integrity Verification" },
+        scenario: {
+          ko: "다운로드한 소프트웨어의 SHA-256 체크섬을 공식 값과 비교해야 합니다.",
+          en: "You need to compare the SHA-256 checksum of downloaded software with the official value.",
+        },
+        steps: [
+          { ko: "다운로드 파일의 내용을 텍스트로 입력하거나 해시값을 생성합니다.", en: "Enter file content as text or generate the hash value." },
+          { ko: "SHA-256 알고리즘을 선택합니다.", en: "Select the SHA-256 algorithm." },
+          { ko: "생성된 해시를 공식 체크섬과 비교합니다.", en: "Compare the generated hash with the official checksum." },
+        ],
+        result: {
+          ko: "해시값 일치를 확인하여 파일이 변조되지 않았음을 검증.",
+          en: "Verified file integrity by confirming hash value match.",
+        },
+      },
+      {
+        title: { ko: "API 웹훅 서명 검증", en: "API Webhook Signature Verification" },
+        scenario: {
+          ko: "외부 서비스의 웹훅 payload 서명을 검증하기 위해 해시를 계산합니다.",
+          en: "Calculate hash to verify webhook payload signature from an external service.",
+        },
+        steps: [
+          { ko: "웹훅 payload 문자열을 입력합니다.", en: "Enter the webhook payload string." },
+          { ko: "서비스에서 지정한 해시 알고리즘(SHA-256)을 선택합니다.", en: "Select the hash algorithm specified by the service (SHA-256)." },
+        ],
+        result: {
+          ko: "생성된 해시로 웹훅 요청의 진위를 확인할 수 있습니다.",
+          en: "Use the generated hash to verify webhook request authenticity.",
         },
       },
     ],

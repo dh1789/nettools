@@ -101,6 +101,39 @@ export const LINUX_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
+    usageExamples: [
+      {
+        title: { ko: "매일 새벽 3시 백업 크론 설정", en: "Set Up Daily 3 AM Backup Cron" },
+        scenario: {
+          ko: "데이터베이스 백업 스크립트를 매일 새벽 3시에 자동 실행해야 합니다.",
+          en: "You need to run a database backup script automatically every day at 3 AM.",
+        },
+        steps: [
+          { ko: "'0 3 * * *' 크론 표현식을 입력합니다.", en: "Enter the cron expression '0 3 * * *'." },
+          { ko: "다음 실행 시간 목록에서 매일 03:00에 실행됨을 확인합니다.", en: "Verify in the next execution list that it runs at 03:00 daily." },
+          { ko: "한글 설명 '매일 새벽 3시 0분에 실행'을 확인합니다.", en: "Confirm the description: 'Runs at 3:00 AM every day.'" },
+        ],
+        result: {
+          ko: "crontab에 '0 3 * * * /usr/local/bin/backup.sh' 등록 준비 완료.",
+          en: "Ready to add '0 3 * * * /usr/local/bin/backup.sh' to crontab.",
+        },
+      },
+      {
+        title: { ko: "매주 월요일 로그 정리 크론", en: "Weekly Monday Log Cleanup Cron" },
+        scenario: {
+          ko: "서버 로그 파일을 매주 월요일 새벽에 자동 정리하려 합니다.",
+          en: "You want to automatically clean up server log files every Monday morning.",
+        },
+        steps: [
+          { ko: "'0 1 * * 1' 크론 표현식을 입력합니다.", en: "Enter the cron expression '0 1 * * 1'." },
+          { ko: "다음 실행 시간이 매주 월요일 01:00임을 확인합니다.", en: "Verify next execution is every Monday at 01:00." },
+        ],
+        result: {
+          ko: "매주 월요일 새벽 1시에 로그 정리 스크립트가 실행됨을 확인.",
+          en: "Confirmed log cleanup script runs every Monday at 1 AM.",
+        },
+      },
+    ],
   },
 
   "chmod-calculator": {
@@ -203,6 +236,39 @@ export const LINUX_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
+    usageExamples: [
+      {
+        title: { ko: "웹 서버 파일 권한 설정", en: "Web Server File Permission Setup" },
+        scenario: {
+          ko: "Nginx 웹 서버의 정적 파일과 디렉토리에 적절한 권한을 설정해야 합니다.",
+          en: "You need to set proper permissions for Nginx web server static files and directories.",
+        },
+        steps: [
+          { ko: "Owner: Read+Write, Group: Read, Others: Read 체크박스를 선택합니다.", en: "Select Owner: Read+Write, Group: Read, Others: Read checkboxes." },
+          { ko: "숫자 표기 644, 심볼릭 표기 -rw-r--r--를 확인합니다.", en: "Verify numeric notation 644, symbolic notation -rw-r--r--." },
+          { ko: "chmod 644 명령어를 복사하여 터미널에서 실행합니다.", en: "Copy the chmod 644 command and run it in the terminal." },
+        ],
+        result: {
+          ko: "웹 서버 파일이 소유자만 수정 가능하고 모든 사용자가 읽을 수 있도록 설정 완료.",
+          en: "Web server files set to owner-writable and world-readable.",
+        },
+      },
+      {
+        title: { ko: "배포 스크립트 실행 권한 설정", en: "Deployment Script Execute Permission" },
+        scenario: {
+          ko: "CI/CD 배포 스크립트에 실행 권한을 부여해야 합니다.",
+          en: "You need to grant execute permission to a CI/CD deployment script.",
+        },
+        steps: [
+          { ko: "Owner: Read+Write+Execute, Group: Read+Execute, Others: 없음을 선택합니다.", en: "Select Owner: Read+Write+Execute, Group: Read+Execute, Others: None." },
+          { ko: "숫자 표기 750을 확인합니다.", en: "Verify numeric notation 750." },
+        ],
+        result: {
+          ko: "배포 스크립트가 소유자와 그룹만 실행 가능하도록 보안 설정 완료.",
+          en: "Deployment script secured to be executable only by owner and group.",
+        },
+      },
+    ],
   },
 
   "regex-tester": {
@@ -302,6 +368,54 @@ export const LINUX_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "RFC 5322 완전 준수 정규표현식은 매우 복잡합니다. 실무에서는 /^[\\w.+-]+@[\\w-]+\\.[a-z]{2,}$/i 같은 간단한 패턴으로 기본 형식을 검증한 후, 실제 이메일 발송으로 유효성을 확인하는 것이 권장됩니다.",
           en: "A fully RFC 5322-compliant regex is extremely complex. In practice, it's recommended to validate the basic format with a simple pattern like /^[\\w.+-]+@[\\w-]+\\.[a-z]{2,}$/i, then confirm validity by actually sending an email.",
+        },
+      },
+    ],
+    usageExamples: [
+      {
+        title: { ko: "이메일 주소 추출 정규식", en: "Email Address Extraction Regex" },
+        scenario: {
+          ko: "텍스트 문서에서 모든 이메일 주소를 추출해야 합니다.",
+          en: "You need to extract all email addresses from a text document.",
+        },
+        steps: [
+          { ko: "패턴에 [\\w.+-]+@[\\w-]+\\.[a-z]{2,}를 입력합니다.", en: "Enter [\\w.+-]+@[\\w-]+\\.[a-z]{2,} as the pattern." },
+          { ko: "글로벌(g) 및 대소문자 무시(i) 플래그를 설정합니다.", en: "Set global (g) and case-insensitive (i) flags." },
+          { ko: "테스트 문자열에 이메일이 포함된 텍스트를 붙여넣습니다.", en: "Paste text containing emails into the test string." },
+        ],
+        result: {
+          ko: "문서 내 모든 이메일 주소가 하이라이트되어 추출됨.",
+          en: "All email addresses in the document are highlighted and extracted.",
+        },
+      },
+      {
+        title: { ko: "로그 파일에서 IP 주소 필터링", en: "Filter IP Addresses from Log Files" },
+        scenario: {
+          ko: "서버 로그에서 모든 IPv4 주소를 찾아야 합니다.",
+          en: "You need to find all IPv4 addresses in server logs.",
+        },
+        steps: [
+          { ko: "패턴에 \\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b를 입력합니다.", en: "Enter \\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b as the pattern." },
+          { ko: "로그 파일 내용을 테스트 문자열에 붙여넣습니다.", en: "Paste log file content into the test string." },
+        ],
+        result: {
+          ko: "로그에 포함된 모든 IP 주소가 매칭되어 표시됨.",
+          en: "All IP addresses in the log are matched and displayed.",
+        },
+      },
+      {
+        title: { ko: "전화번호 형식 검증", en: "Phone Number Format Validation" },
+        scenario: {
+          ko: "한국 휴대전화 번호(010-XXXX-XXXX) 형식을 검증해야 합니다.",
+          en: "You need to validate Korean mobile phone number format (010-XXXX-XXXX).",
+        },
+        steps: [
+          { ko: "패턴에 ^010-\\d{4}-\\d{4}$를 입력합니다.", en: "Enter ^010-\\d{4}-\\d{4}$ as the pattern." },
+          { ko: "테스트 문자열에 다양한 전화번호를 입력하여 검증합니다.", en: "Enter various phone numbers in the test string to validate." },
+        ],
+        result: {
+          ko: "올바른 형식의 번호만 매칭되어 입력 검증 패턴 확인 완료.",
+          en: "Only properly formatted numbers are matched, confirming the validation pattern.",
         },
       },
     ],

@@ -97,6 +97,39 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
+    usageExamples: [
+      {
+        title: { ko: "이미지 인코딩 후 HTML 삽입", en: "Encode Image for HTML Embedding" },
+        scenario: {
+          ko: "작은 아이콘 이미지를 Base64로 인코딩하여 HTML에 직접 삽입해야 합니다.",
+          en: "You need to Base64-encode a small icon image for direct HTML embedding.",
+        },
+        steps: [
+          { ko: "인코딩할 데이터를 입력란에 붙여넣습니다.", en: "Paste the data to encode into the input field." },
+          { ko: "인코딩 버튼을 클릭합니다.", en: "Click the encode button." },
+          { ko: "결과를 data:image/png;base64,... 형식으로 img 태그에 삽입합니다.", en: "Insert the result as data:image/png;base64,... in an img tag." },
+        ],
+        result: {
+          ko: "별도 HTTP 요청 없이 이미지가 HTML에 인라인으로 포함됨.",
+          en: "Image embedded inline in HTML without additional HTTP requests.",
+        },
+      },
+      {
+        title: { ko: "API 토큰 디코딩 확인", en: "Decode API Token for Inspection" },
+        scenario: {
+          ko: "외부 API에서 받은 Base64 인코딩된 토큰의 내용을 확인해야 합니다.",
+          en: "You need to inspect the contents of a Base64-encoded token from an external API.",
+        },
+        steps: [
+          { ko: "인코딩된 토큰 문자열을 입력란에 붙여넣습니다.", en: "Paste the encoded token string into the input field." },
+          { ko: "디코딩 버튼을 클릭하여 원본 내용을 확인합니다.", en: "Click decode to view the original content." },
+        ],
+        result: {
+          ko: "토큰에 포함된 사용자 정보, 권한 등을 평문으로 확인 가능.",
+          en: "User info, permissions, etc. in the token visible in plaintext.",
+        },
+      },
+    ],
   },
 
   "json-formatter": {
@@ -192,6 +225,39 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "현재는 입력된 순서 그대로 포맷합니다. JSON 표준에서는 키 순서가 보장되지 않으므로, API 응답 비교 시에는 별도의 키 정렬 도구를 활용하거나 jq의 --sort-keys 옵션을 사용할 수 있습니다.",
           en: "Currently, keys are formatted in their original order. Since JSON standard does not guarantee key order, for API response comparison you can use a separate key sorting tool or jq's --sort-keys option.",
+        },
+      },
+    ],
+    usageExamples: [
+      {
+        title: { ko: "API 응답 디버깅", en: "Debugging API Response" },
+        scenario: {
+          ko: "백엔드 API가 반환하는 압축된 JSON 응답을 가독성 있게 확인해야 합니다.",
+          en: "You need to read a minified JSON response from a backend API.",
+        },
+        steps: [
+          { ko: "API 응답 JSON을 입력란에 붙여넣습니다.", en: "Paste the API response JSON into the input field." },
+          { ko: "포맷 버튼을 클릭하여 들여쓰기가 적용된 결과를 확인합니다.", en: "Click format to view the indented result." },
+          { ko: "중첩된 객체 구조와 데이터 값을 쉽게 파악합니다.", en: "Easily identify nested object structures and data values." },
+        ],
+        result: {
+          ko: "압축된 JSON이 깔끔하게 정리되어 API 응답 구조 파악 완료.",
+          en: "Minified JSON neatly formatted for easy API response structure analysis.",
+        },
+      },
+      {
+        title: { ko: "설정 파일 문법 검증", en: "Config File Syntax Validation" },
+        scenario: {
+          ko: "배포 전 JSON 설정 파일에 문법 오류가 없는지 확인해야 합니다.",
+          en: "You need to check a JSON config file for syntax errors before deployment.",
+        },
+        steps: [
+          { ko: "설정 파일 내용을 입력란에 붙여넣습니다.", en: "Paste the config file content into the input field." },
+          { ko: "포맷 버튼 클릭 시 오류가 있으면 줄 번호와 함께 표시됩니다.", en: "Click format — errors are shown with line numbers if any." },
+        ],
+        result: {
+          ko: "후행 콤마 오류를 발견하여 배포 전 수정 완료.",
+          en: "Found trailing comma error and fixed it before deployment.",
         },
       },
     ],
@@ -672,6 +738,39 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "액세스 토큰은 15분~1시간, 리프레시 토큰은 7일~30일이 일반적입니다. 보안이 중요한 서비스(금융 등)는 더 짧게, 사용자 편의가 중요한 서비스는 더 길게 설정합니다.",
           en: "Access tokens typically expire in 15 minutes to 1 hour, refresh tokens in 7 to 30 days. Security-critical services (finance etc.) use shorter times, while user convenience-focused services use longer times.",
+        },
+      },
+    ],
+    usageExamples: [
+      {
+        title: { ko: "인증 토큰 디버깅", en: "Debugging Authentication Token" },
+        scenario: {
+          ko: "로그인 후 발급된 JWT 토큰의 사용자 정보와 만료 시간을 확인해야 합니다.",
+          en: "You need to check user info and expiration time of a JWT issued after login.",
+        },
+        steps: [
+          { ko: "브라우저 개발자 도구에서 JWT 토큰을 복사합니다.", en: "Copy the JWT token from browser developer tools." },
+          { ko: "토큰을 입력란에 붙여넣어 Header와 Payload를 확인합니다.", en: "Paste the token to inspect Header and Payload." },
+          { ko: "exp 클레임으로 토큰 만료 시간(예: 2026-04-06 15:00 KST)을 확인합니다.", en: "Check token expiry time (e.g., 2026-04-06 15:00 KST) via the exp claim." },
+        ],
+        result: {
+          ko: "토큰에 포함된 사용자 ID, 역할, 만료 시간을 확인하여 인증 문제 원인 파악.",
+          en: "Identified auth issue by checking user ID, role, and expiry in the token.",
+        },
+      },
+      {
+        title: { ko: "API 권한 클레임 검증", en: "Verify API Permission Claims" },
+        scenario: {
+          ko: "마이크로서비스 간 API 호출에서 JWT에 필요한 권한이 포함되어 있는지 확인합니다.",
+          en: "Verify that the JWT contains required permissions for inter-service API calls.",
+        },
+        steps: [
+          { ko: "API 요청 헤더에서 Bearer 토큰을 복사합니다.", en: "Copy the Bearer token from API request headers." },
+          { ko: "Payload에서 scope 또는 permissions 클레임을 확인합니다.", en: "Check scope or permissions claims in the Payload." },
+        ],
+        result: {
+          ko: "누락된 'admin:write' 권한을 발견하여 403 오류 원인 해결.",
+          en: "Found missing 'admin:write' permission, resolving the 403 error.",
         },
       },
     ],

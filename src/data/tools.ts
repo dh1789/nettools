@@ -30,11 +30,19 @@ export interface RelatedConcept {
   description: { ko: string; en: string };
 }
 
+export interface UsageExample {
+  title: { ko: string; en: string };
+  scenario: { ko: string; en: string };
+  steps: Array<{ ko: string; en: string }>;
+  result: { ko: string; en: string };
+}
+
 export interface ToolEnhancement {
   howTo: HowTo;
   relatedConcepts: RelatedConcept[];
   relatedTools: string[];
   extraFaqs: FAQ[];
+  usageExamples?: UsageExample[];
 }
 
 export interface Tool {
@@ -57,6 +65,7 @@ export interface Tool {
   howTo?: HowTo;
   relatedConcepts?: RelatedConcept[];
   relatedTools?: string[];
+  usageExamples?: UsageExample[];
   /** Component name in src/components/tools/index.ts */
   component: string;
   /** For structured data (schema.org) */
@@ -2712,16 +2721,8 @@ export const TOOLS: Tool[] = [
   },
 ];
 
-// Enhancement 데이터 통합: howTo, relatedConcepts, relatedTools, extraFaqs 머지
-const ALL_ENHANCEMENTS: Record<
-  string,
-  {
-    howTo: HowTo;
-    relatedConcepts: RelatedConcept[];
-    relatedTools: string[];
-    extraFaqs: FAQ[];
-  }
-> = {
+// Enhancement 데이터 통합: howTo, relatedConcepts, relatedTools, extraFaqs, usageExamples 머지
+const ALL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
   ...NETWORK_ENHANCEMENTS,
   ...SECURITY_ENHANCEMENTS,
   ...LINUX_ENHANCEMENTS,
@@ -2737,6 +2738,9 @@ for (const tool of TOOLS) {
     tool.relatedTools = enhancement.relatedTools;
     if (enhancement.extraFaqs.length > 0) {
       tool.faqs = [...(tool.faqs || []), ...enhancement.extraFaqs];
+    }
+    if (enhancement.usageExamples && enhancement.usageExamples.length > 0) {
+      tool.usageExamples = enhancement.usageExamples;
     }
   }
 }

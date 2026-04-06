@@ -23,6 +23,7 @@ export function ToolPageContent({ tool }: ToolPageContentProps) {
       howTo={tool.howTo}
       relatedConcepts={tool.relatedConcepts}
       relatedTools={tool.relatedTools}
+      usageExamples={tool.usageExamples}
       locale={locale}
     >
       <Component />

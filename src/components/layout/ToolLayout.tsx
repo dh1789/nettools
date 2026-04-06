@@ -3,7 +3,7 @@
 import { type ReactNode, useState } from "react";
 import Link from "next/link";
 import { AdSlot } from "./AdSlot";
-import type { FAQ, HowTo, RelatedConcept } from "@/data/tools";
+import type { FAQ, HowTo, RelatedConcept, UsageExample } from "@/data/tools";
 import { getToolBySlug } from "@/data/tools";
 
 interface ToolLayoutProps {
@@ -14,6 +14,7 @@ interface ToolLayoutProps {
   howTo?: HowTo;
   relatedConcepts?: RelatedConcept[];
   relatedTools?: string[];
+  usageExamples?: UsageExample[];
   locale?: "ko" | "en";
   children: ReactNode;
 }
@@ -196,6 +197,109 @@ function RelatedConceptsSection({
   );
 }
 
+function UsageExamplesSection({
+  examples,
+  locale,
+}: {
+  examples: UsageExample[];
+  locale: "ko" | "en";
+}) {
+  const heading = locale === "ko" ? "실사용 예시" : "Usage Examples";
+  const scenarioLabel = locale === "ko" ? "상황" : "Scenario";
+  const stepsLabel = locale === "ko" ? "단계" : "Steps";
+  const resultLabel = locale === "ko" ? "결과" : "Result";
+
+  return (
+    <section style={{ marginTop: "1rem" }}>
+      <h2
+        style={{
+          fontSize: "1.25rem",
+          fontWeight: 700,
+          color: "var(--text-primary, #111)",
+          marginBottom: "1rem",
+        }}
+      >
+        {heading}
+      </h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        {examples.map((example, i) => (
+          <div
+            key={i}
+            style={{
+              border: "1px solid var(--border, #e5e7eb)",
+              borderRadius: "8px",
+              padding: "1rem",
+              background: "var(--background, #f9fafb)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "1rem",
+                fontWeight: 600,
+                color: "var(--text-primary, #111)",
+                marginBottom: "0.5rem",
+              }}
+            >
+              {example.title[locale]}
+            </h3>
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "var(--text-secondary, #6b7280)",
+                marginBottom: "0.75rem",
+                lineHeight: 1.6,
+              }}
+            >
+              <strong>{scenarioLabel}:</strong> {example.scenario[locale]}
+            </p>
+            <div style={{ marginBottom: "0.75rem" }}>
+              <strong
+                style={{
+                  fontSize: "0.875rem",
+                  color: "var(--text-secondary, #6b7280)",
+                }}
+              >
+                {stepsLabel}:
+              </strong>
+              <ol
+                style={{
+                  paddingLeft: "1.25rem",
+                  margin: "0.25rem 0 0 0",
+                }}
+              >
+                {example.steps.map((step, j) => (
+                  <li
+                    key={j}
+                    style={{
+                      fontSize: "0.875rem",
+                      color: "var(--text-secondary, #6b7280)",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {step[locale]}
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "var(--info-text, #1d4ed8)",
+                background: "var(--info-bg, #eff6ff)",
+                padding: "0.5rem 0.75rem",
+                borderRadius: "6px",
+                lineHeight: 1.6,
+              }}
+            >
+              <strong>{resultLabel}:</strong> {example.result[locale]}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function RelatedToolsSection({
   slugs,
   locale,
@@ -263,6 +367,7 @@ export function ToolLayout({
   howTo,
   relatedConcepts,
   relatedTools,
+  usageExamples,
   locale = "ko",
   children,
 }: ToolLayoutProps) {
@@ -352,6 +457,21 @@ export function ToolLayout({
           }}
         >
           <HowToSection howTo={howTo} locale={locale} />
+        </section>
+      )}
+
+      {/* 실사용 예시 */}
+      {usageExamples && usageExamples.length > 0 && (
+        <section
+          style={{
+            background: "var(--surface, #fff)",
+            border: "1px solid var(--border, #e5e5e5)",
+            borderRadius: "12px",
+            padding: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <UsageExamplesSection examples={usageExamples} locale={locale} />
         </section>
       )}
 
