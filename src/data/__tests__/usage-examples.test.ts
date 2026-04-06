@@ -10,7 +10,7 @@
  */
 
 import { getToolBySlug } from "../tools";
-import type { Tool, UsageExample } from "../tools";
+import type { Tool } from "../tools";
 
 const TOP_10_SLUGS = [
   "subnet-calculator",

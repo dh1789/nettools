@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { type Tool, type Category, type FAQ, type UsageExample, getCategoryById } from "@/data/tools";
+import { type Tool, type Category, type FAQ, getCategoryById } from "@/data/tools";
 import type { Locale } from "./i18n";
 import { t } from "./i18n";
 import type { BlogPost } from "./blog";
