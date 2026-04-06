@@ -152,7 +152,7 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["text-counter", "text-case-converter", "json-formatter"],
+    relatedTools: ["text-counter", "text-case-converter", "json-formatter", "markdown-preview", "regex-tester"],
     extraFaqs: [
       {
         question: {
@@ -260,7 +260,7 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["text-counter", "text-case-converter", "markdown-preview"],
+    relatedTools: ["text-counter", "text-case-converter", "markdown-preview", "sql-formatter"],
     extraFaqs: [
       {
         question: {
@@ -364,7 +364,7 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["text-diff", "text-case-converter", "lorem-ipsum-generator"],
+    relatedTools: ["text-diff", "text-case-converter", "lorem-ipsum-generator", "byte-unit-converter", "code-minifier", "markdown-preview", "regex-tester"],
     extraFaqs: [
       {
         question: {
@@ -462,7 +462,7 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["url-encoder", "base64", "image-base64-converter"],
+    relatedTools: ["url-encoder", "base64", "image-base64-converter", "color-converter", "totp-generator"],
     extraFaqs: [
       {
         question: {
@@ -644,7 +644,7 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["html-entity-encoder", "url-encoder", "number-base-converter"],
+    relatedTools: ["html-entity-encoder", "url-encoder", "number-base-converter", "byte-unit-converter"],
     extraFaqs: [
       {
         question: {

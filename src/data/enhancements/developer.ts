@@ -54,7 +54,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["url-encoder", "jwt-decoder", "image-base64-converter"],
+    relatedTools: ["url-encoder", "jwt-decoder", "image-base64-converter", "hash-generator", "html-entity-encoder", "qr-code-generator", "uuid-generator"],
     extraFaqs: [
       {
         question: {
@@ -185,7 +185,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["yaml-json-converter", "json-schema-validator", "json-csv-converter"],
+    relatedTools: ["yaml-json-converter", "json-schema-validator", "json-csv-converter", "code-minifier", "html-entity-encoder", "http-status-dictionary", "sql-formatter", "text-diff", "unix-timestamp", "url-encoder"],
     extraFaqs: [
       {
         question: {
@@ -316,7 +316,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["base64", "html-entity-encoder", "json-formatter"],
+    relatedTools: ["base64", "html-entity-encoder", "json-formatter", "ascii-unicode-table", "http-status-dictionary", "image-base64-converter", "qr-code-generator", "regex-tester"],
     extraFaqs: [
       {
         question: {
@@ -502,7 +502,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["text-counter", "text-diff", "code-minifier"],
+    relatedTools: ["text-counter", "text-diff", "code-minifier", "lorem-ipsum-generator", "sql-formatter"],
     extraFaqs: [
       {
         question: {
@@ -610,7 +610,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["chmod-calculator", "color-converter", "subnet-calculator"],
+    relatedTools: ["chmod-calculator", "color-converter", "subnet-calculator", "ascii-unicode-table", "byte-unit-converter"],
     extraFaqs: [
       {
         question: {
@@ -829,7 +829,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["password-generator", "hash-generator", "uuid-generator"],
+    relatedTools: ["password-generator", "hash-generator", "base64"],
     extraFaqs: [
       {
         question: {
@@ -995,7 +995,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["json-formatter", "code-minifier", "text-case-converter"],
+    relatedTools: ["json-formatter", "code-minifier", "text-case-converter", "lorem-ipsum-generator"],
     extraFaqs: [
       {
         question: {
@@ -1073,7 +1073,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["html-entity-encoder", "text-counter", "text-diff"],
+    relatedTools: ["html-entity-encoder", "text-counter", "text-diff", "lorem-ipsum-generator"],
     extraFaqs: [
       {
         question: {
@@ -1161,7 +1161,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["url-encoder", "base64", "json-formatter"],
+    relatedTools: ["url-encoder", "base64", "json-formatter", "ascii-unicode-table", "markdown-preview"],
     extraFaqs: [
       {
         question: {
@@ -1249,7 +1249,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["base64", "url-encoder", "qr-code-generator"],
+    relatedTools: ["base64", "url-encoder", "qr-code-generator", "color-converter"],
     extraFaqs: [
       {
         question: {
@@ -1425,7 +1425,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["json-formatter", "sql-formatter", "text-counter"],
+    relatedTools: ["json-formatter", "sql-formatter", "text-counter", "text-case-converter"],
     extraFaqs: [
       {
         question: {

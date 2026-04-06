@@ -58,7 +58,7 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["hash-generator", "bcrypt-generator", "totp-generator"],
+    relatedTools: ["hash-generator", "bcrypt-generator", "totp-generator", "uuid-generator"],
     extraFaqs: [
       {
         question: {
@@ -179,7 +179,7 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["csp-generator", "http-headers-checker", "dns-lookup"],
+    relatedTools: ["csp-generator", "http-headers-checker", "dns-lookup", "port-dictionary", "whois-lookup"],
     extraFaqs: [
       {
         question: {
@@ -267,7 +267,7 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["bcrypt-generator", "password-generator", "base64"],
+    relatedTools: ["bcrypt-generator", "password-generator", "base64", "csp-generator", "totp-generator", "uuid-generator"],
     extraFaqs: [
       {
         question: {
@@ -398,7 +398,7 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["password-generator", "hash-generator", "qr-code-generator"],
+    relatedTools: ["password-generator", "hash-generator", "qr-code-generator", "bcrypt-generator", "jwt-decoder"],
     extraFaqs: [
       {
         question: {

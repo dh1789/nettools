@@ -193,6 +193,7 @@ export const LINUX_ENHANCEMENTS: Record<string, ToolEnhancement> = {
       "ssh-config-generator",
       "cron-parser",
       "ufw-rules-builder",
+      "number-base-converter",
     ],
     extraFaqs: [
       {
@@ -482,6 +483,7 @@ export const LINUX_ENHANCEMENTS: Record<string, ToolEnhancement> = {
       "ufw-rules-builder",
       "cron-parser",
       "port-dictionary",
+      "chmod-calculator",
     ],
     extraFaqs: [
       {
@@ -574,6 +576,8 @@ export const LINUX_ENHANCEMENTS: Record<string, ToolEnhancement> = {
       "ssh-config-generator",
       "port-dictionary",
       "subnet-calculator",
+      "chmod-calculator",
+      "cidr-to-range",
     ],
     extraFaqs: [
       {

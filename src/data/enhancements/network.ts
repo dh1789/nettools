@@ -45,7 +45,7 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["cidr-to-range", "vlsm-calculator", "ip-lookup"],
+    relatedTools: ["cidr-to-range", "vlsm-calculator", "ip-lookup", "number-base-converter", "ufw-rules-builder"],
     extraFaqs: [
       {
         question: {
@@ -338,7 +338,7 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["dns-lookup", "whois-lookup", "subnet-calculator"],
+    relatedTools: ["dns-lookup", "whois-lookup", "subnet-calculator", "mac-oui-lookup", "vlsm-calculator"],
     extraFaqs: [
       {
         question: {
@@ -417,7 +417,7 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["whois-lookup", "ip-lookup", "ssl-checker"],
+    relatedTools: ["whois-lookup", "ip-lookup", "ssl-checker", "mac-oui-lookup"],
     extraFaqs: [
       {
         question: {
@@ -492,7 +492,7 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["ufw-rules-builder", "http-status-dictionary", "ssl-checker"],
+    relatedTools: ["ufw-rules-builder", "http-status-dictionary", "ssl-checker", "ssh-config-generator"],
     extraFaqs: [
       {
         question: {
@@ -571,7 +571,7 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["http-headers-checker", "url-encoder", "json-formatter"],
+    relatedTools: ["http-headers-checker", "url-encoder", "json-formatter", "port-dictionary"],
     extraFaqs: [
       {
         question: {
@@ -722,7 +722,7 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["dns-lookup", "ssl-checker", "http-headers-checker"],
+    relatedTools: ["dns-lookup", "ssl-checker", "http-headers-checker", "ip-lookup", "mac-oui-lookup"],
     extraFaqs: [
       {
         question: {
@@ -801,7 +801,7 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["ssl-checker", "csp-generator", "http-status-dictionary"],
+    relatedTools: ["ssl-checker", "csp-generator", "http-status-dictionary", "whois-lookup"],
     extraFaqs: [
       {
         question: {
