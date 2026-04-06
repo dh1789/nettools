@@ -3,6 +3,7 @@ import { type Tool, type Category, type FAQ, type ToolCategory, getCategoryById 
 import type { Locale } from "./i18n";
 import { t } from "./i18n";
 import type { BlogPost } from "./blog";
+import { getCategoryOgImagePath } from "./og-image";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://beomanro.com";
 const SITE_NAME = "NetTools";
@@ -23,6 +24,7 @@ export function generateToolMetadata(tool: Tool, locale: Locale): Metadata {
   const title = t(tool.title, locale);
   const description = t(tool.description, locale);
   const canonicalUrl = `${SITE_URL}/tools/net/${tool.slug}`;
+  const ogImage = `${SITE_URL}${getCategoryOgImagePath(tool.category)}`;
 
   return {
     title: `${title} — 무료 온라인 도구 | ${SITE_NAME}`,
@@ -38,7 +40,7 @@ export function generateToolMetadata(tool: Tool, locale: Locale): Metadata {
       locale: locale === "ko" ? "ko_KR" : "en_US",
       images: [
         {
-          url: DEFAULT_OG_IMAGE,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: `${title} - ${SITE_NAME}`,
@@ -49,7 +51,7 @@ export function generateToolMetadata(tool: Tool, locale: Locale): Metadata {
       card: "summary_large_image",
       title: `${title} | ${SITE_NAME}`,
       description,
-      images: [DEFAULT_OG_IMAGE],
+      images: [ogImage],
     },
     alternates: {
       canonical: canonicalUrl,
@@ -89,7 +91,7 @@ export function generateToolJsonLd(tool: Tool, locale: Locale): string {
     applicationSubCategory: CATEGORY_SUBCATEGORY_MAP[tool.category],
     operatingSystem: "Any",
     browserRequirements: "Requires JavaScript",
-    screenshot: DEFAULT_OG_IMAGE,
+    screenshot: `${SITE_URL}${getCategoryOgImagePath(tool.category)}`,
     inLanguage: ["ko", "en"],
     isAccessibleForFree: true,
     offers: {
@@ -209,6 +211,7 @@ export function generateCategoryMetadata(
   const title = t(category.title, locale);
   const description = t(category.description, locale);
   const canonicalUrl = `${SITE_URL}/category/${category.id}`;
+  const ogImage = `${SITE_URL}${getCategoryOgImagePath(category.id)}`;
 
   return {
     title: `${title} 도구 모음 | ${SITE_NAME}`,
@@ -221,7 +224,7 @@ export function generateCategoryMetadata(
       type: "website",
       images: [
         {
-          url: DEFAULT_OG_IMAGE,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: `${title} - ${SITE_NAME}`,
@@ -232,7 +235,7 @@ export function generateCategoryMetadata(
       card: "summary_large_image",
       title: `${title} 도구 모음 | ${SITE_NAME}`,
       description,
-      images: [DEFAULT_OG_IMAGE],
+      images: [ogImage],
     },
     alternates: {
       canonical: canonicalUrl,

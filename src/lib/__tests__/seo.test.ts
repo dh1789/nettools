@@ -128,13 +128,13 @@ describe("generateToolJsonLd - SoftwareApplication 스키마 보강", () => {
     expect(typeof app.applicationSubCategory).toBe("string");
   });
 
-  test("screenshot 속성이 OG 이미지 URL로 설정되어야 한다", () => {
+  test("screenshot 속성이 카테고리별 OG 이미지 URL로 설정되어야 한다", () => {
     const jsonLd = JSON.parse(generateToolJsonLd(mockTool, "ko"));
     const app = jsonLd["@graph"].find(
       (item: { "@id": string }) => item["@id"]?.includes("#webapp")
     );
     expect(app.screenshot).toBeDefined();
-    expect(app.screenshot).toContain("og-image.png");
+    expect(app.screenshot).toContain("/og/developer.png");
   });
 
   test("offers에 availability가 포함되어야 한다", () => {
