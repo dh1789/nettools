@@ -1,0 +1,72 @@
+---
+title: "Complete Guide to Subnet Masks — From CIDR to VLSM"
+description: "Everything you need to know about subnet masks, CIDR notation, and VLSM. A must-read guide for network engineers."
+category: network
+keywords:
+  - subnet mask
+  - CIDR
+  - VLSM
+  - network subnetting
+  - IP address calculation
+publishedAt: "2026-04-06"
+relatedTools:
+  - subnet-calculator
+  - cidr-to-range
+author: NetTools Team
+---
+
+## What is a Subnet Mask?
+
+A subnet mask is a 32-bit value that separates the **network portion** from the **host portion** of an IP address. It forms the foundation of routing decisions in all TCP/IP communication.
+
+For example, the mask `255.255.255.0` (/24) uses the first 24 bits to identify the network and the remaining 8 bits to identify hosts.
+
+### Why Do We Need Subnetting?
+
+1. **IP Address Conservation**: Allocate only as many hosts as needed
+2. **Broadcast Domain Reduction**: Decrease network traffic
+3. **Enhanced Security**: Access control between network segments
+
+## CIDR Notation
+
+CIDR (Classless Inter-Domain Routing) replaces the legacy classful addressing system. The number after the slash (e.g., `/24`) represents the number of network bits.
+
+| CIDR | Subnet Mask | Usable Hosts |
+|------|------------|--------------|
+| /24  | 255.255.255.0 | 254 |
+| /25  | 255.255.255.128 | 126 |
+| /26  | 255.255.255.192 | 62 |
+| /27  | 255.255.255.224 | 30 |
+| /28  | 255.255.255.240 | 14 |
+
+## VLSM in Practice
+
+VLSM (Variable Length Subnet Masking) allows using different mask lengths for each subnet, enabling efficient IP address distribution.
+
+### Example: Office Network Design
+
+For a company with 100 employees, you can divide the network by department:
+
+- **Development** (50 people): `192.168.1.0/26` → 62 hosts
+- **Marketing** (20 people): `192.168.1.64/27` → 30 hosts
+- **Management** (10 people): `192.168.1.96/28` → 14 hosts
+- **Server Network**: `192.168.1.112/28` → 14 hosts
+
+## Subnet Calculation Tips
+
+To quickly calculate subnets, memorize **powers of 2**:
+
+```
+2^1 = 2    2^5 = 32
+2^2 = 4    2^6 = 64
+2^3 = 8    2^7 = 128
+2^4 = 16   2^8 = 256
+```
+
+Number of hosts = 2^(32 - prefix length) - 2
+
+> The `-2` accounts for the network address and broadcast address.
+
+## Conclusion
+
+Subnet masks are both the foundation and the most important concept in networking. We recommend practicing with the NetTools Subnet Calculator to build your skills.

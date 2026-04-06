@@ -6,7 +6,6 @@ import {
   getAllSlugs,
   getAllPosts,
   getPostBySlug,
-  type BlogFrontmatter,
 } from "../blog";
 
 // --- parseFrontmatter ---
@@ -209,8 +208,8 @@ describe("generateHeadingId", () => {
 // --- 파일 시스템 통합 테스트 ---
 
 describe("파일 시스템 기반 함수", () => {
-  const fs = require("fs");
-  const path = require("path");
+  const fs = require("fs"); // eslint-disable-line @typescript-eslint/no-require-imports
+  const path = require("path"); // eslint-disable-line @typescript-eslint/no-require-imports
 
   const CONTENT_DIR = path.resolve(
     process.cwd(),

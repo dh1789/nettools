@@ -60,12 +60,17 @@ export function parseFrontmatter(raw: string): {
     throw new Error("Frontmatter not found: 파일이 --- 로 시작해야 합니다");
   }
 
-  const parsed = yaml.load(match[1]) as Record<string, unknown>;
+  const parsed = yaml.load(match[1]) as Record<string, string | string[] | undefined>;
   for (const field of REQUIRED_FIELDS) {
     if (parsed[field] === undefined || parsed[field] === null) {
       throw new Error(`필수 frontmatter 필드 누락: ${field}`);
     }
   }
+
+  const optionalFields: Partial<Pick<BlogFrontmatter, "updatedAt" | "relatedTools" | "author">> = {};
+  if (parsed.updatedAt) optionalFields.updatedAt = String(parsed.updatedAt);
+  if (Array.isArray(parsed.relatedTools)) optionalFields.relatedTools = parsed.relatedTools.map(String);
+  if (parsed.author) optionalFields.author = String(parsed.author);
 
   const frontmatter: BlogFrontmatter = {
     title: String(parsed.title),
@@ -75,12 +80,7 @@ export function parseFrontmatter(raw: string): {
       ? parsed.keywords.map(String)
       : [],
     publishedAt: String(parsed.publishedAt),
-    ...(parsed.updatedAt && { updatedAt: String(parsed.updatedAt) }),
-    ...(parsed.relatedTools &&
-      Array.isArray(parsed.relatedTools) && {
-        relatedTools: parsed.relatedTools.map(String),
-      }),
-    ...(parsed.author && { author: String(parsed.author) }),
+    ...optionalFields,
   };
 
   return { frontmatter, content: match[2].trim() };
