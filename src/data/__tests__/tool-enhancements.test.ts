@@ -104,4 +104,27 @@ describe("도구 콘텐츠 강화 (CMP-41)", () => {
       });
     });
   });
+
+  describe("양방향 내부 링크 검증 (CMP-61)", () => {
+    TOOLS.forEach((tool) => {
+      if (!tool.relatedTools || tool.relatedTools.length === 0) return;
+      tool.relatedTools.forEach((targetSlug) => {
+        it(`${tool.slug} → ${targetSlug}: 역방향 링크 존재`, () => {
+          const target = getToolBySlug(targetSlug);
+          expect(target).toBeDefined();
+          expect(target!.relatedTools).toBeDefined();
+          expect(target!.relatedTools).toContain(tool.slug);
+        });
+      });
+    });
+  });
+
+  describe("모든 도구 relatedTools 3개 이상 (CMP-61)", () => {
+    TOOLS.forEach((tool) => {
+      it(`${tool.slug}: relatedTools ${tool.relatedTools?.length ?? 0}개 → 3개 이상`, () => {
+        expect(tool.relatedTools).toBeDefined();
+        expect(tool.relatedTools!.length).toBeGreaterThanOrEqual(3);
+      });
+    });
+  });
 });
