@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { type Tool, type Category, type FAQ, getCategoryById } from "@/data/tools";
+import { type Tool, type Category, type FAQ, type ToolCategory, getCategoryById } from "@/data/tools";
 import type { Locale } from "./i18n";
 import { t } from "./i18n";
 import type { BlogPost } from "./blog";
@@ -7,6 +7,14 @@ import type { BlogPost } from "./blog";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://beomanro.com";
 const SITE_NAME = "NetTools";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
+
+const CATEGORY_SUBCATEGORY_MAP: Record<ToolCategory, string> = {
+  network: "NetworkApplication",
+  security: "SecurityApplication",
+  linux: "SystemAdministration",
+  developer: "DeveloperApplication",
+  general: "UtilityApplication",
+};
 
 /**
  * Generate metadata for a tool page
@@ -72,20 +80,23 @@ export function generateToolJsonLd(tool: Tool, locale: Locale): string {
   const canonicalUrl = `${SITE_URL}/tools/net/${tool.slug}`;
 
   const webApp = {
-    "@type": "WebApplication",
+    "@type": ["WebApplication", "SoftwareApplication"],
     "@id": `${canonicalUrl}#webapp`,
     name: title,
     description,
     url: canonicalUrl,
     applicationCategory: "UtilityApplication",
+    applicationSubCategory: CATEGORY_SUBCATEGORY_MAP[tool.category],
     operatingSystem: "Any",
     browserRequirements: "Requires JavaScript",
+    screenshot: DEFAULT_OG_IMAGE,
     inLanguage: ["ko", "en"],
     isAccessibleForFree: true,
     offers: {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
     },
     provider: {
       "@type": "Organization",
@@ -165,6 +176,21 @@ export function generateToolJsonLd(tool: Tool, locale: Locale): string {
       };
       graph.push(howTo);
     }
+  } else if (tool.howTo && tool.howTo.steps.length > 0) {
+    const howToName = locale === "ko"
+      ? `${title} 사용법`
+      : `How to use ${title}`;
+    const howTo = {
+      "@type": "HowTo" as const,
+      "@id": `${canonicalUrl}#howto`,
+      name: howToName,
+      step: tool.howTo.steps.map((step, i) => ({
+        "@type": "HowToStep" as const,
+        position: i + 1,
+        text: t(step, locale),
+      })),
+    };
+    graph.push(howTo);
   }
 
   return JSON.stringify({

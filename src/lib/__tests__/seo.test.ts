@@ -37,6 +37,18 @@ const mockToolWithExamples: Tool = {
   ],
 };
 
+const mockToolWithHowTo: Tool = {
+  ...mockTool,
+  slug: "howto-tool",
+  howTo: {
+    steps: [
+      { ko: "IP 주소를 입력합니다.", en: "Enter an IP address." },
+      { ko: "결과를 확인합니다.", en: "Review the results." },
+      { ko: "설정에 반영합니다.", en: "Apply to your configuration." },
+    ],
+  },
+};
+
 describe("generateToolMetadata", () => {
   test("alternates에 languages(hrefLang) 속성이 포함되지 않아야 한다", () => {
     const metadata = generateToolMetadata(mockTool, "ko");
@@ -95,5 +107,83 @@ describe("generateToolJsonLd - usageExamples HowTo 스키마", () => {
     );
     expect(howToItems[0].name).toBe("Debugging API Response");
     expect(howToItems[0].step[0].text).toBe("Paste JSON data");
+  });
+});
+
+describe("generateToolJsonLd - SoftwareApplication 스키마 보강", () => {
+  test("@type이 SoftwareApplication을 포함해야 한다", () => {
+    const jsonLd = JSON.parse(generateToolJsonLd(mockTool, "ko"));
+    const app = jsonLd["@graph"].find(
+      (item: { "@id": string }) => item["@id"]?.includes("#webapp")
+    );
+    expect(app["@type"]).toContain("SoftwareApplication");
+  });
+
+  test("applicationSubCategory가 카테고리 기반으로 설정되어야 한다", () => {
+    const jsonLd = JSON.parse(generateToolJsonLd(mockTool, "ko"));
+    const app = jsonLd["@graph"].find(
+      (item: { "@id": string }) => item["@id"]?.includes("#webapp")
+    );
+    expect(app.applicationSubCategory).toBeDefined();
+    expect(typeof app.applicationSubCategory).toBe("string");
+  });
+
+  test("screenshot 속성이 OG 이미지 URL로 설정되어야 한다", () => {
+    const jsonLd = JSON.parse(generateToolJsonLd(mockTool, "ko"));
+    const app = jsonLd["@graph"].find(
+      (item: { "@id": string }) => item["@id"]?.includes("#webapp")
+    );
+    expect(app.screenshot).toBeDefined();
+    expect(app.screenshot).toContain("og-image.png");
+  });
+
+  test("offers에 availability가 포함되어야 한다", () => {
+    const jsonLd = JSON.parse(generateToolJsonLd(mockTool, "ko"));
+    const app = jsonLd["@graph"].find(
+      (item: { "@id": string }) => item["@id"]?.includes("#webapp")
+    );
+    expect(app.offers.availability).toBe("https://schema.org/InStock");
+    expect(app.offers.price).toBe("0");
+    expect(app.offers.priceCurrency).toBe("USD");
+  });
+});
+
+describe("generateToolJsonLd - howTo 필드에서 HowTo 스키마 생성", () => {
+  test("howTo 데이터가 있으면 HowTo 스키마가 @graph에 포함되어야 한다", () => {
+    const jsonLd = JSON.parse(generateToolJsonLd(mockToolWithHowTo, "ko"));
+    const howToItems = jsonLd["@graph"].filter(
+      (item: { "@type": string }) => item["@type"] === "HowTo"
+    );
+    expect(howToItems.length).toBe(1);
+  });
+
+  test("howTo HowTo 스키마에 도구 이름 기반 name과 step이 포함되어야 한다", () => {
+    const jsonLd = JSON.parse(generateToolJsonLd(mockToolWithHowTo, "ko"));
+    const howTo = jsonLd["@graph"].find(
+      (item: { "@type": string }) => item["@type"] === "HowTo"
+    );
+    expect(howTo.name).toContain("테스트 도구");
+    expect(howTo.step).toBeDefined();
+    expect(howTo.step.length).toBe(3);
+    expect(howTo.step[0]["@type"]).toBe("HowToStep");
+    expect(howTo.step[0].position).toBe(1);
+    expect(howTo.step[0].text).toBe("IP 주소를 입력합니다.");
+  });
+
+  test("영어 locale 시 howTo에서 영어 텍스트로 HowTo 생성", () => {
+    const jsonLd = JSON.parse(generateToolJsonLd(mockToolWithHowTo, "en"));
+    const howTo = jsonLd["@graph"].find(
+      (item: { "@type": string }) => item["@type"] === "HowTo"
+    );
+    expect(howTo.name).toContain("Test Tool");
+    expect(howTo.step[0].text).toBe("Enter an IP address.");
+  });
+
+  test("howTo와 usageExamples 모두 없으면 HowTo 스키마가 없어야 한다", () => {
+    const jsonLd = JSON.parse(generateToolJsonLd(mockTool, "ko"));
+    const howToItems = jsonLd["@graph"].filter(
+      (item: { "@type": string }) => item["@type"] === "HowTo"
+    );
+    expect(howToItems.length).toBe(0);
   });
 });
