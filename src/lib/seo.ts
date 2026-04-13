@@ -420,7 +420,7 @@ export function generateBlogSitemapEntries(
   posts: BlogPost[],
 ): { url: string; lastmod?: string; priority: number }[] {
   return posts.map((post) => ({
-    url: `${SITE_URL}/blog/${post.slug}`,
+    url: `${SITE_URL}/blog/${post.slug}/`,
     lastmod: post.frontmatter.updatedAt || post.frontmatter.publishedAt,
     priority: 0.7,
   }));
@@ -433,9 +433,10 @@ export function generateSitemapEntries(
   tools: Tool[],
 ): { url: string; lastmod?: string; priority: number }[] {
   const entries = [
-    { url: SITE_URL, priority: 1.0 },
+    { url: `${SITE_URL}/`, priority: 1.0 },
+    { url: `${SITE_URL}/tools/net/`, priority: 0.9 },
     ...tools.map((tool) => ({
-      url: `${SITE_URL}/tools/net/${tool.slug}`,
+      url: `${SITE_URL}/tools/net/${tool.slug}/`,
       lastmod: tool.dateModified || tool.datePublished,
       priority: 0.8,
     })),

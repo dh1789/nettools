@@ -12,19 +12,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticPages: MetadataRoute.Sitemap = [
     {
-      url: `${SITE_URL}/about`,
+      url: `${SITE_URL}/about/`,
       lastModified: new Date("2025-01-01"),
       changeFrequency: "yearly",
       priority: 0.5,
     },
     {
-      url: `${SITE_URL}/privacy`,
+      url: `${SITE_URL}/privacy/`,
       lastModified: new Date("2025-01-01"),
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${SITE_URL}/terms`,
+      url: `${SITE_URL}/terms/`,
       lastModified: new Date("2025-01-01"),
       changeFrequency: "yearly",
       priority: 0.3,
@@ -32,7 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((cat) => ({
-    url: `${SITE_URL}/category/${cat.id}`,
+    url: `${SITE_URL}/category/${cat.id}/`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
@@ -43,7 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const blogListPage: MetadataRoute.Sitemap = blogPosts.length > 0
     ? [{
-        url: `${SITE_URL}/blog`,
+        url: `${SITE_URL}/blog/`,
         lastModified: new Date(),
         changeFrequency: "weekly" as const,
         priority: 0.7,
