@@ -31,9 +31,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-# build-generated OUI data
-/public/oui-db.json
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts

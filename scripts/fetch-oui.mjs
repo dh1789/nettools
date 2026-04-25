@@ -9,12 +9,14 @@
  * 빌드: npm run build (prebuild에서 자동 실행)
  */
 
-import { writeFileSync, mkdirSync } from "fs";
+import { writeFileSync, mkdirSync, existsSync, statSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_PATH = join(__dirname, "..", "public", "oui-db.json");
+const FETCH_TIMEOUT_MS = 60000;
+const MAX_ATTEMPTS = 3;
 
 const SOURCES = [
   {
@@ -52,6 +54,25 @@ function parseCSV(text) {
   return result;
 }
 
+async function fetchWithRetry(url) {
+  let lastErr;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.text();
+    } catch (err) {
+      lastErr = err;
+      if (attempt < MAX_ATTEMPTS) {
+        const delay = 2000 * attempt;
+        process.stdout.write(`(retry ${attempt}/${MAX_ATTEMPTS - 1} in ${delay}ms) `);
+        await new Promise((r) => setTimeout(r, delay));
+      }
+    }
+  }
+  throw lastErr;
+}
+
 async function main() {
   console.log("IEEE OUI 데이터 다운로드 중...");
 
@@ -62,12 +83,7 @@ async function main() {
 
   for (const src of SOURCES) {
     process.stdout.write(`  ${src.key.toUpperCase()}: ${src.url} ... `);
-    const res = await fetch(src.url);
-    if (!res.ok) {
-      console.error(`FAILED (${res.status})`);
-      process.exit(1);
-    }
-    const text = await res.text();
+    const text = await fetchWithRetry(src.url);
     const entries = parseCSV(text);
     const count = Object.keys(entries).length;
     db[src.key] = entries;
@@ -82,6 +98,14 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error("OUI 다운로드 실패:", err.message);
+  console.error(`\nOUI 다운로드 실패: ${err.message}`);
+  if (existsSync(OUT_PATH)) {
+    const stats = statSync(OUT_PATH);
+    const ageDays = ((Date.now() - stats.mtimeMs) / 86400000).toFixed(1);
+    const sizeKB = (stats.size / 1024).toFixed(0);
+    console.log(`기존 ${OUT_PATH} 사용 (${sizeKB} KB, ${ageDays}일 전 갱신)`);
+    process.exit(0);
+  }
+  console.error(`기존 파일도 없어 빌드 중단`);
   process.exit(1);
 });
