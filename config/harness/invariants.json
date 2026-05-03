@@ -1,0 +1,113 @@
+{
+  "$schema": "./invariants.schema.json",
+  "description": "nettools 하네스 verify 불변 조건. 각 항목의 type 에 따라 실행기가 결정됨. 실패 시 pre-commit 차단.",
+  "invariants": [
+    {
+      "id": "package_json_present",
+      "category": "infra",
+      "type": "file_exists",
+      "path": "package.json",
+      "description": "package.json 존재",
+      "message_on_fail": "package.json 누락 — 프로젝트 루트가 잘못됐거나 손상"
+    },
+    {
+      "id": "next_config_static_export",
+      "category": "convention",
+      "type": "file_contains",
+      "path": "next.config.js",
+      "pattern": "output:\\s*[\"']export[\"']",
+      "description": "next.config.js 의 output: \"export\" 유지 (Cloudflare Pages 정적 호스팅 전제)",
+      "message_on_fail": "next.config.js 의 output: \"export\" 가 사라짐 — Cloudflare Pages 빌드 깨짐"
+    },
+    {
+      "id": "next_config_trailing_slash",
+      "category": "convention",
+      "type": "file_contains",
+      "path": "next.config.js",
+      "pattern": "trailingSlash:\\s*true",
+      "description": "next.config.js 의 trailingSlash: true 유지 (사이트맵 색인 정책)",
+      "message_on_fail": "trailingSlash: true 누락 — 색인 리디렉션 회귀 위험 (커밋 05f3279 참조)"
+    },
+    {
+      "id": "wrangler_config_present",
+      "category": "infra",
+      "type": "file_exists",
+      "path": "wrangler.jsonc",
+      "description": "Cloudflare Pages/Worker 설정",
+      "message_on_fail": "wrangler.jsonc 누락 — Cloudflare 배포 불가"
+    },
+    {
+      "id": "wrangler_assets_directory",
+      "category": "convention",
+      "type": "file_contains",
+      "path": "wrangler.jsonc",
+      "pattern": "\"directory\":\\s*\"out\"",
+      "description": "wrangler.jsonc assets.directory 가 out 으로 고정",
+      "message_on_fail": "Cloudflare assets.directory 가 out 이 아님 — Next.js 정적 export 와 어긋남"
+    },
+    {
+      "id": "tools_data_present",
+      "category": "data",
+      "type": "file_exists",
+      "path": "src/data/tools.ts",
+      "description": "도구 메타데이터 레지스트리",
+      "message_on_fail": "src/data/tools.ts 누락 — 모든 동적 라우트 깨짐"
+    },
+    {
+      "id": "tool_component_index_present",
+      "category": "data",
+      "type": "file_exists",
+      "path": "src/components/tools/index.ts",
+      "description": "도구 컴포넌트 동적 import 레지스트리",
+      "message_on_fail": "src/components/tools/index.ts 누락 — 도구 페이지 렌더링 불가"
+    },
+    {
+      "id": "tool_registry_consistency",
+      "category": "data",
+      "type": "custom",
+      "module": "checks/tool-registry-consistency.mjs",
+      "description": "TOOLS[].component ↔ TOOL_COMPONENTS 키 ↔ src/components/tools/<Name>.tsx 3중 정합성",
+      "message_on_fail": "도구 레지스트리 3중 정합성 깨짐 — slug/component 명/파일 중 하나 누락"
+    },
+    {
+      "id": "tool_slug_uniqueness",
+      "category": "data",
+      "type": "custom",
+      "module": "checks/tool-slug-uniqueness.mjs",
+      "description": "TOOLS[].slug 중복 없음",
+      "message_on_fail": "TOOLS[].slug 중복 — 동적 라우트 충돌"
+    },
+    {
+      "id": "no_build_artifacts_in_git",
+      "category": "convention",
+      "type": "custom",
+      "module": "checks/no-tracked-artifacts.mjs",
+      "description": "out/ 또는 .next/ 가 git 추적되지 않음",
+      "message_on_fail": "빌드 산출물(out/ 또는 .next/) 이 git 추적 중 — .gitignore 갱신 필요"
+    },
+    {
+      "id": "tool_layout_present",
+      "category": "infra",
+      "type": "file_exists",
+      "path": "src/components/layout/ToolLayout.tsx",
+      "description": "도구 페이지 공통 래퍼",
+      "message_on_fail": "ToolLayout.tsx 누락 — 광고 슬롯/레이아웃 일관성 깨짐"
+    },
+    {
+      "id": "sitemap_route_present",
+      "category": "seo",
+      "type": "file_exists",
+      "path": "src/app/sitemap.ts",
+      "description": "동적 sitemap.xml 생성기",
+      "message_on_fail": "sitemap.ts 누락 — SEO 색인 회귀"
+    },
+    {
+      "id": "robots_route_present",
+      "category": "seo",
+      "type": "file_exists",
+      "path": "src/app/robots.ts",
+      "description": "robots.txt 생성기",
+      "message_on_fail": "robots.ts 누락 — 크롤러 정책 부재"
+    }
+  ]
+}
