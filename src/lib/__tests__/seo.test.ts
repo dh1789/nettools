@@ -55,7 +55,7 @@ describe("generateToolMetadata", () => {
 
     expect(metadata.alternates).toBeDefined();
     expect(metadata.alternates?.canonical).toBe(
-      "https://beomanro.com/tools/net/test-tool"
+      "https://beomanro.com/tools/net/test-tool/"
     );
     // 존재하지 않는 /ko/, /en/ 경로로의 hrefLang 링크가 없어야 함
     expect(metadata.alternates).not.toHaveProperty("languages");
@@ -64,7 +64,7 @@ describe("generateToolMetadata", () => {
   test("canonical URL이 올바르게 생성되어야 한다", () => {
     const metadata = generateToolMetadata(mockTool, "ko");
     expect(metadata.alternates?.canonical).toBe(
-      "https://beomanro.com/tools/net/test-tool"
+      "https://beomanro.com/tools/net/test-tool/"
     );
   });
 });

@@ -23,7 +23,7 @@ const CATEGORY_SUBCATEGORY_MAP: Record<ToolCategory, string> = {
 export function generateToolMetadata(tool: Tool, locale: Locale): Metadata {
   const title = t(tool.title, locale);
   const description = t(tool.description, locale);
-  const canonicalUrl = `${SITE_URL}/tools/net/${tool.slug}`;
+  const canonicalUrl = `${SITE_URL}/tools/net/${tool.slug}/`;
   const ogImage = `${SITE_URL}${getCategoryOgImagePath(tool.category)}`;
 
   return {
@@ -79,7 +79,7 @@ export function generateToolJsonLd(tool: Tool, locale: Locale): string {
   const description = t(tool.description, locale);
   const category = getCategoryById(tool.category);
   const categoryName = category ? t(category.title, locale) : "";
-  const canonicalUrl = `${SITE_URL}/tools/net/${tool.slug}`;
+  const canonicalUrl = `${SITE_URL}/tools/net/${tool.slug}/`;
 
   const webApp = {
     "@type": ["WebApplication", "SoftwareApplication"],
@@ -117,7 +117,7 @@ export function generateToolJsonLd(tool: Tool, locale: Locale): string {
         "@type": "ListItem",
         position: 1,
         name: SITE_NAME,
-        item: SITE_URL,
+        item: `${SITE_URL}/`,
       },
       ...(categoryName
         ? [
@@ -125,7 +125,7 @@ export function generateToolJsonLd(tool: Tool, locale: Locale): string {
               "@type": "ListItem",
               position: 2,
               name: categoryName,
-              item: `${SITE_URL}/category/${tool.category}`,
+              item: `${SITE_URL}/category/${tool.category}/`,
             },
             {
               "@type": "ListItem",
@@ -210,7 +210,7 @@ export function generateCategoryMetadata(
 ): Metadata {
   const title = t(category.title, locale);
   const description = t(category.description, locale);
-  const canonicalUrl = `${SITE_URL}/category/${category.id}`;
+  const canonicalUrl = `${SITE_URL}/category/${category.id}/`;
   const ogImage = `${SITE_URL}${getCategoryOgImagePath(category.id)}`;
 
   return {
@@ -261,7 +261,7 @@ export function generateCategoryJsonLd(
         "@type": "CollectionPage",
         name: `${title} 도구 모음`,
         description,
-        url: `${SITE_URL}/category/${category.id}`,
+        url: `${SITE_URL}/category/${category.id}/`,
         numberOfItems: toolCount,
         provider: {
           "@type": "Organization",
@@ -276,13 +276,13 @@ export function generateCategoryJsonLd(
             "@type": "ListItem",
             position: 1,
             name: SITE_NAME,
-            item: SITE_URL,
+            item: `${SITE_URL}/`,
           },
           {
             "@type": "ListItem",
             position: 2,
             name: title,
-            item: `${SITE_URL}/category/${category.id}`,
+            item: `${SITE_URL}/category/${category.id}/`,
           },
         ],
       },
@@ -298,7 +298,7 @@ export function generateBlogMetadata(
   locale: Locale,
 ): Metadata {
   const { title, description, keywords, publishedAt } = post.frontmatter;
-  const canonicalUrl = `${SITE_URL}/blog/${post.slug}`;
+  const canonicalUrl = `${SITE_URL}/blog/${post.slug}/`;
 
   return {
     title: `${title} | ${SITE_NAME}`,
@@ -354,7 +354,7 @@ export function generateBlogMetadata(
 export function generateBlogJsonLd(post: BlogPost, locale: Locale): string {
   const { title, description, publishedAt, updatedAt, keywords } =
     post.frontmatter;
-  const canonicalUrl = `${SITE_URL}/blog/${post.slug}`;
+  const canonicalUrl = `${SITE_URL}/blog/${post.slug}/`;
 
   const blogPosting = {
     "@type": "BlogPosting",
@@ -390,13 +390,13 @@ export function generateBlogJsonLd(post: BlogPost, locale: Locale): string {
         "@type": "ListItem",
         position: 1,
         name: SITE_NAME,
-        item: SITE_URL,
+        item: `${SITE_URL}/`,
       },
       {
         "@type": "ListItem",
         position: 2,
         name: locale === "ko" ? "블로그" : "Blog",
-        item: `${SITE_URL}/blog`,
+        item: `${SITE_URL}/blog/`,
       },
       {
         "@type": "ListItem",
