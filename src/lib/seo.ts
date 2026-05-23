@@ -434,7 +434,6 @@ export function generateSitemapEntries(
 ): { url: string; lastmod?: string; priority: number }[] {
   const entries = [
     { url: `${SITE_URL}/`, priority: 1.0 },
-    { url: `${SITE_URL}/tools/net/`, priority: 0.9 },
     ...tools.map((tool) => ({
       url: `${SITE_URL}/tools/net/${tool.slug}/`,
       lastmod: tool.dateModified || tool.datePublished,

@@ -1,6 +1,8 @@
 import { HomeContent } from "@/components/layout/HomeContent";
 import type { Metadata } from "next";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://beomanro.com";
+
 export const metadata: Metadata = {
   title: "NetTools — 무료 네트워크 & 보안 온라인 도구 모음",
   description:
@@ -12,9 +14,14 @@ export const metadata: Metadata = {
     description:
       "서브넷 계산기, DNS 조회, SSL 인증서 확인 등 45개 이상의 무료 네트워크 & 보안 도구. 19년 경력의 보안 개발자가 만든 실용적인 도구 모음.",
     type: "website",
+    url: `${SITE_URL}/`,
   },
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || "https://beomanro.com"}/tools/net`,
+    canonical: `${SITE_URL}/`,
+  },
+  robots: {
+    index: false,
+    follow: true,
   },
 };
 
