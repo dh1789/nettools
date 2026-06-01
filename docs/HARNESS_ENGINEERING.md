@@ -443,6 +443,22 @@ git log -- next.config.js  # 회귀 도입 커밋 식별
 
 ---
 
+### TR-7. SSG 본문 언어 ≠ 메타데이터 언어 → 색인 보류
+
+**증상**: GSC "크롤링됨 - 현재 색인이 생성되지 않음" 다수. 도구 페이지가 200 + `index,follow` + canonical 정상인데 색인 안 됨. 라이브 HTML 의 `<h1>`/`<h2>` 가 영어(`Subnet Calculator`, `About This Tool`)인데 `<title>`/`description`/`og:locale`/`<html lang>` 은 한국어.
+
+**원인**: `LocaleProvider` 의 `useState<Locale>(DEFAULT_LOCALE)` 초기값이 `DEFAULT_LOCALE`. `output: "export"` SSG 빌드는 `useEffect`(클라이언트 전용 `detectBrowserLocale()`) 가 돌기 전 상태로 정적 HTML 을 굽는다. 따라서 **SSG 본문 언어 = `DEFAULT_LOCALE`**. 이게 `"en"` 이면 본문만 영어로 박제되고, `generateMetadata`/`layout` 의 `"ko"` 하드코딩 메타와 불일치 → Googlebot 이 언어 신호 충돌로 색인 보류.
+
+**회복**: `src/lib/i18n.ts` 의 `DEFAULT_LOCALE` 를 사이트 1차 타겟 언어(`"ko"`)로 설정. 반대 언어 사용자는 `detectBrowserLocale()` 에 분기를 둬 클라이언트 mount 후 swap (`navigator.language` 가 `"en"` 으로 시작 → `"en"`).
+
+**검증**: 빌드 후 `grep '<h1' out/tools/net/<slug>/index.html` 로 본문 언어가 메타와 같은지 확인. `<title>` 언어 == `<h1>` 언어 == `<html lang>` 이어야 한다.
+
+**자동 차단 후보 (lint)**: `out/**/index.html` 에서 `<html lang="ko">` 인데 `<h1>` 이 ASCII-only 인 경우 경고 — 미구현.
+
+**최초 발견**: 2026-06 색인 정체 진단 중. 커밋 `aa44cae`.
+
+---
+
 ### 함정 추가 가이드
 
 새 함정 발견 시 다음 형식으로 추가:
