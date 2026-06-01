@@ -16,7 +16,10 @@ export const LOCALES: { code: Locale; label: string }[] = [
   { code: "en", label: "English" },
 ];
 
-export const DEFAULT_LOCALE: Locale = "en";
+// 한국어 1차 타겟. SSG(서버) 렌더 시 LocaleProvider 초기값으로 쓰여 정적 HTML이
+// 한국어로 생성된다 → 메타데이터(title/desc/og 전부 ko)와 본문 언어 일치 → 색인 정상화.
+// 영어 사용자는 클라이언트 mount 후 detectBrowserLocale() 로 "en" swap.
+export const DEFAULT_LOCALE: Locale = "ko";
 export const STORAGE_KEY = "nettools-locale";
 
 export function detectBrowserLocale(): Locale {
@@ -28,6 +31,7 @@ export function detectBrowserLocale(): Locale {
     if (stored === "ko" || stored === "en") return stored;
     const lang = navigator.language || "";
     if (lang.startsWith("ko")) return "ko";
+    if (lang.startsWith("en")) return "en";
   } catch {
     // SSR or restricted context
   }
