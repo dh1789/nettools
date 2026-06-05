@@ -40,6 +40,7 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   TextCounter: dynamic(() => import("./TextCounter").then(m => ({ default: m.TextCounter })), { loading }),
   QrCodeGenerator: dynamic(() => import("./QrCodeGenerator").then(m => ({ default: m.QrCodeGenerator })), { loading }),
   JwtDecoder: dynamic(() => import("./JwtDecoder").then(m => ({ default: m.JwtDecoder })), { loading }),
+  JwtGenerator: dynamic(() => import("./JwtGenerator").then(m => ({ default: m.JwtGenerator })), { loading }),
   UuidGenerator: dynamic(() => import("./UuidGenerator").then(m => ({ default: m.UuidGenerator })), { loading }),
   YamlJsonConverter: dynamic(() => import("./YamlJsonConverter").then(m => ({ default: m.YamlJsonConverter })), { loading }),
   SqlFormatter: dynamic(() => import("./SqlFormatter").then(m => ({ default: m.SqlFormatter })), { loading }),

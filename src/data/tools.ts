@@ -1516,6 +1516,71 @@ export const TOOLS: Tool[] = [
     ],
   },
   {
+    slug: "jwt-generator",
+    title: {
+      ko: "JWT 생성기",
+      en: "JWT Generator",
+    },
+    description: {
+      ko: "Header와 Payload, Secret으로 HMAC(HS256/HS384/HS512) 서명된 JWT 토큰을 생성합니다.",
+      en: "Generate an HMAC-signed (HS256/HS384/HS512) JWT token from Header, Payload, and Secret.",
+    },
+    longDescription: {
+      ko: "JWT(JSON Web Token) 생성기는 Header와 Payload(JSON), 그리고 Secret을 입력받아 HMAC 알고리즘(HS256/HS384/HS512)으로 서명된 완성된 JWT 토큰을 즉시 생성합니다. 모든 서명은 브라우저의 Web Crypto API로 수행되어 Secret이 서버로 전송되지 않습니다. API 테스트용 토큰 발급, 인증 디버깅, JWT 서명 메커니즘 학습에 유용합니다. jwt-decoder의 짝 도구로, 생성한 토큰을 디코더로 다시 확인할 수 있습니다.",
+      en: "The JWT Generator instantly creates a signed JWT token from Header, Payload (JSON), and Secret using HMAC algorithms (HS256/HS384/HS512). All signing is performed with the browser's Web Crypto API, so your secret is never sent to any server. Useful for issuing test tokens for APIs, authentication debugging, and learning how JWT signing works. As the counterpart to the JWT Decoder, you can verify generated tokens by decoding them again.",
+    },
+    category: "security",
+    keywords: [
+      "jwt generator",
+      "jwt signer",
+      "sign jwt",
+      "json web token",
+      "create jwt",
+      "hmac jwt",
+      "hs256",
+      "hs384",
+      "hs512",
+      "jwt 생성기",
+      "JWT 서명",
+      "토큰 생성",
+      "인증 토큰 발급",
+    ],
+    component: "JwtGenerator",
+    datePublished: "2026-06-05",
+    faqs: [
+      {
+        question: {
+          ko: "이 도구는 어떤 서명 알고리즘을 지원하나요?",
+          en: "Which signing algorithms does this tool support?",
+        },
+        answer: {
+          ko: "HMAC 기반 대칭키 알고리즘인 HS256, HS384, HS512를 지원합니다. Secret(문자열) 하나로 서명하며, RSA/ECDSA 같은 비대칭키 알고리즘(RS256, ES256 등)은 현재 지원하지 않습니다.",
+          en: "It supports the HMAC-based symmetric algorithms HS256, HS384, and HS512, which sign with a single secret string. Asymmetric algorithms like RSA/ECDSA (RS256, ES256, etc.) are not currently supported.",
+        },
+      },
+      {
+        question: {
+          ko: "Secret이 서버로 전송되나요?",
+          en: "Is my secret sent to a server?",
+        },
+        answer: {
+          ko: "아니요. 모든 서명은 브라우저의 Web Crypto API로 로컬에서 수행됩니다. Secret과 Payload는 어떤 서버로도 전송되지 않습니다. 다만 운영 환경의 실제 Secret을 공용 PC에서 입력하는 것은 피하세요.",
+          en: "No. All signing is performed locally in your browser via the Web Crypto API. Your secret and payload are never sent to any server. That said, avoid entering production secrets on shared computers.",
+        },
+      },
+      {
+        question: {
+          ko: "생성한 토큰을 어떻게 검증하나요?",
+          en: "How do I verify the generated token?",
+        },
+        answer: {
+          ko: "JWT 디코더 도구로 Header와 Payload를 확인할 수 있습니다. 서버 측에서는 동일한 Secret으로 서명을 재계산하여 일치 여부를 검증합니다. 알고리즘(alg)은 헤더 입력과 무관하게 선택한 값으로 강제 적용됩니다.",
+          en: "Use the JWT Decoder tool to inspect the Header and Payload. On the server side, verify by recomputing the signature with the same secret and comparing. The algorithm (alg) is enforced from your selection regardless of the header input.",
+        },
+      },
+    ],
+  },
+  {
     slug: "uuid-generator",
     title: {
       ko: "UUID / ULID 생성기",
