@@ -267,7 +267,7 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["bcrypt-generator", "password-generator", "base64", "csp-generator", "totp-generator", "uuid-generator"],
+    relatedTools: ["jwt-generator", "bcrypt-generator", "password-generator", "base64", "csp-generator", "totp-generator", "uuid-generator"],
     extraFaqs: [
       {
         question: {
@@ -574,7 +574,7 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["hash-generator", "password-generator", "totp-generator"],
+    relatedTools: ["jwt-generator", "hash-generator", "password-generator", "totp-generator"],
     extraFaqs: [
       {
         question: {
@@ -604,6 +604,123 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "네. bcrypt는 입력을 최대 72바이트로 자릅니다. UTF-8에서 한글은 문자당 3바이트이므로 한글 24자 또는 영문 72자가 한계입니다. 이 제한을 우회하려면 비밀번호를 먼저 SHA-256으로 해시한 뒤 bcrypt를 적용하는 방법(pre-hashing)이 있지만, 대부분의 실제 비밀번호는 72바이트 이내입니다.",
           en: "Yes. bcrypt truncates input at 72 bytes. In UTF-8, Korean characters are 3 bytes each, so the limit is 24 Korean characters or 72 ASCII characters. To work around this, you can pre-hash the password with SHA-256 before applying bcrypt, but most real-world passwords fall within the 72-byte limit.",
+        },
+      },
+    ],
+  },
+  "jwt-generator": {
+    howTo: {
+      steps: [
+        {
+          ko: "알고리즘(HS256/HS384/HS512)을 선택합니다. 선택값이 헤더의 alg에 자동 반영됩니다.",
+          en: "Select the algorithm (HS256/HS384/HS512). Your choice is automatically applied to the header's alg field.",
+        },
+        {
+          ko: "Header와 Payload를 JSON 형식으로 입력합니다. Payload에는 sub, name, iat 등 원하는 클레임을 넣습니다.",
+          en: "Enter the Header and Payload as JSON. Put any claims you want in the Payload, such as sub, name, and iat.",
+        },
+        {
+          ko: "서명에 사용할 Secret(문자열)을 입력합니다. 검증 시 서버가 동일한 Secret을 사용해야 합니다.",
+          en: "Enter the Secret string used for signing. The server must use the same secret to verify.",
+        },
+        {
+          ko: "'생성' 버튼을 클릭하면 서명된 JWT가 만들어집니다. '복사'로 토큰을 클립보드에 복사해 사용합니다.",
+          en: "Click 'Generate' to produce the signed JWT. Use 'Copy' to copy the token to your clipboard.",
+        },
+      ],
+    },
+    relatedConcepts: [
+      {
+        title: {
+          ko: "HMAC (Hash-based Message Authentication Code)",
+          en: "HMAC (Hash-based Message Authentication Code)",
+        },
+        description: {
+          ko: "비밀 키와 해시 함수(SHA-256 등)를 결합해 메시지의 무결성과 인증을 보장하는 방식입니다. JWT의 HS256/384/512는 HMAC 기반으로, 같은 Secret을 아는 측만 서명을 재현·검증할 수 있습니다. 대칭키이므로 Secret 노출에 주의해야 합니다.",
+          en: "A method that combines a secret key with a hash function (e.g. SHA-256) to guarantee message integrity and authenticity. JWT's HS256/384/512 are HMAC-based: only parties knowing the same secret can reproduce and verify the signature. Being symmetric, the secret must be kept safe.",
+        },
+      },
+      {
+        title: {
+          ko: "Base64URL 인코딩",
+          en: "Base64URL Encoding",
+        },
+        description: {
+          ko: "JWT의 Header와 Payload는 Base64URL로 인코딩됩니다. 일반 Base64와 달리 +/는 -_로 바뀌고 패딩(=)이 제거되어 URL과 HTTP 헤더에서 안전하게 사용됩니다. 인코딩일 뿐 암호화가 아니므로 누구나 디코딩해 내용을 볼 수 있습니다.",
+          en: "JWT's Header and Payload are Base64URL-encoded. Unlike standard Base64, +/ become -_ and padding (=) is removed so it's safe in URLs and HTTP headers. It is only encoding, not encryption — anyone can decode and read the contents.",
+        },
+      },
+      {
+        title: {
+          ko: "서명(Signature) vs 암호화(Encryption)",
+          en: "Signature vs Encryption",
+        },
+        description: {
+          ko: "JWT 서명은 토큰의 위변조를 막을 뿐 Payload를 숨기지 않습니다. 민감 정보를 Payload에 평문으로 넣으면 안 됩니다. 내용 자체를 숨기려면 JWE(JSON Web Encryption)를 사용해야 합니다.",
+          en: "A JWT signature prevents tampering but does not hide the Payload. Never put sensitive data in the Payload as plaintext. To conceal the content itself, use JWE (JSON Web Encryption).",
+        },
+      },
+    ],
+    relatedTools: ["jwt-decoder", "hash-generator", "bcrypt-generator"],
+    extraFaqs: [
+      {
+        question: {
+          ko: "생성한 JWT를 운영 환경에서 그대로 써도 되나요?",
+          en: "Can I use the generated JWT directly in production?",
+        },
+        answer: {
+          ko: "테스트·디버깅 용도로 권장합니다. 운영 환경의 실제 Secret을 브라우저 도구에 입력하는 것은 피하고, 토큰 발급은 서버의 인증 라이브러리로 수행하세요. 공용 PC에서는 특히 주의해야 합니다.",
+          en: "It's recommended for testing and debugging. Avoid entering real production secrets into a browser tool; issue tokens with your server's auth library instead. Be especially careful on shared computers.",
+        },
+      },
+      {
+        question: {
+          ko: "exp(만료) 클레임은 어떻게 넣나요?",
+          en: "How do I add the exp (expiration) claim?",
+        },
+        answer: {
+          ko: "Payload에 exp를 Unix 타임스탬프(초)로 직접 추가하면 됩니다. 예를 들어 1시간 뒤 만료는 현재 시각(초) + 3600입니다. iat(발급 시각)는 'iat 현재시각 삽입' 버튼으로 즉시 넣을 수 있습니다.",
+          en: "Add exp to the Payload as a Unix timestamp (in seconds). For example, expiring in 1 hour is the current time (seconds) + 3600. The iat (issued-at) claim can be inserted instantly with the 'Insert current iat' button.",
+        },
+      },
+      {
+        question: {
+          ko: "RS256(RSA) 토큰도 만들 수 있나요?",
+          en: "Can I create RS256 (RSA) tokens too?",
+        },
+        answer: {
+          ko: "현재는 HMAC 대칭키(HS256/384/512)만 지원합니다. RS256/ES256 같은 비대칭키 서명은 개인키 관리가 필요해 범위에 포함하지 않았습니다. 비대칭키가 필요하면 서버 측 라이브러리(예: jose, jsonwebtoken)를 사용하세요.",
+          en: "Currently only HMAC symmetric keys (HS256/384/512) are supported. Asymmetric signing like RS256/ES256 requires private key management and is out of scope. For asymmetric keys, use a server-side library such as jose or jsonwebtoken.",
+        },
+      },
+    ],
+    usageExamples: [
+      {
+        title: {
+          ko: "API 테스트용 Bearer 토큰 발급",
+          en: "Issuing a Bearer token for API testing",
+        },
+        scenario: {
+          ko: "보호된 API 엔드포인트를 Postman으로 테스트하기 위해 임시 JWT가 필요한 상황",
+          en: "You need a temporary JWT to test a protected API endpoint with Postman.",
+        },
+        steps: [
+          {
+            ko: "Payload에 {\"sub\":\"123\",\"role\":\"admin\"}를 입력하고 HS256을 선택합니다.",
+            en: "Enter {\"sub\":\"123\",\"role\":\"admin\"} in the Payload and select HS256.",
+          },
+          {
+            ko: "서버와 동일한 Secret을 입력하고 '생성'을 클릭합니다.",
+            en: "Enter the same Secret as the server and click 'Generate'.",
+          },
+          {
+            ko: "'복사'로 토큰을 복사해 Authorization: Bearer <token> 헤더에 붙여넣습니다.",
+            en: "Copy the token with 'Copy' and paste it into the Authorization: Bearer <token> header.",
+          },
+        ],
+        result: {
+          ko: "Postman 요청이 인증을 통과하고 보호된 리소스 응답을 받습니다.",
+          en: "The Postman request passes authentication and returns the protected resource.",
         },
       },
     ],

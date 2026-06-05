@@ -708,7 +708,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["base64", "totp-generator", "unix-timestamp"],
+    relatedTools: ["jwt-generator", "base64", "totp-generator", "unix-timestamp"],
     extraFaqs: [
       {
         question: {
