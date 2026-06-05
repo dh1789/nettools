@@ -42,6 +42,12 @@ export function ClientHeader() {
           >
             {t(T.navTools)}
           </Link>
+          <Link
+            href="/blog/"
+            style={{ textDecoration: "none", color: "var(--text-secondary)" }}
+          >
+            {t(T.blogTitle)}
+          </Link>
           <a
             href="/about"
             style={{ textDecoration: "none", color: "var(--text-secondary)" }}

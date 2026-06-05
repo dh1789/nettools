@@ -2,6 +2,7 @@
 
 import { useLocale } from "@/lib/LocaleProvider";
 import { T } from "@/lib/i18n";
+import Link from "next/link";
 
 export function ClientFooter() {
   const { t } = useLocale();
@@ -20,6 +21,9 @@ export function ClientFooter() {
       <p>{t(T.footerBuiltBy)}</p>
       <p style={{ marginTop: "0.25rem" }}>{t(T.footerPrivacy)}</p>
       <p style={{ marginTop: "0.75rem", fontSize: "0.75rem" }}>
+        <Link href="/blog/" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
+          {t(T.blogTitle)}
+        </Link>
         <a href="/about" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
           {t(T.navAbout)}
         </a>
