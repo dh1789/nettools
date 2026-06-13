@@ -212,6 +212,128 @@ function buildTemplate(cat) {
   };
 }
 
+/** 루트 og-image.png (홈/블로그 기본 OG) — 한글 폰트 포함 렌더 */
+function buildMainTemplate() {
+  return {
+    type: "div",
+    props: {
+      style: {
+        width: `${WIDTH}px`,
+        height: `${HEIGHT}px`,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        padding: "0 90px",
+        backgroundColor: "#0f172a",
+        backgroundImage: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+        fontFamily: "NotoSansKR",
+        position: "relative",
+        overflow: "hidden",
+      },
+      children: [
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              top: "-120px",
+              right: "-120px",
+              width: "450px",
+              height: "450px",
+              borderRadius: "50%",
+              background: "#3b82f6",
+              opacity: 0.1,
+            },
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              display: "flex",
+              alignItems: "center",
+              gap: "24px",
+              marginBottom: "28px",
+            },
+            children: [
+              {
+                type: "div",
+                props: {
+                  style: {
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "88px",
+                    height: "88px",
+                    borderRadius: "20px",
+                    background: "#3b82f6",
+                    color: "#ffffff",
+                    fontSize: "30px",
+                    fontWeight: 700,
+                  },
+                  children: "NET",
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    fontSize: "84px",
+                    fontWeight: 700,
+                    color: "#f8fafc",
+                    letterSpacing: "-0.02em",
+                  },
+                  children: "NetTools",
+                },
+              },
+            ],
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              fontSize: "40px",
+              fontWeight: 700,
+              color: "#7dd3fc",
+              marginBottom: "18px",
+            },
+            children: "무료 네트워크 & 보안 도구",
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              fontSize: "27px",
+              color: "#94a3b8",
+              marginBottom: "44px",
+            },
+            children: "서브넷 계산기 · DNS 조회 · SSL 인증서 · JWT · JSON 포매터 등 45개 도구",
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              display: "flex",
+              padding: "12px 28px",
+              borderRadius: "999px",
+              border: "2px solid #334155",
+              background: "#1e293b",
+              color: "#7dd3fc",
+              fontSize: "24px",
+              fontWeight: 700,
+            },
+            children: "beomanro.com",
+          },
+        },
+      ],
+    },
+  };
+}
+
 async function main() {
   console.log("🎨 OG 이미지 생성 시작");
 
@@ -220,6 +342,18 @@ async function main() {
   }
 
   const fontData = await loadFont();
+
+  // 루트 og-image.png (홈/블로그 기본)
+  {
+    const svg = await satori(buildMainTemplate(), {
+      width: WIDTH,
+      height: HEIGHT,
+      fonts: [{ name: "NotoSansKR", data: fontData, weight: 700, style: "normal" }],
+    });
+    const png = await sharp(Buffer.from(svg)).png({ quality: 90 }).toBuffer();
+    await writeFile(join(ROOT, "public", "og-image.png"), png);
+    console.log(`  ✅ og-image.png (${(png.length / 1024).toFixed(1)}KB)`);
+  }
 
   for (const cat of CATEGORIES) {
     const template = buildTemplate(cat);
