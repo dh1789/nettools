@@ -51,5 +51,5 @@ export function getCategoryOgImagePath(category: string): string {
   if (category in CATEGORY_OG_CONFIG) {
     return `/og/${category}.png`;
   }
-  return "/og-image.png";
+  return "/og-image.png?v=2";
 }

@@ -43,6 +43,6 @@ describe("getCategoryOgImagePath", () => {
 
   test("알 수 없는 카테고리는 기본 OG 이미지를 반환해야 한다", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(getCategoryOgImagePath("unknown" as any)).toBe("/og-image.png");
+    expect(getCategoryOgImagePath("unknown" as any)).toBe("/og-image.png?v=2");
   });
 });

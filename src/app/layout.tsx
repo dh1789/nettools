@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     images: [
       {
-        url: `${SITE_URL}/og-image.png`,
+        url: `${SITE_URL}/og-image.png?v=2`,
         width: 1200,
         height: 630,
         alt: "NetTools — 무료 네트워크 & 개발자 도구",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    images: [`${SITE_URL}/og-image.png`],
+    images: [`${SITE_URL}/og-image.png?v=2`],
   },
   robots: {
     index: true,

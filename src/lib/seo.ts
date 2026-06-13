@@ -7,7 +7,8 @@ import { getCategoryOgImagePath } from "./og-image";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://beomanro.com";
 const SITE_NAME = "NetTools";
-const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
+// ?v=2: 2026-06-13 한글 tofu 수정본 — X/카카오 등 이미지 URL 단위 캐시 우회용 버전
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png?v=2`;
 
 const CATEGORY_SUBCATEGORY_MAP: Record<ToolCategory, string> = {
   network: "NetworkApplication",
