@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { parseFrontmatter } from "../blog";
+import { parseFrontmatter, getAllPosts } from "../blog";
 import { getAllSlugs } from "@/data/tools";
 
 const CONTENT_DIR = path.resolve(process.cwd(), "src/content/blog");
@@ -13,6 +13,8 @@ const GUIDE_SLUGS = [
   "jwt-generate-guide",
   "ssl-certificate-check-guide",
   "chmod-permissions-guide",
+  "dns-records-guide",
+  "base64-encoding-guide",
 ];
 
 describe("블로그 가이드 글", () => {
@@ -67,5 +69,13 @@ describe("블로그 가이드 글", () => {
         expect(content).toMatch(/\/tools\/net\/[a-z0-9-]+\//);
       });
     });
+  });
+
+  it("가이드 5편이 모두 getAllPosts('ko')에 로드된다", () => {
+    const posts = getAllPosts("ko");
+    const loaded = new Set(posts.map((p) => p.slug));
+    for (const slug of GUIDE_SLUGS) {
+      expect(loaded.has(slug)).toBe(true);
+    }
   });
 });

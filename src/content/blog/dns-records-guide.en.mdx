@@ -1,0 +1,83 @@
+---
+title: "A Complete Guide to DNS Record Types — A, AAAA, MX, CNAME, TXT"
+description: "The types of DNS records (A, AAAA, MX, CNAME, TXT, NS, etc.) and what each does, from a practical standpoint. Focused on the records you use most: domain connection, mail setup, and domain verification."
+category: network
+keywords:
+  - DNS records
+  - dns lookup
+  - A record
+  - MX record
+  - CNAME
+  - TXT record
+publishedAt: "2026-06-16"
+relatedTools:
+  - dns-lookup
+author: NetTools Team
+---
+
+## DNS Is the Internet's Phone Book
+
+When you type `example.com` into a browser, your computer first needs to know which IP address that name points to. DNS (Domain Name System) handles this "name → address" translation, and each entry holding that information is a **DNS record**.
+
+Working with domains, you'll run into "mail isn't arriving," "domain verification fails," or "www works but the root doesn't" — most of which resolve once you understand DNS records.
+
+## The Records You Use Most
+
+| Record | Role | Example |
+|--------|------|---------|
+| **A** | domain → IPv4 address | `example.com → 93.184.216.34` |
+| **AAAA** | domain → IPv6 address | `example.com → 2606:2800:...` |
+| **CNAME** | domain → another domain (alias) | `www → example.com` |
+| **MX** | designate the mail server | `example.com → mail.example.com (priority 10)` |
+| **TXT** | arbitrary text (auth/policy) | SPF, DKIM, domain ownership |
+| **NS** | the nameservers managing this domain | `ns1.provider.com` |
+
+### A / AAAA — The Address Itself
+
+The basics. They set the actual server IP a domain points to. IPv4 uses A, IPv6 uses AAAA. Multiple A records on one domain can provide simple load distribution.
+
+### CNAME — Aliases
+
+Points one domain to another. A common example is `www.example.com → example.com`. Note: **you usually cannot put a CNAME on the root domain** (it conflicts with other required records). So the typical setup is A/AAAA for the root and CNAME for www. Some DNS providers offer ALIAS/ANAME to work around this.
+
+### MX — Where Mail Goes
+
+Designates the server that receives email. A lower number (priority) is tried first. A large share of "mail isn't arriving" cases are missing or misconfigured MX records.
+
+### TXT — The All-Purpose Auth Slot
+
+Originally for arbitrary text, but in practice it's used most for **domain verification**. SPF (which servers may send), DKIM (signing keys), and the ownership-verification tokens of various services all go into TXT records.
+
+## Checking Records
+
+Put a domain into the [DNS Lookup](/tools/net/dns-lookup/) tool and you can query A/AAAA/MX/TXT/NS records at once. Handy for confirming propagation after a change and that the values are what you intended.
+
+On the command line, `dig` is the standard:
+
+```bash
+dig example.com A +short
+dig example.com MX +short
+dig example.com TXT +short
+```
+
+## TTL and Propagation
+
+Each record has a **TTL (Time To Live)** that tells resolvers how long to cache the result. With a TTL of 3600 (1 hour), the old value can linger for up to an hour after a change. Lowering the TTL ahead of a migration makes the switch faster.
+
+## Frequently Asked Questions (FAQ)
+
+### Q. I changed it — why isn't it live immediately?
+
+Because of TTL, resolvers and browsers may still cache the old value. Use the [DNS Lookup](/tools/net/dns-lookup/) to see what the authoritative server currently returns, then wait out the TTL or flush your local DNS cache.
+
+### Q. Why can't I put a CNAME on the root domain?
+
+The root must carry required records like SOA and NS, and a CNAME cannot coexist with other records. Solve it with your provider's ALIAS/ANAME or by placing A records directly on the root.
+
+### Q. What records are SPF/DKIM?
+
+Both are TXT records. SPF holds the list of servers allowed to send mail for the domain; DKIM holds the public key used to verify mail signatures. They directly affect deliverability and spam classification.
+
+## Wrap-up
+
+Once you know the record types, you can diagnose most domain issues yourself. Addresses are A/AAAA, aliases are CNAME, mail is MX, verification is TXT — nailing just these four is enough. When you need to confirm a value, check the real response with the [DNS Lookup](/tools/net/dns-lookup/).
