@@ -1,0 +1,72 @@
+---
+title: "How to Check SSL Certificate Expiry and Issuer — A Practical Guide"
+description: "How to check a domain's SSL/TLS certificate expiry, issuer, and chain. A monitoring routine to prevent certificate-expiry incidents, plus how to check directly in the browser."
+category: security
+keywords:
+  - SSL certificate check
+  - ssl checker
+  - certificate expiry
+  - TLS certificate
+  - certificate issuer
+  - HTTPS check
+publishedAt: "2026-06-16"
+relatedTools:
+  - ssl-checker
+author: NetTools Team
+---
+
+## Certificate Expiry Sneaks Up on You
+
+One of the most deflating outages is an **expired SSL certificate**. The code and the server are fine, yet one day the browser throws a "Your connection is not private" warning and users leave. Even with auto-renewal, a silent renewal failure leads to the same incident.
+
+That's why certificates need **regular, hands-on checks**. This guide covers the key fields of an SSL certificate and how to inspect them.
+
+## Key Fields to Check in an SSL Certificate
+
+A certificate has many fields, but from an operations standpoint these are the must-checks:
+
+- **Validity (Not Before / Not After)**: the expiry date is what matters. Teams typically alert from 30 days out.
+- **Issuer**: which CA issued it — Let's Encrypt, DigiCert, and so on.
+- **Subject / SAN**: the domains the certificate protects, including `www` and wildcards (`*.example.com`).
+- **Certificate chain**: whether the trust chain to the root CA is intact. A missing intermediate is a common mistake.
+- **Signature algorithm**: SHA-256 or stronger (SHA-1 is deprecated).
+
+## Checking a Certificate Step by Step
+
+Enter a domain into the [SSL Checker](/tools/net/ssl-checker/) and you can see all of the above at a glance.
+
+1. Enter the domain to inspect (e.g. `example.com`).
+2. Check the expiry date and **days remaining**. Under 30 days? Review your renewal schedule.
+3. Confirm the issuer and SAN list include all the domains you intend.
+4. Verify the certificate chain is complete. Some clients (especially mobile and certain bots) fail to connect if an intermediate certificate is missing.
+
+If you prefer the command line, OpenSSL is handy:
+
+```bash
+echo | openssl s_client -servername example.com -connect example.com:443 2>/dev/null \
+  | openssl x509 -noout -dates -issuer -subject
+```
+
+## A Routine to Prevent Expiry Incidents
+
+- **Monitoring**: alert N days before expiry (e.g. 30/14/7 days). Certificate expiry is about the only outage you can fully predict in advance.
+- **Verify auto-renewal**: if you use Let's Encrypt auto-renewal, monitor whether the renewal **succeeded**, not just that it ran.
+- **Chain checks**: when replacing a certificate, confirm the intermediate certificates were deployed too.
+
+## Frequently Asked Questions (FAQ)
+
+### Q. If the browser padlock is closed, is it safe?
+
+The padlock only means "the connection is encrypted." A certificate that's about to expire or has an incomplete chain may still pass in your current browser. That's why you check expiry and chain separately.
+
+### Q. Does a wildcard certificate protect all subdomains?
+
+`*.example.com` covers only one level of subdomain. Multi-level names like `a.b.example.com` need a separate certificate or SAN. Use the [SSL Checker](/tools/net/ssl-checker/) to see the actual coverage in the SAN list.
+
+### Q. Can't I just temporarily ignore an expired certificate?
+
+Showing users a security warning directly damages trust. Renewing is faster and safer than any workaround.
+
+## Wrap-up
+
+SSL certificate expiry is a predictable failure, which is exactly why it should be prevented with proactive checks. Use the [SSL Checker](/tools/net/ssl-checker/) to review expiry, issuer, SAN, and chain regularly, and set up a 30-day alert routine — and "the site went down because the certificate expired" all but disappears.

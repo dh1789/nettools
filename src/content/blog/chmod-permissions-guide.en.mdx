@@ -1,0 +1,90 @@
+---
+title: "Linux File Permissions with chmod — What 755 and 644 Really Mean"
+description: "A from-scratch guide to Linux file permissions (rwx) and chmod numeric notation (755, 644, etc.). Owner/group/other permissions, octal math, and the most common permission combos."
+category: linux
+keywords:
+  - chmod
+  - linux file permissions
+  - 755 644
+  - rwx permissions
+  - file permissions
+  - chmod calculator
+publishedAt: "2026-06-16"
+relatedTools:
+  - chmod-calculator
+author: NetTools Team
+---
+
+## What Does chmod 755 Actually Mean?
+
+Working with Linux, you end up copy-pasting commands like `chmod 755 script.sh` and `chmod 644 config.yml`. They work — but if asked to explain exactly what 755 and 644 allow, many people stall. This guide unpacks those numbers from the ground up.
+
+## The 3×3 Structure of Permissions
+
+Linux file permissions are **for whom (3 classes) × what (3 permissions)**.
+
+Classes:
+
+- **owner (u)**: the file's owner
+- **group (g)**: the group the file belongs to
+- **others (o)**: everyone else
+
+Permissions:
+
+- **r (read)** = 4
+- **w (write)** = 2
+- **x (execute)** = 1
+
+`ls -l` shows them as `-rwxr-xr-x`. The first character is the file type (`-` regular file, `d` directory); the next nine are owner/group/others rwx.
+
+## The Octal Math
+
+Add r=4, w=2, x=1 for each class to get a single digit.
+
+| rwx | Sum | Digit |
+|-----|-----|-------|
+| `rwx` | 4+2+1 | 7 |
+| `rw-` | 4+2 | 6 |
+| `r-x` | 4+1 | 5 |
+| `r--` | 4 | 4 |
+| `-wx` | 2+1 | 3 |
+| `--x` | 1 | 1 |
+| `---` | 0 | 0 |
+
+Chain three of these digits in owner/group/others order and you get the familiar three-digit number.
+
+- **755** = `rwx r-x r-x` → owner has everything; group and others read+execute. Common for scripts and directories.
+- **644** = `rw- r-- r--` → owner reads+writes; others read only. Common for config and document files.
+- **600** = `rw- --- ---` → owner only reads+writes. Used for SSH keys and secret files.
+- **777** = full permissions for everyone. **Almost always to be avoided** (security risk).
+
+If converting by hand is error-prone, the [chmod Calculator](/tools/net/chmod-calculator/) lets you toggle rwx checkboxes to get the number instantly, and vice versa.
+
+## Common Permission Combos
+
+- **Executable scripts**: `755` (owner can edit, anyone can run)
+- **Config/document files**: `644`
+- **Secret files (SSH keys)**: `600` — if group/others have read access, `ssh` refuses to use the key.
+- **Directories**: usually `755`. A directory's `x` means "you may enter (traverse) it."
+
+## Why the x Permission on Directories Confuses People
+
+On a file, `x` means "execute," but **on a directory, `x` means "you may traverse (access) it."** If a directory has `r` but not `x`, you can list names but can't access the files inside. That's why directories are usually `755` (rwxr-xr-x).
+
+## Frequently Asked Questions (FAQ)
+
+### Q. Shouldn't I just use chmod 777?
+
+Almost never. It grants write and execute to everyone, so in shared environments like web servers it becomes a vector for injecting or tampering with code. Trying to "fix a permission problem" with 777 usually creates a security hole.
+
+### Q. Can I use letters instead of numbers?
+
+Yes. You can specify relatively with `chmod u+x file` (add execute for owner) or `chmod go-w file` (remove write for group and others). When you need an absolute value, numbers are clearer.
+
+### Q. What are four-digit numbers like setuid/sticky bit?
+
+A leading extra digit like `4755` means special permissions (setuid=4, setgid=2, sticky=1). They're uncommon in everyday file management but show up in specific cases, like the sticky bit on `/tmp` (`1777`).
+
+## Wrap-up
+
+The heart of chmod is a simple structure: "three classes × three permissions (r=4, w=2, x=1)." Understanding just 755 and 644 covers most daily needs. When the conversion trips you up, use the [chmod Calculator](/tools/net/chmod-calculator/) to check rwx and numbers both ways.

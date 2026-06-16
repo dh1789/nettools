@@ -11,6 +11,8 @@ const TOOL_SLUGS = new Set(getAllSlugs());
 // Phase별로 채워짐 — Phase 1: jwt만 / Phase 2: +ssl,chmod / Phase 3: +dns,base64
 const GUIDE_SLUGS = [
   "jwt-generate-guide",
+  "ssl-certificate-check-guide",
+  "chmod-permissions-guide",
 ];
 
 describe("블로그 가이드 글", () => {
