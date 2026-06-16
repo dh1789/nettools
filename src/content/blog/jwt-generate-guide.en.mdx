@@ -1,0 +1,108 @@
+---
+title: "Generating JWT Tokens with HMAC — A Complete HS256/384/512 Guide"
+description: "Step-by-step guide to creating JWT tokens and signing them with HMAC (HS256/HS384/HS512). From building the Header/Payload to managing the Secret and generating tokens safely in the browser."
+category: security
+keywords:
+  - JWT generator
+  - sign jwt
+  - create jwt
+  - HMAC
+  - HS256
+  - issue token
+publishedAt: "2026-06-16"
+relatedTools:
+  - jwt-generator
+  - jwt-decoder
+author: NetTools Team
+---
+
+## When You Need to Build a JWT Yourself
+
+While developing or testing an API, you often hit the moment of "I just need one valid JWT right now." You have to poke a protected endpoint with Postman, but going through the full login flow is tedious — and to see how your auth middleware verifies a token, the fastest path is to craft one and feed it in.
+
+If decoding a JWT is about "opening" a token, generating one is about "building and signing" it. This guide revisits the JWT structure and walks through issuing a token yourself with HMAC signing.
+
+## How a JWT Is Built
+
+A JWT consists of three parts separated by dots (`.`):
+
+```
+Base64URL(Header).Base64URL(Payload).Base64URL(Signature)
+```
+
+- **Header**: the signing algorithm and token type, e.g. `{"alg":"HS256","typ":"JWT"}`
+- **Payload**: the claims you want to carry, e.g. `{"sub":"1234567890","name":"John Doe","iat":1700000000}`
+- **Signature**: the Header and Payload signed with your Secret
+
+The signature is computed as:
+
+```
+signature = HMAC-SHA256(
+  Base64URL(Header) + "." + Base64URL(Payload),
+  secret
+)
+```
+
+So the Header and Payload are merely **encoded** with Base64URL (anyone can decode and read them); the real security comes from the fact that **only someone who knows the Secret can reproduce the signature**.
+
+## HMAC Algorithms: HS256 / HS384 / HS512
+
+The HS family is **symmetric** — you use the same Secret to sign and to verify. The trailing number is the bit length of the SHA hash used.
+
+| Algorithm | Hash | Signature length | Notes |
+|-----------|------|------------------|-------|
+| HS256 | SHA-256 | 32 bytes | Most common. Sufficient for most cases |
+| HS384 | SHA-384 | 48 bytes | When you need a longer hash |
+| HS512 | SHA-512 | 64 bytes | Strongest, also the longest token |
+
+The choice is simple: **use HS256 unless you have a specific reason not to**. As long as the Secret is long and random enough (256 bits recommended), HS256 is secure.
+
+## Generating a JWT Step by Step
+
+Open the [JWT Generator](/tools/net/jwt-generator/) and you can build a token in this order:
+
+1. **Pick the algorithm** — HS256/384/512. Your choice is auto-applied to the Header's `alg`.
+2. **Enter the Header** — usually leave it as `{"alg":"HS256","typ":"JWT"}`.
+3. **Enter the Payload** — write the claims you need as JSON, e.g.:
+   ```json
+   {
+     "sub": "1234567890",
+     "name": "John Doe",
+     "role": "admin",
+     "iat": 1700000000
+   }
+   ```
+4. **Enter the Secret** — the same secret string the server will use to verify.
+5. **Generate** — copy the token and put it in an `Authorization: Bearer <token>` header.
+
+To confirm the token came out as intended, paste it into the [JWT Decoder](/tools/net/jwt-decoder/) and reopen the Header and Payload. Going back and forth between generating and decoding is a great way to internalize the signing mechanism.
+
+## Common Claims
+
+These are standard claims often placed in the Payload. All are optional, but time-related claims are recommended for auth tokens.
+
+- `sub` (subject): the token's subject, usually a user ID
+- `iat` (issued at): issue time as a Unix timestamp (seconds)
+- `exp` (expiration): expiry time; the token must be rejected after this
+- `nbf` (not before): the token can't be used before this time
+- `aud` (audience), `iss` (issuer): identify the recipient and issuer
+
+Compute the expiry yourself. For example, "expires in 1 hour" is current time (seconds) + 3600.
+
+## Frequently Asked Questions (FAQ)
+
+### Q. Can I use the generated token directly in production?
+
+It's recommended for testing and debugging. Avoid entering real production secrets into a browser tool; issue real tokens with your server's auth library (jose, jsonwebtoken, etc.). Be especially careful on shared computers.
+
+### Q. Is my Secret sent anywhere?
+
+The [JWT Generator](/tools/net/jwt-generator/) signs locally using the browser's Web Crypto API. Your secret and payload are never sent to any server.
+
+### Q. Can I create RS256 (RSA) tokens?
+
+This tool supports only HMAC symmetric keys (HS256/384/512). Asymmetric signing like RS256/ES256 requires private key management, so a server-side library is the right tool.
+
+## Wrap-up
+
+The key idea of JWT generation is "Header and Payload are public, only the Secret is private." A signature prevents tampering but does not hide the Payload, so never put sensitive data in it as plaintext. When you need a test token, the fastest flow is to create it with the [JWT Generator](/tools/net/jwt-generator/) and verify its structure with the [JWT Decoder](/tools/net/jwt-decoder/).
