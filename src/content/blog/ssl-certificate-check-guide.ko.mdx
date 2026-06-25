@@ -47,11 +47,44 @@ echo | openssl s_client -servername example.com -connect example.com:443 2>/dev/
   | openssl x509 -noout -dates -issuer -subject
 ```
 
+## OpenSSL로 더 깊이 확인하기
+
+브라우저나 도구로 부족할 때, OpenSSL 한 줄이 가장 빠릅니다.
+
+```bash
+# 만료까지 30일 미만이면 exit code 1 (모니터링 스크립트에 유용)
+echo | openssl s_client -servername example.com -connect example.com:443 2>/dev/null \
+  | openssl x509 -noout -checkend $((30*86400))
+
+# 로컬 인증서 파일(.pem/.crt) 직접 보기
+openssl x509 -in cert.pem -noout -dates -issuer -subject -ext subjectAltName
+
+# 체인 검증 (중간 인증서 포함 여부)
+openssl verify -untrusted chain.pem cert.pem
+
+# 서버가 실제로 내려주는 체인 전체 보기
+echo | openssl s_client -servername example.com -connect example.com:443 -showcerts 2>/dev/null
+```
+
+`-checkend`는 스크립트에서 특히 유용합니다. 만료가 임박하면 0이 아닌 종료 코드를 돌려주므로 cron + 알림과 엮어 "만료 N일 전 자동 경보"를 만들 수 있습니다.
+
 ## 만료 사고를 예방하는 루틴
 
 - **모니터링**: 만료 N일 전 알림(예: 30/14/7일). 인증서 만료는 사전 예측이 가능한 유일한 장애에 가깝습니다.
 - **자동 갱신 검증**: Let's Encrypt 자동 갱신을 걸었다면, 갱신 자체가 아니라 **갱신이 성공했는지**를 모니터링하세요.
 - **체인 점검**: 인증서를 교체할 때 중간 인증서까지 함께 배포했는지 확인합니다.
+
+## 흔한 인증서 오류와 원인
+
+| 브라우저 오류 | 원인 | 해결 |
+|---|---|---|
+| `NET::ERR_CERT_DATE_INVALID` | 인증서 만료 또는 서버 시계 오류 | 갱신, 서버 시간 NTP 동기화 |
+| `ERR_CERT_AUTHORITY_INVALID` | 자체 서명·신뢰되지 않은 CA | 공인 CA 인증서 사용 |
+| `ERR_CERT_COMMON_NAME_INVALID` | 접속 도메인이 SAN에 없음 | 해당 도메인을 SAN에 포함해 재발급 |
+| 일부 모바일/봇만 실패 | 중간 인증서 누락(체인 불완전) | 중간 인증서까지 함께 배포 |
+| 자물쇠에 경고 표시 | 혼합 콘텐츠(HTTP 리소스 혼입) | 모든 리소스를 HTTPS로 |
+
+체인 불완전은 특히 까다롭습니다. 데스크톱 브라우저는 중간 인증서를 캐시해 통과시키지만, 캐시가 없는 모바일·API 클라이언트는 실패하기 때문입니다. [SSL 인증서 확인](/tools/net/ssl-checker/)으로 체인을 명시적으로 점검하세요.
 
 ## 자주 묻는 질문 (FAQ)
 
@@ -66,6 +99,10 @@ echo | openssl s_client -servername example.com -connect example.com:443 2>/dev/
 ### Q. 만료된 인증서를 임시로 무시하면 안 되나요?
 
 사용자에게 보안 경고를 노출하는 것은 신뢰에 직접 타격을 줍니다. 임시 회피보다 갱신이 빠르고 안전합니다.
+
+### Q. Let's Encrypt는 90일짜리인데 매번 갱신하나요?
+
+수동으로 하지 않습니다. `certbot` 등 ACME 클라이언트가 보통 만료 30일 전(발급 60일 시점)에 자동 갱신합니다. 중요한 건 갱신 자체가 아니라 **갱신 성공 여부 모니터링**입니다. 자동 갱신이 조용히 실패하는 것이 인증서 만료 사고의 흔한 원인입니다.
 
 ## 정리
 

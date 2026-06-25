@@ -64,6 +64,7 @@ export const T = {
   },
   navTools: { ko: "도구", en: "Tools" },
   navAbout: { ko: "소개", en: "About" },
+  navContact: { ko: "문의", en: "Contact" },
   navHome: { ko: "홈", en: "Home" },
   menu: { ko: "메뉴", en: "Menu" },
   footerBuiltBy: {

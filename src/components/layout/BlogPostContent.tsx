@@ -40,6 +40,7 @@ export function BlogPostContent({
       description={meta.frontmatter.description}
       publishedAt={meta.frontmatter.publishedAt}
       updatedAt={meta.frontmatter.updatedAt}
+      author={meta.frontmatter.author}
       readingTime={meta.readingTime}
       category={meta.frontmatter.category}
       toc={meta.toc}

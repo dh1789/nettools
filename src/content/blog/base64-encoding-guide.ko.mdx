@@ -40,6 +40,22 @@ Base64의 핵심은 단순합니다.
 입력:  "M"   (1바이트)  → "TQ==" (2패딩)
 ```
 
+## 직접 비트로 계산해보기 — "Man" → "TWFu"
+
+원리를 한 번 손으로 따라가면 확실히 이해됩니다. 각 문자를 ASCII 코드 → 8비트로 펼친 뒤, 6비트씩 다시 끊습니다.
+
+```
+M = 0x4D = 01001101
+a = 0x61 = 01100001
+n = 0x6E = 01101110
+
+24비트 이어붙이기 : 010011 010110 000101 101110
+6비트 값         :   19     22      5     46
+Base64 문자      :   T      W       F     u
+```
+
+`A`=0, `B`=1 … `Z`=25, `a`=26 … `z`=51, `0`=52 … `9`=61, `+`=62, `/`=63 순서로 매핑하면 `19→T, 22→W, 5→F, 46→u`, 즉 `TWFu`가 됩니다. 입력이 3의 배수가 아니면 마지막 묶음의 빈 비트를 0으로 채우고, 모자라는 4문자 자리를 `=`로 메웁니다.
+
 ## 실무에서 Base64가 쓰이는 곳
 
 - **data URI**: 작은 이미지를 별도 요청 없이 HTML/CSS에 직접 박을 때. `data:image/png;base64,iVBOR...`. [이미지 Base64 변환](/tools/net/image-base64-converter/)으로 만들 수 있습니다.
@@ -56,6 +72,43 @@ Base64의 핵심은 단순합니다.
 
 텍스트나 파일을 [Base64 인코더/디코더](/tools/net/base64/)에 넣으면 즉시 양방향 변환됩니다. 이미지를 data URI로 만들려면 [이미지 Base64 변환](/tools/net/image-base64-converter/)이 더 편합니다.
 
+## 명령줄·코드에서 Base64
+
+브라우저 도구 없이 터미널이나 코드에서 바로 다룰 때 쓰는 한 줄들입니다.
+
+```bash
+# Linux / macOS — 인코딩 & 디코딩
+echo -n 'Man' | base64            # → TWFu
+echo 'TWFu' | base64 -d           # → Man
+
+# 파일 인코딩 (GNU는 76자마다 줄바꿈 → -w0 으로 끔)
+base64 -w0 logo.png > logo.b64    # Linux(GNU coreutils)
+base64 -i logo.png                # macOS(BSD, 기본 줄바꿈 없음)
+```
+
+```python
+# Python
+import base64
+base64.b64encode(b'Man')          # b'TWFu'
+base64.urlsafe_b64encode(b'...')  # Base64URL 변형
+```
+
+```javascript
+// Node.js
+Buffer.from('Man').toString('base64')   // 'TWFu'
+// 브라우저 — btoa는 Latin1만 처리 (아래 함정 참고)
+btoa('Man')                              // 'TWFu'
+```
+
+Windows는 `certutil -encode in out`(BEGIN/END 머리말이 붙음) 또는 PowerShell `[Convert]::ToBase64String([IO.File]::ReadAllBytes('file'))`을 씁니다.
+
+## 흔한 함정
+
+- **한글·이모지가 깨진다**: 브라우저 `btoa('한글')`은 Latin1(0–255)만 받아 `InvalidCharacterError`를 던집니다. UTF-8로 먼저 바꿔야 합니다 — `btoa(unescape(encodeURIComponent(s)))` 또는 `TextEncoder`. [Base64 인코더/디코더](/tools/net/base64/)는 UTF-8을 자동 처리하므로 한글도 그대로 됩니다.
+- **줄바꿈이 섞여 디코딩 실패**: GNU `base64`는 76자마다 개행을 넣습니다. 토큰·헤더에 그대로 넣으면 깨질 수 있으니 `-w0`으로 끄거나, 디코더가 공백을 무시하는지 확인하세요.
+- **패딩 `=` 누락**: Base64URL은 패딩을 빼는 경우가 많은데 엄격한 디코더는 패딩을 요구합니다. 디코딩 전 길이를 4의 배수로 맞춰 `=`를 복원해야 할 수 있습니다.
+- **URL에 그대로 넣기**: 표준 Base64의 `+`, `/`, `=`는 URL에서 의미가 충돌합니다. URL·파일명에는 Base64URL을 쓰세요.
+
 ## 자주 묻는 질문 (FAQ)
 
 ### Q. Base64로 비밀번호를 저장해도 되나요?
@@ -69,6 +122,10 @@ Base64의 핵심은 단순합니다.
 ### Q. data URI는 항상 좋은가요?
 
 작은 자원은 요청 수를 줄여 유리하지만, 큰 이미지는 ① 33% 용량 증가 ② 브라우저 캐시 불가 ③ HTML 비대화 때문에 오히려 손해입니다. 크기와 재사용 빈도를 보고 판단하세요.
+
+### Q. 한글을 Base64로 바꾸면 왜 깨지나요?
+
+대부분 UTF-8 인코딩을 건너뛰어서입니다. 브라우저 `btoa()`는 Latin1만 처리하므로 한글·이모지에서 에러가 납니다. UTF-8 바이트로 변환한 뒤 인코딩하면 됩니다. [Base64 인코더/디코더](/tools/net/base64/)는 이를 자동 처리합니다.
 
 ## 정리
 

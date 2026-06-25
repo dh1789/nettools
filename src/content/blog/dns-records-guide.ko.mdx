@@ -48,6 +48,15 @@ author: NetTools Team
 
 원래 임의 텍스트용이지만, 실무에서는 **도메인 인증**에 가장 많이 쓰입니다. SPF(발신 서버 지정), DKIM(서명 키), 그리고 "이 도메인이 내 것임을 증명하라"는 각종 서비스의 소유 확인 토큰이 모두 TXT로 들어갑니다.
 
+## 더 알아두면 좋은 레코드 (CAA·SRV·PTR·SOA)
+
+기본 5종 외에 실무에서 종종 만나는 것들입니다.
+
+- **CAA**: 어떤 인증 기관(CA)이 이 도메인의 SSL 인증서를 발급할 수 있는지 제한합니다. 잘못 설정하면 발급이 거부되니, [SSL 인증서](/tools/net/ssl-checker/) 발급 문제 시 함께 점검하세요.
+- **SRV**: 특정 서비스의 호스트·포트를 알립니다(SIP, XMPP 등). `_service._proto.도메인` 형식.
+- **PTR**: IP → 도메인 역방향 조회. 메일 서버는 PTR이 없거나 정방향과 불일치하면 스팸으로 분류되기 쉽습니다.
+- **SOA**: 영역(zone)의 권한 정보(주 네임서버, 시리얼, 갱신 주기). 전파·영역 전송 디버깅의 시작점.
+
 ## 레코드 확인하기
 
 [DNS 조회](/tools/net/dns-lookup/) 도구에 도메인을 넣으면 A/AAAA/MX/TXT/NS 등 레코드를 한 번에 조회할 수 있습니다. 변경 후 전파가 됐는지, 의도한 값이 맞는지 확인할 때 유용합니다.
@@ -58,6 +67,15 @@ author: NetTools Team
 dig example.com A +short
 dig example.com MX +short
 dig example.com TXT +short
+
+# 특정 리졸버에 직접 질의 (전파/캐시 비교)
+dig @8.8.8.8 example.com A +short
+
+# 역방향(PTR) 조회 — 메일 서버 점검에 유용
+dig -x 93.184.216.34 +short
+
+# 위임 경로 추적 (루트 → TLD → 권한 서버)
+dig example.com +trace
 ```
 
 ## TTL과 전파

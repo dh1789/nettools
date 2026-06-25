@@ -37,6 +37,18 @@
 - [ ] (선택) 홈에 블로그 글 섹션 — 홈(색인됨)→9글 1-hop 최강 발견 신호
 - [ ] (선택) 블로그 나머지 9글 개별 색인 요청 — /blog/ 시드 + 내부링크로 자연 발견 가능, marginal
 
+## 애드센스 승인 준비 (2026-06-24 서베이)
+
+> 상세·요건·근거 22개 사이트 분석: [docs/ADSENSE_APPROVAL.md](ADSENSE_APPROVAL.md). 판정 = **2~4주 작업 후 신청** (지금 신청은 거절 위험).
+
+- [x] 🔴 색인 지원 (코드 가능분 완료, 2026-06-24) — ✅ 홈에 가이드 8편 1-hop 섹션 추가(`HomeContent`, 색인된 홈→가이드 발견 신호) · ✅ 내부링크 trailing-slash 전체 정규화 · ✅ canonical/noindex 점검(`/tools/net` noindex=홈 중복 통합 의도, 정상). 🙋 **남은 GSC sitemap 제출·핵심 URL 색인 요청은 사용자만 가능**(코드 불가)
+- [x] 🔴 가이드 ko 14/14 심화 ✅ (2026-06-24, build 검증) — 도구 워크드 예제·엣지케이스·명령어표·1인칭+교차링크. subnet 3편 distinct 앵글 클러스터 분리(subnet-guide는 CIDR/VLSM로 retitle). 내부링크 trailing-slash 전체 정규화. **en 패리티 보류**: ko=primary(DEFAULT_LOCALE=ko), en은 hreflang 변형이라 AdSense 평가 비대상 — 필요 시 후속
+- [x] 🟡 privacy 애드센스 디스클로저 보강 ✅ (2026-06-24) — 제3자 쿠키·웹비콘·IP 명시 + aboutads.info/youronlinechoices 옵트아웃 + partner-sites 링크 + 날짜 갱신 (legal 페이지 ko 단일, en 변형 없음). lint/test/verify 통과
+- [x] 🟡 Contact 페이지 ✅ (2026-06-24) — footer 링크 + i18n navContact + sitemap 등록. tsc/lint/test(677)/verify 통과
+- [x] 🟡 가이드 저자 바이라인 ✅ (2026-06-24) — 28편 전부 author:NetTools Team 보유 확인 + BlogLayout 헤더 가시 바이라인 추가(JSON-LD 기존 보유). tsc/lint/test 통과
+- [ ] ⚪ (승인 후) ads.txt Google DIRECT 라인 추가 · (EEA/UK 서빙 전) 인증 CMP — 둘 다 신청 게이트 아님
+- [ ] ⚪ "이것저것 다 올리기" 금지 — 니치 심화 + intent 수익화가 정답 (근거: ADSENSE_APPROVAL.md §6)
+
 ## 신규 도구 아이디어 (검색 트래픽 후보)
 
 | 아이디어 | 카테고리 | 메모 |

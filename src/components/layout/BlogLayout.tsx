@@ -13,6 +13,7 @@ interface BlogLayoutProps {
   description: string;
   publishedAt: string;
   updatedAt?: string;
+  author?: string;
   readingTime: number;
   category: string;
   toc: TocItem[];
@@ -174,6 +175,7 @@ export function BlogLayout({
   description,
   publishedAt,
   updatedAt,
+  author,
   readingTime,
   category,
   toc,
@@ -246,6 +248,16 @@ export function BlogLayout({
           >
             · {tf(T.blogReadingTime, { minutes: readingTime })}
           </span>
+          {author && (
+            <span
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--text-tertiary, #9ca3af)",
+              }}
+            >
+              · {locale === "ko" ? "글쓴이" : "By"} {author}
+            </span>
+          )}
           {updatedAt && (
             <span
               style={{

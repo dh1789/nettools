@@ -35,7 +35,7 @@ export default function PrivacyPage() {
           개인정보처리방침
         </h1>
         <p style={{ fontSize: "0.875rem", color: "var(--text-tertiary)" }}>
-          최종 업데이트: 2025년 1월 1일
+          최종 업데이트: 2026년 6월 24일
         </p>
       </header>
 
@@ -87,11 +87,65 @@ export default function PrivacyPage() {
 
         <Section title="4. Google AdSense 및 제3자 광고">
           <p>
-            NetTools는 Google AdSense를 통해 광고를 게재합니다. Google은 쿠키를 사용하여
-            사용자의 이전 방문 기록을 기반으로 맞춤 광고를 표시할 수 있습니다.
+            NetTools는 Google AdSense를 비롯한 제3자 광고 서비스를 통해 광고를 게재합니다.
+            Google을 포함한 제3자 광고 공급업체는 쿠키를 사용하여 사용자의 본 사이트 및 다른
+            웹사이트 방문 기록을 기반으로 광고를 게재합니다.
           </p>
           <p style={{ marginTop: "0.75rem" }}>
-            Google의 광고 쿠키 사용은{" "}
+            Google의 광고 쿠키(예: DART 쿠키)는 사용자가 본 사이트 및 인터넷상의 다른 사이트를
+            방문한 기록을 바탕으로 맞춤 광고를 표시할 수 있게 합니다. 또한 제3자 광고 공급업체나
+            광고 네트워크는 광고 게재 과정에서 쿠키 및 웹 비콘(web beacon)을 사용하거나 IP
+            주소 등의 정보를 수집·이용할 수 있습니다.
+          </p>
+          <p style={{ marginTop: "0.75rem" }}>
+            사용자는 다음에서 맞춤 광고를 비활성화하거나 관리할 수 있습니다:
+          </p>
+          <ul style={{ marginTop: "0.75rem", paddingLeft: "1.5rem" }}>
+            <li style={{ marginBottom: "0.5rem" }}>
+              <a
+                href="https://www.google.com/settings/ads"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#3b82f6" }}
+              >
+                Google 광고 설정
+              </a>{" "}
+              — Google 맞춤 광고 사용 안 함
+            </li>
+            <li style={{ marginBottom: "0.5rem" }}>
+              <a
+                href="https://www.aboutads.info/choices/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#3b82f6" }}
+              >
+                www.aboutads.info/choices
+              </a>{" "}
+              — 제3자 광고 공급업체 옵트아웃(미국)
+            </li>
+            <li style={{ marginBottom: "0.5rem" }}>
+              <a
+                href="https://www.youronlinechoices.eu/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#3b82f6" }}
+              >
+                www.youronlinechoices.eu
+              </a>{" "}
+              — 유럽 사용자 옵트아웃
+            </li>
+          </ul>
+          <p style={{ marginTop: "0.75rem" }}>
+            Google이 광고 파트너로서 데이터를 사용하는 방식은{" "}
+            <a
+              href="https://policies.google.com/technologies/partner-sites"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#3b82f6" }}
+            >
+              Google 파트너 사이트 정책
+            </a>
+            에서, 전반적인 처리 방침은{" "}
             <a
               href="https://policies.google.com/privacy"
               target="_blank"
@@ -100,16 +154,7 @@ export default function PrivacyPage() {
             >
               Google 개인정보처리방침
             </a>
-            에 따라 처리됩니다. 맞춤 광고 설정은{" "}
-            <a
-              href="https://www.google.com/settings/ads"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "#3b82f6" }}
-            >
-              Google 광고 설정
-            </a>
-            에서 변경할 수 있습니다.
+            에서 확인할 수 있습니다.
           </p>
         </Section>
 

@@ -27,6 +27,9 @@ export function ClientFooter() {
         <a href="/about" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
           {t(T.navAbout)}
         </a>
+        <a href="/contact" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
+          {t(T.navContact)}
+        </a>
         <a href="/privacy" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
           {t(T.footerLinkPrivacy)}
         </a>
