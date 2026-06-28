@@ -54,3 +54,92 @@ export function xorSteps(body: string): XorStep[] {
   }
   return steps;
 }
+
+export interface ParsedSentence {
+  start: '$' | '!' | null;
+  body: string;
+  given: string | null;
+  error?: string;
+}
+
+const HEX2 = /^[0-9A-Fa-f]{2}$/;
+
+/** 에러 메시지 (한/영) */
+const ERR = {
+  empty: { ko: '빈 입력입니다.', en: 'Empty input.' },
+  givenLen: {
+    ko: '체크섬은 * 뒤 2자리여야 합니다.',
+    en: 'Checksum must be 2 characters after *.',
+  },
+  givenHex: {
+    ko: '체크섬이 16진수(0-9, A-F)가 아닙니다.',
+    en: 'Checksum is not valid hexadecimal (0-9, A-F).',
+  },
+} as const;
+
+type Lang = 'ko' | 'en';
+
+/**
+ * 한 줄 NMEA 문장을 시작 구분자 / 본문 / 기존 체크섬으로 분해.
+ * - 첫 글자가 `$`/`!` 면 start, 아니면 본문만(start null) 허용 → 계산 모드.
+ * - 첫 `*` 까지가 본문, 이후 전부가 given 후보(2자리 hex 아니면 error).
+ */
+export function parseSentence(line: string, lang: Lang = 'ko'): ParsedSentence {
+  const trimmed = line.trim();
+  if (trimmed === '') {
+    return { start: null, body: '', given: null, error: ERR.empty[lang] };
+  }
+
+  let start: '$' | '!' | null = null;
+  let rest = trimmed;
+  if (trimmed[0] === '$' || trimmed[0] === '!') {
+    start = trimmed[0];
+    rest = trimmed.slice(1);
+  }
+
+  const starIdx = rest.indexOf('*');
+  if (starIdx === -1) {
+    return { start, body: rest, given: null };
+  }
+
+  const body = rest.slice(0, starIdx);
+  const givenRaw = rest.slice(starIdx + 1);
+  if (givenRaw.length !== 2) {
+    return { start, body, given: null, error: ERR.givenLen[lang] };
+  }
+  if (!HEX2.test(givenRaw)) {
+    return { start, body, given: null, error: ERR.givenHex[lang] };
+  }
+
+  return { start, body, given: givenRaw };
+}
+
+/**
+ * 문장을 검증(*XX 있을 때) 또는 계산(*XX 없을 때)하여 NmeaResult 반환.
+ * - given 있으면 대소문자 무시 비교 → valid true/false.
+ * - given 없으면 계산 모드 → valid null, full 에 완성 문장 제공.
+ * - full = (start ?? '') + body + '*' + computed (항상 올바른 체크섬으로 완성).
+ */
+export function validateSentence(line: string, lang: Lang = 'ko'): NmeaResult {
+  const parsed = parseSentence(line, lang);
+  const { start, body, given } = parsed;
+
+  if (parsed.error) {
+    return {
+      input: line,
+      start,
+      body,
+      computed: '',
+      given,
+      valid: null,
+      full: '',
+      error: parsed.error,
+    };
+  }
+
+  const computed = computeChecksum(body);
+  const full = (start ?? '') + body + '*' + computed;
+  const valid = given === null ? null : given.toUpperCase() === computed;
+
+  return { input: line, start, body, computed, given, valid, full };
+}

@@ -1,6 +1,8 @@
 import {
   computeChecksum,
   xorSteps,
+  parseSentence,
+  validateSentence,
 } from '../nmea-checksum';
 
 // 검증된 테스트 벡터 (node XOR 자체 재현 + 발표 출처 일치)
@@ -64,5 +66,117 @@ describe('xorSteps', () => {
     const steps = xorSteps('AB');
     expect(steps[0]).toEqual({ char: 'A', code: 65, acc: 65 });
     expect(steps[1]).toEqual({ char: 'B', code: 66, acc: 65 ^ 66 });
+  });
+});
+
+// AIS 벡터 (Wikipedia AIVDM, *5C 일치)
+const AIS_BODY = 'AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0';
+const AIS_FULL = '!' + AIS_BODY + '*5C';
+
+describe('parseSentence', () => {
+  // Happy
+  test('$ 문장 분해 (start/body/given)', () => {
+    const r = parseSentence('$' + GPGGA + '*76');
+    expect(r.error).toBeUndefined();
+    expect(r.start).toBe('$');
+    expect(r.body).toBe(GPGGA);
+    expect(r.given).toBe('76');
+  });
+
+  test('! AIS 문장 분해', () => {
+    const r = parseSentence(AIS_FULL);
+    expect(r.error).toBeUndefined();
+    expect(r.start).toBe('!');
+    expect(r.body).toBe(AIS_BODY);
+    expect(r.given).toBe('5C');
+  });
+
+  // Boundary
+  test('* 없는 본문만 → given null', () => {
+    const r = parseSentence('$' + GPGGA);
+    expect(r.error).toBeUndefined();
+    expect(r.start).toBe('$');
+    expect(r.body).toBe(GPGGA);
+    expect(r.given).toBeNull();
+  });
+
+  test('구분자 없는 순수 본문 허용 (start null)', () => {
+    const r = parseSentence(GPGGA);
+    expect(r.error).toBeUndefined();
+    expect(r.start).toBeNull();
+    expect(r.body).toBe(GPGGA);
+    expect(r.given).toBeNull();
+  });
+
+  // Exception
+  test('비-hex given → error', () => {
+    const r = parseSentence('$GPGGA,x*ZZ');
+    expect(r.error).toBeDefined();
+  });
+
+  test('길이≠2 given → error (1자/3자)', () => {
+    expect(parseSentence('$GPGGA,x*4').error).toBeDefined();
+    expect(parseSentence('$GPGGA,x*456').error).toBeDefined();
+  });
+});
+
+describe('validateSentence', () => {
+  // Happy
+  test('유효 문장 → valid true', () => {
+    const r = validateSentence('$' + GPGGA + '*76');
+    expect(r.error).toBeUndefined();
+    expect(r.valid).toBe(true);
+    expect(r.computed).toBe('76');
+    expect(r.given).toBe('76');
+    expect(r.full).toBe('$' + GPGGA + '*76');
+  });
+
+  // Boundary
+  test('틀린 체크섬 → valid false + computed 제시', () => {
+    const r = validateSentence('$' + GPGGA + '*99');
+    expect(r.valid).toBe(false);
+    expect(r.computed).toBe('76');
+    expect(r.given).toBe('99');
+    expect(r.full).toBe('$' + GPGGA + '*76'); // 올바른 체크섬으로 완성
+  });
+
+  test('소문자 given normalize 비교 (*5c == 5C)', () => {
+    const r = validateSentence('!' + AIS_BODY + '*5c');
+    expect(r.valid).toBe(true);
+    expect(r.computed).toBe('5C');
+  });
+
+  test('* 없음 → 계산 모드 (valid null, full 제공)', () => {
+    const r = validateSentence('$' + GPGGA);
+    expect(r.error).toBeUndefined();
+    expect(r.valid).toBeNull();
+    expect(r.given).toBeNull();
+    expect(r.computed).toBe('76');
+    expect(r.full).toBe('$' + GPGGA + '*76');
+  });
+
+  test('! AIS 검증 → valid true', () => {
+    const r = validateSentence(AIS_FULL);
+    expect(r.valid).toBe(true);
+    expect(r.computed).toBe('5C');
+  });
+
+  test('구분자 없는 본문 계산 모드 (start null, full에 구분자 없음)', () => {
+    const r = validateSentence(GPGGA);
+    expect(r.error).toBeUndefined();
+    expect(r.start).toBeNull();
+    expect(r.valid).toBeNull();
+    expect(r.full).toBe(GPGGA + '*76');
+  });
+
+  // Exception
+  test('형식 오류 (비-hex given) → error, valid null', () => {
+    const r = validateSentence('$GP*ZZ');
+    expect(r.error).toBeDefined();
+    expect(r.valid).toBeNull();
+  });
+
+  test('빈 입력 → error', () => {
+    expect(validateSentence('   ').error).toBeDefined();
   });
 });
