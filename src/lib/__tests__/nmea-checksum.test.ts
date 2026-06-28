@@ -3,6 +3,7 @@ import {
   xorSteps,
   parseSentence,
   validateSentence,
+  processInput,
 } from '../nmea-checksum';
 
 // 검증된 테스트 벡터 (node XOR 자체 재현 + 발표 출처 일치)
@@ -178,5 +179,47 @@ describe('validateSentence', () => {
 
   test('빈 입력 → error', () => {
     expect(validateSentence('   ').error).toBeDefined();
+  });
+});
+
+describe('processInput', () => {
+  // Happy
+  test('여러 줄 각각 처리 (개수 일치)', () => {
+    const text = ['$' + GPGGA + '*76', '$' + GPRMC + '*45', AIS_FULL].join('\n');
+    const rows = processInput(text);
+    expect(rows).toHaveLength(3);
+    expect(rows.every((r) => r.valid === true)).toBe(true);
+  });
+
+  // Boundary
+  test('빈 줄 / 공백 줄 무시', () => {
+    const text = ['', '  ', '$' + GPGGA + '*76', '\t', ''].join('\n');
+    const rows = processInput(text);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].valid).toBe(true);
+  });
+
+  test('CRLF(\\r\\n) 트림 후 처리', () => {
+    const text = '$' + GPGGA + '*76\r\n$' + GPRMC + '*45\r\n';
+    const rows = processInput(text);
+    expect(rows).toHaveLength(2);
+    expect(rows[0].body).toBe(GPGGA); // \r 잔류 없음
+    expect(rows[0].valid).toBe(true);
+    expect(rows[1].valid).toBe(true);
+  });
+
+  // 혼합 valid/invalid
+  test('혼합 valid/invalid 결과', () => {
+    const text = ['$' + GPGGA + '*76', '$' + GPGGA + '*99', GPRMC].join('\n');
+    const rows = processInput(text);
+    expect(rows).toHaveLength(3);
+    expect(rows[0].valid).toBe(true);
+    expect(rows[1].valid).toBe(false);
+    expect(rows[2].valid).toBeNull(); // 계산 모드
+  });
+
+  test('빈 입력 / 전부 공백 → 빈 배열', () => {
+    expect(processInput('')).toEqual([]);
+    expect(processInput('  \n \t \n')).toEqual([]);
   });
 });

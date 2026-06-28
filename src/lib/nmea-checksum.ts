@@ -143,3 +143,15 @@ export function validateSentence(line: string, lang: Lang = 'ko'): NmeaResult {
 
   return { input: line, start, body, computed, given, valid, full };
 }
+
+/**
+ * 멀티라인 입력을 줄 단위로 검증/계산.
+ * 빈 줄·공백 줄 무시, CRLF/LF 모두 지원.
+ */
+export function processInput(text: string, lang: Lang = 'ko'): NmeaResult[] {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line !== '')
+    .map((line) => validateSentence(line, lang));
+}
