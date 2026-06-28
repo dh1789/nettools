@@ -61,4 +61,5 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   UfwRulesBuilder: dynamic(() => import("./UfwRulesBuilder").then(m => ({ default: m.UfwRulesBuilder })), { loading }),
   CodeMinifier: dynamic(() => import("./CodeMinifier").then(m => ({ default: m.CodeMinifier })), { loading }),
   JsonCsvConverter: dynamic(() => import("./JsonCsvConverter").then(m => ({ default: m.JsonCsvConverter })), { loading }),
+  NmeaChecksum: dynamic(() => import("./NmeaChecksum").then(m => ({ default: m.NmeaChecksum })), { loading }),
 };

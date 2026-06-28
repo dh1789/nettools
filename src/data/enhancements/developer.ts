@@ -54,7 +54,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["url-encoder", "jwt-decoder", "image-base64-converter", "hash-generator", "html-entity-encoder", "qr-code-generator", "uuid-generator"],
+    relatedTools: ["url-encoder", "jwt-decoder", "image-base64-converter", "hash-generator", "html-entity-encoder", "qr-code-generator", "uuid-generator", "nmea-checksum"],
     extraFaqs: [
       {
         question: {
@@ -610,7 +610,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["chmod-calculator", "color-converter", "subnet-calculator", "ascii-unicode-table", "byte-unit-converter"],
+    relatedTools: ["chmod-calculator", "color-converter", "subnet-calculator", "ascii-unicode-table", "byte-unit-converter", "nmea-checksum"],
     extraFaqs: [
       {
         question: {
@@ -1513,7 +1513,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["json-formatter", "json-schema-validator", "yaml-json-converter"],
+    relatedTools: ["json-formatter", "json-schema-validator", "yaml-json-converter", "nmea-checksum"],
     extraFaqs: [
       {
         question: {
@@ -1543,6 +1543,93 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "데이터에 쉼표가 많이 포함된 경우 탭(TSV) 구분자가 적합합니다. 유럽 지역에서는 숫자의 소수점으로 쉼표를 사용하므로 세미콜론을 구분자로 선호합니다.",
           en: "Use tab (TSV) when data contains many commas. European regions use commas as decimal separators, so semicolons are preferred as delimiters there.",
+        },
+      },
+    ],
+  },
+  "nmea-checksum": {
+    howTo: {
+      steps: [
+        {
+          ko: "GPS·AIS 장비 로그에서 NMEA 문장을 복사해 입력 영역에 붙여넣습니다. 여러 줄을 한 번에 넣어도 됩니다.",
+          en: "Copy NMEA sentences from your GPS or AIS device log and paste them into the input area. Multiple lines at once are fine.",
+        },
+        {
+          ko: "검증 / 계산 버튼을 클릭하면 줄마다 본문을 XOR하여 체크섬을 계산합니다.",
+          en: "Click Validate / Calculate to XOR each sentence body and compute its checksum.",
+        },
+        {
+          ko: "*XX 체크섬이 있는 줄은 ✅(일치) 또는 ❌(불일치)로 표시되고, 없는 줄은 🔵 계산 모드로 완성 문장을 만들어 줍니다.",
+          en: "Lines with a *XX checksum show ✅ (match) or ❌ (mismatch); lines without one run in 🔵 calculation mode and produce the completed sentence.",
+        },
+        {
+          ko: "필요하면 XOR 과정 표시를 켜서 누적 단계를 확인하고, 완성 문장을 복사합니다.",
+          en: "Optionally enable Show XOR steps to inspect the accumulation, then copy the completed sentence.",
+        },
+      ],
+    },
+    relatedConcepts: [
+      {
+        title: {
+          ko: "NMEA 0183 프로토콜",
+          en: "NMEA 0183 Protocol",
+        },
+        description: {
+          ko: "선박·GPS 장비가 위치·속도·시각 등을 주고받는 ASCII 직렬 통신 표준입니다. 각 문장은 $ 또는 ! 로 시작하고 쉼표로 필드를 구분하며 *XX 체크섬으로 끝납니다.",
+          en: "An ASCII serial communication standard used by marine and GPS equipment to exchange position, speed, and time. Each sentence starts with $ or !, separates fields with commas, and ends with a *XX checksum.",
+        },
+      },
+      {
+        title: {
+          ko: "XOR 체크섬",
+          en: "XOR Checksum",
+        },
+        description: {
+          ko: "본문의 모든 바이트를 순차적으로 배타적 논리합(XOR)하여 얻는 1바이트 값입니다. 계산이 빠르고 단순해 전송 중 비트 오류를 가볍게 검출하는 데 쓰입니다.",
+          en: "A one-byte value obtained by XOR-ing every byte of the body in sequence. It is fast and simple, used to lightly detect bit errors during transmission.",
+        },
+      },
+      {
+        title: {
+          ko: "AIS (AIVDM/AIVDO)",
+          en: "AIS (AIVDM/AIVDO)",
+        },
+        description: {
+          ko: "선박 자동 식별 장치가 사용하는 메시지로, ! 로 시작하는 캡슐화 문장입니다. 페이로드는 6비트 ASCII로 인코딩되지만 체크섬 규칙은 표준 NMEA와 동일합니다.",
+          en: "Messages used by the Automatic Identification System, encapsulated in sentences that start with !. The payload is 6-bit ASCII encoded, but the checksum rule is identical to standard NMEA.",
+        },
+      },
+    ],
+    relatedTools: ["number-base-converter", "base64", "json-csv-converter"],
+    extraFaqs: [
+      {
+        question: {
+          ko: "체크섬은 일치하는데 데이터가 이상할 수 있나요?",
+          en: "Can the checksum match but the data still be wrong?",
+        },
+        answer: {
+          ko: "네. XOR 체크섬은 1바이트(8비트)뿐이라 충돌 가능성이 있고, 짝수 번 바뀐 비트 오류는 잡지 못할 수 있습니다. 체크섬 일치는 전송 무결성의 가벼운 확인일 뿐 의미적 정확성을 보장하지 않습니다.",
+          en: "Yes. An XOR checksum is only one byte (8 bits), so collisions are possible and it can miss errors where an even number of bits flip. A matching checksum is a lightweight integrity check, not a guarantee of semantic correctness.",
+        },
+      },
+      {
+        question: {
+          ko: "* 뒤의 체크섬이 소문자(예: *4a)여도 되나요?",
+          en: "Does the checksum after * have to be uppercase (e.g. *4a)?",
+        },
+        answer: {
+          ko: "표준은 대문자 16진수를 권장하지만, 이 도구는 검증 시 대소문자를 구분하지 않으므로 *4a 와 *4A 를 동일하게 처리합니다. 계산 결과는 항상 대문자 2자리로 출력합니다.",
+          en: "The standard recommends uppercase hexadecimal, but this tool compares case-insensitively, so *4a and *4A are treated the same. The computed result is always printed as two uppercase digits.",
+        },
+      },
+      {
+        question: {
+          ko: "여러 줄을 한 번에 검증할 수 있나요?",
+          en: "Can I validate many lines at once?",
+        },
+        answer: {
+          ko: "네. 줄 단위로 일괄 처리하며 빈 줄과 공백 줄, CRLF(\\r\\n) 줄바꿈은 자동으로 정리합니다. 각 줄의 결과를 표로 보여 주어 로그 전체를 빠르게 점검할 수 있습니다.",
+          en: "Yes. It processes line by line in batch, automatically trimming blank lines, whitespace-only lines, and CRLF (\\r\\n) line endings. Results are shown per line so you can scan an entire log quickly.",
         },
       },
     ],

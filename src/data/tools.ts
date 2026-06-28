@@ -2784,6 +2784,79 @@ export const TOOLS: Tool[] = [
       },
     ],
   },
+  {
+    slug: "nmea-checksum",
+    title: {
+      ko: "NMEA 0183 체크섬 계산기 / 검증기",
+      en: "NMEA 0183 Checksum Calculator / Validator",
+    },
+    description: {
+      ko: "NMEA 0183 문장의 체크섬을 계산하고 검증합니다. GPS·AIS·해양 장비 문장을 줄 단위로 일괄 처리하며 XOR 과정을 확인할 수 있습니다.",
+      en: "Calculate and validate NMEA 0183 sentence checksums. Batch-process GPS, AIS, and marine equipment sentences line by line and inspect the XOR steps.",
+    },
+    longDescription: {
+      ko: "NMEA 0183 체크섬 계산기/검증기는 GPS·해양·드론·임베디드 개발자가 NMEA 문장의 무결성을 즉시 확인하도록 돕습니다. 시작 구분자($ 표준 또는 ! AIS)와 별표(*) 사이의 모든 문자를 8비트 XOR한 뒤 2자리 대문자 16진수로 변환합니다. *XX 체크섬이 포함된 문장은 검증 모드로 동작하여 일치 여부(✅/❌)를 표시하고, 체크섬이 없는 본문은 계산 모드로 동작하여 완성된 문장을 만들어 줍니다. 여러 줄을 한 번에 붙여넣어 일괄 검증할 수 있고, AIS(AIVDM/AIVDO) 문장도 동일하게 지원합니다. XOR 누적 과정을 단계별로 펼쳐 볼 수 있어 학습과 디버깅에 유용합니다. 모든 계산은 브라우저 안에서 이루어져 입력값이 서버로 전송되지 않습니다.",
+      en: "The NMEA 0183 Checksum Calculator/Validator helps GPS, marine, drone, and embedded developers instantly verify the integrity of NMEA sentences. It XORs every character between the start delimiter ($ for standard or ! for AIS) and the asterisk (*), then formats the result as a two-digit uppercase hexadecimal value. Sentences that include a *XX checksum run in validation mode and show whether they match (✅/❌), while a bare body runs in calculation mode and produces the completed sentence. You can paste many lines at once for batch validation, and AIS (AIVDM/AIVDO) sentences are supported the same way. The cumulative XOR steps can be expanded for learning and debugging. All computation happens in your browser, so input is never sent to a server.",
+    },
+    category: "developer",
+    keywords: [
+      "nmea checksum",
+      "nmea 0183 checksum",
+      "nmea checksum calculator",
+      "nmea checksum validator",
+      "gps checksum",
+      "ais checksum",
+      "aivdm checksum",
+      "nmea xor",
+      "nmea 체크섬",
+      "nmea 체크섬 계산기",
+      "gps 체크섬 검증",
+    ],
+    component: "NmeaChecksum",
+    datePublished: "2026-06-28",
+    faqs: [
+      {
+        question: {
+          ko: "NMEA 체크섬은 어떻게 계산되나요?",
+          en: "How is the NMEA checksum calculated?",
+        },
+        answer: {
+          ko: "시작 구분자($ 또는 !)와 별표(*) 사이의 모든 문자를 8비트 XOR 연산한 뒤, 그 결과를 2자리 대문자 16진수로 표기합니다. 구분자와 별표 자체는 계산에 포함되지 않습니다.",
+          en: "Every character between the start delimiter ($ or !) and the asterisk (*) is combined with an 8-bit XOR, and the result is written as a two-digit uppercase hexadecimal value. The delimiter and the asterisk themselves are not included.",
+        },
+      },
+      {
+        question: {
+          ko: "AIS(AIVDM) 문장도 검증할 수 있나요?",
+          en: "Can I validate AIS (AIVDM) sentences?",
+        },
+        answer: {
+          ko: "네. ! 로 시작하는 AIS AIVDM/AIVDO 문장도 $ 표준 문장과 동일한 규칙으로 처리됩니다. 페이로드 내부의 특수문자도 모두 XOR 대상에 포함됩니다.",
+          en: "Yes. AIS AIVDM/AIVDO sentences that start with ! are handled by the same rules as standard $ sentences. All special characters inside the payload are included in the XOR.",
+        },
+      },
+      {
+        question: {
+          ko: "체크섬(*XX) 없이 본문만 입력하면 어떻게 되나요?",
+          en: "What happens if I enter a body without a *XX checksum?",
+        },
+        answer: {
+          ko: "별표(*) 체크섬이 없으면 계산 모드로 동작하여 올바른 체크섬을 계산하고 완성된 문장($본문*XX)을 만들어 복사할 수 있게 해 줍니다.",
+          en: "Without an asterisk checksum the tool runs in calculation mode: it computes the correct checksum and produces the completed sentence ($body*XX) for you to copy.",
+        },
+      },
+      {
+        question: {
+          ko: "입력한 NMEA 데이터가 서버로 전송되나요?",
+          en: "Is my NMEA data sent to a server?",
+        },
+        answer: {
+          ko: "아니요. 모든 계산과 검증은 브라우저 안에서만 이루어집니다. 입력값은 외부로 전송되거나 저장되지 않습니다.",
+          en: "No. All calculation and validation happen entirely in your browser. Your input is never transmitted or stored externally.",
+        },
+      },
+    ],
+  },
 ];
 
 // Enhancement 데이터 통합: howTo, relatedConcepts, relatedTools, extraFaqs, usageExamples 머지
