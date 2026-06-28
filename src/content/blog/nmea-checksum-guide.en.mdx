@@ -1,0 +1,101 @@
+---
+title: "Understanding the NMEA 0183 Checksum — From XOR to Validation"
+description: "What the NMEA 0183 checksum is and how it is computed (XOR between the start delimiter and *), explained from first principles. GPS and AIS sentence structure, a hand-worked example, validate vs calculate modes, and common mistakes."
+category: developer
+keywords:
+  - NMEA 0183
+  - NMEA checksum
+  - nmea checksum calculator
+  - GPS sentence
+  - AIS AIVDM
+  - XOR checksum
+  - checksum calculation
+publishedAt: "2026-06-28"
+relatedTools:
+  - nmea-checksum
+  - number-base-converter
+  - base64
+author: NetTools Team
+---
+
+## What is NMEA 0183
+
+**NMEA 0183** is an ASCII serial communication standard used by GPS receivers, marine navigation gear, and fish finders to exchange data. Each line is a single "sentence," written in human-readable text.
+
+```
+$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,*76
+```
+
+Broken down, it looks like this:
+
+| Part | Value | Meaning |
+|------|-------|---------|
+| Start delimiter | `$` | Standard sentence start (AIS uses `!`) |
+| Talker + sentence ID | `GPGGA` | GP = GPS, GGA = fix/altitude |
+| Data fields | `092750.000,...` | Comma-separated values |
+| Checksum delimiter | `*` | Marks end of the body |
+| Checksum | `76` | Two hex digits |
+
+That trailing `*76` is the subject of this guide: the **checksum**.
+
+## Why the checksum exists
+
+Serial communication is fragile. Cable interference, a wrong baud rate, or a buffer overrun can corrupt a single character and throw off an entire position fix. The checksum is a one-byte integrity value used to **lightly detect whether the data was altered in transit**.
+
+The receiver recomputes the checksum from the body it received and compares it to the `*XX` at the end of the sentence. If they differ, it drops that line.
+
+> Note: a checksum is not encryption, and it is not error *correction*. It only tells you **whether** something broke — a lightweight check.
+
+## How it works — XOR between the start delimiter and `*`
+
+The rule is surprisingly simple.
+
+1. Take every character **between the start delimiter (`$` or `!`) and the `*`**. The delimiter and the `*` itself are **not** included.
+2. **XOR (exclusive-or)** each character's ASCII code, in order.
+3. Format the result (0–255) as **two uppercase hexadecimal digits**.
+
+### Work it out by hand
+
+Say the body is just the two characters `AB`.
+
+- `A` = `0x41` = `0100 0001`
+- `B` = `0x42` = `0100 0010`
+- XOR = `0000 0011` = `0x03`
+
+→ the checksum is `03`. XOR yields 0 for matching bits and 1 for differing bits, so if any character changes, the result changes too — which is exactly why it detects corruption.
+
+If hex ↔ binary conversion trips you up, check it with the [number base converter](/tools/net/number-base-converter/).
+
+### Verify with a real sentence
+
+For the `$GPGGA,...` sentence above, XOR-ing the whole `GPGGA,092750.000,...,M,,` between `$` and `*` produces exactly `0x76` → `76`. To accumulate it character by character yourself, turn on "Show XOR steps" in the [NMEA checksum calculator](/tools/net/nmea-checksum/) to see each running value.
+
+## Validate mode vs calculate mode
+
+The NMEA checksum tool branches on whether the input has a `*XX`.
+
+- **Validate**: when a checksum is present, like `$GPRMC,...*45`, it compares the computed value with the given one and shows **✅ match / ❌ mismatch**. Use this to debug broken logs.
+- **Calculate**: when you provide only a body, like `GPGGA,123519,...`, it computes the correct checksum and produces the **completed sentence (`$...*47`)**. Use this when authoring sentences.
+
+Comparison is case-insensitive. The standard recommends uppercase (`*4A`), but `*4a` is treated identically.
+
+## AIS (`!`) sentences follow the same rule
+
+AIVDM/AIVDO sentences from the Automatic Identification System (AIS) start with `!` instead of `$`.
+
+```
+!AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C
+```
+
+The payload is encoded as 6-bit ASCII so it looks unfamiliar, but the **checksum rule is exactly the same as standard NMEA**. XOR every character between `!` and `*` — including special characters inside the payload such as backticks and angle brackets — and you get `5C`.
+
+## Common mistakes
+
+- **Including `$` or `*` in the XOR** — the most common bug. The delimiters must be excluded.
+- **Single-digit hex** — a value like `0x3` must be written as `03`, padded to two digits, not `3`.
+- **Including CR/LF in the body** — the line ending `\r\n` comes after the `*`, so it is not part of the XOR. Trim it so it never leaks into the body.
+- **Assuming "checksum matches = data is correct"** — XOR is only 8 bits, so collisions are possible and it misses errors where an even number of bits flip. It is a lightweight integrity guarantee, nothing more.
+
+## Summary
+
+The NMEA checksum is just "XOR everything between the start delimiter and `*`, formatted as two uppercase hex digits." The rule is identical for GPS and AIS. When debugging logs or authoring sentences, use the [NMEA 0183 checksum calculator/validator](/tools/net/nmea-checksum/) to validate and calculate many lines at once. All computation happens entirely in your browser, so your input is never sent anywhere.

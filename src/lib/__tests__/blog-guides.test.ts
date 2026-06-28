@@ -15,6 +15,7 @@ const GUIDE_SLUGS = [
   "chmod-permissions-guide",
   "dns-records-guide",
   "base64-encoding-guide",
+  "nmea-checksum-guide",
 ];
 
 describe("블로그 가이드 글", () => {
