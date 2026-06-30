@@ -22,7 +22,7 @@ author: beomanro
 
 Cron expressions are essential for server operations, CI/CD pipelines, and batch job scheduling. But expressions like `0 */6 * * 1-5` aren't exactly easy to read at a glance.
 
-crontab.guru has been the de facto standard for years — it's well made, and I still use it. I built the [Cron Expression Parser](/tools/net/cron-parser/) for just two reasons: explaining the English interpretation every time I shared an expression with a Korean-speaking team got tedious, and I once dropped an AWS EventBridge 6-field (with-seconds) cron into a 5-field tool, had every field shift by one, and watched a batch job fire in the middle of the night. Below is an honest "which one, when" comparison — not marketing.
+crontab.guru has been the de facto standard for years. The [Cron Expression Parser](/tools/net/cron-parser/) differs in two specific ways — **Korean interpretation output** and **6-field (with-seconds) cron support**. Below is an honest "which one, when" comparison — not marketing.
 
 ## Feature Comparison
 
