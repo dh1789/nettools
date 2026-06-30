@@ -2,10 +2,11 @@
 
 import { useLocale } from "@/lib/LocaleProvider";
 import { T } from "@/lib/i18n";
+import { CATEGORIES } from "@/data/tools";
 import Link from "next/link";
 
 export function ClientFooter() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   return (
     <footer
@@ -20,6 +21,20 @@ export function ClientFooter() {
     >
       <p>{t(T.footerBuiltBy)}</p>
       <p style={{ marginTop: "0.25rem" }}>{t(T.footerPrivacy)}</p>
+      <nav
+        aria-label={t({ ko: "카테고리", en: "Categories" })}
+        style={{ marginTop: "0.75rem", fontSize: "0.75rem", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.25rem 1rem" }}
+      >
+        {CATEGORIES.map((category) => (
+          <Link
+            key={category.id}
+            href={`/category/${category.id}/`}
+            style={{ color: "var(--text-tertiary)", textDecoration: "none" }}
+          >
+            {category.icon} {category.title[locale]}
+          </Link>
+        ))}
+      </nav>
       <p style={{ marginTop: "0.75rem", fontSize: "0.75rem" }}>
         <Link href="/blog/" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
           {t(T.blogTitle)}

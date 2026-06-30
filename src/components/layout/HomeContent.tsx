@@ -18,7 +18,7 @@ const GUIDES: { slug: string; title: { ko: string; en: string } }[] = [
 ];
 
 export function HomeContent() {
-  const { locale, tf } = useLocale();
+  const { locale, t, tf } = useLocale();
 
   return (
     <main style={{ maxWidth: "960px", margin: "0 auto", padding: "2rem 1rem" }}>
@@ -71,13 +71,23 @@ export function HomeContent() {
                 fontWeight: 700,
                 color: "var(--text-primary, #111)",
                 marginBottom: "1rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
               }}
             >
-              <span>{category.icon}</span>
-              {category.title[locale]}
+              <Link
+                href={`/category/${category.id}/`}
+                style={{
+                  color: "inherit",
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+                aria-label={`${category.title[locale]} ${t({ ko: "도구 전체 보기", en: "view all tools" })}`}
+              >
+                <span>{category.icon}</span>
+                {category.title[locale]}
+                <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text-tertiary, #9ca3af)" }}>→</span>
+              </Link>
             </h2>
 
             <div
