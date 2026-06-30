@@ -20,38 +20,31 @@ author: NetTools Team
 
 ## Why Compare Regex Testers?
 
-Regular expressions (regex) are essential for text processing, log analysis, and data validation. regex101 is the most widely known online regex tester, but it's not the best choice for every situation.
-
-The beomanro [Regex Tester](/tools/net/regex-tester/) is a lightweight, privacy-focused alternative.
+Regular expressions (regex) are essential for text processing, log analysis, and data validation. regex101 is the most powerful online regex IDE, and I still reach for it when building complex patterns. But I didn't want to push sensitive production logs onto a server engine just to match them quickly — so I built the browser-JS-only [Regex Tester](/tools/net/regex-tester/). Here's an honest take on how to split the two.
 
 ## Feature Comparison
 
 | Feature | beomanro | regex101 |
 |---------|:--------:|:--------:|
 | Free to use | ✓ | ✓ |
-| Works offline | ✓ | ✗ |
 | Korean interface | ✓ | ✗ |
-| No ads | ✓ | ✗ |
-| Client-side processing | ✓ | ✗ |
-| No data sent to server | ✓ | ✗ |
-| Mobile responsive | ✓ | Some |
 | Real-time match highlighting | ✓ | ✓ |
 | Capture group display | ✓ | ✓ |
-| Multi-language engine | ✗ | ✓ |
-| Pattern save/share | ✗ | ✓ |
-| Debugger mode | ✗ | ✓ |
+| Multi-engine (PCRE, Python, Go, …) | ✗ | ✓ |
+| Pattern save/share (URL) | ✗ | ✓ |
+| Step-by-step debugger | ✗ | ✓ |
 
 ## Detailed Comparison
 
-### Privacy
+### Where processing happens (privacy)
 
-This is the biggest difference. regex101 **sends all text and patterns to its server**. When testing log data or text containing personal information, there's a risk of data exposure.
+This is the most practical difference. regex101 runs PCRE, Python, Go, and other engines **on its server**, so when you use those engines your pattern and test string are sent to the backend (save/share is server-based too). Worth considering for production logs or text with personal data.
 
-beomanro performs all processing in the browser, so **no data ever leaves your machine**.
+beomanro uses only the browser's JavaScript engine, so input **never leaves your browser** — with the trade-off that it can only validate JS-flavor regex.
 
 ### Speed and Lightness
 
-beomanro loads instantly as a single page. regex101 offers more features but has relatively slower initial loading and UI responsiveness.
+beomanro loads instantly as a single page. regex101 offers far more features but has relatively heavier initial loading.
 
 ### Korean Support
 
