@@ -39,7 +39,8 @@
 
 ## 애드센스 승인 준비 (2026-06-24 서베이)
 
-> 상세·요건·근거 22개 사이트 분석: [docs/ADSENSE_APPROVAL.md](ADSENSE_APPROVAL.md). 판정 = **2~4주 작업 후 신청** (지금 신청은 거절 위험).
+> 상세·요건·근거 22개 사이트 분석: [docs/ADSENSE_APPROVAL.md](ADSENSE_APPROVAL.md).
+> **🟢 2026-06-26 재심사 제출 완료** — 계정 `koei2418` / `pub-6842181130818480`. 과거(2026-01-16) "가치가 별로 없는 콘텐츠"로 거절 → 콘텐츠 심화·ads.txt·코드 배포 후 재심사 요청. 상태 "준비 중"(검토 중). 결과 며칠~2주.
 
 - [x] 🔴 색인 지원 (코드 가능분 완료, 2026-06-24) — ✅ 홈에 가이드 8편 1-hop 섹션 추가(`HomeContent`, 색인된 홈→가이드 발견 신호) · ✅ 내부링크 trailing-slash 전체 정규화 · ✅ canonical/noindex 점검(`/tools/net` noindex=홈 중복 통합 의도, 정상). 🙋 **남은 GSC sitemap 제출·핵심 URL 색인 요청은 사용자만 가능**(코드 불가)
 - [x] 🔴 가이드 ko 14/14 심화 ✅ (2026-06-24, build 검증) — 도구 워크드 예제·엣지케이스·명령어표·1인칭+교차링크. subnet 3편 distinct 앵글 클러스터 분리(subnet-guide는 CIDR/VLSM로 retitle). 내부링크 trailing-slash 전체 정규화. **en 패리티 보류**: ko=primary(DEFAULT_LOCALE=ko), en은 hreflang 변형이라 AdSense 평가 비대상 — 필요 시 후속

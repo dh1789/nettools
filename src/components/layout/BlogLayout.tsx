@@ -255,7 +255,10 @@ export function BlogLayout({
                 color: "var(--text-tertiary, #9ca3af)",
               }}
             >
-              · {locale === "ko" ? "글쓴이" : "By"} {author}
+              · {locale === "ko" ? "글쓴이" : "By"}{" "}
+              <a href="/about/" style={{ color: "inherit", textDecoration: "underline" }}>
+                {author}
+              </a>
             </span>
           )}
           {updatedAt && (

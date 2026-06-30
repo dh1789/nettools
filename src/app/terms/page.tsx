@@ -277,7 +277,7 @@ export default function TermsPage() {
   return (
     <LegalDoc
       title={{ ko: "이용약관", en: "Terms of Service" }}
-      updated={{ ko: "최종 업데이트: 2025년 1월 1일", en: "Last updated: January 1, 2025" }}
+      updated={{ ko: "최종 업데이트: 2026년 6월 30일", en: "Last updated: June 30, 2026" }}
       sections={sections}
     />
   );

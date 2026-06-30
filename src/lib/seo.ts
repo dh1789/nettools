@@ -368,9 +368,9 @@ export function generateBlogJsonLd(post: BlogPost, locale: Locale): string {
     ...(updatedAt && { dateModified: updatedAt }),
     keywords: keywords.join(", "),
     author: {
-      "@type": "Organization",
+      "@type": "Person",
       name: post.frontmatter.author || SITE_NAME,
-      url: SITE_URL,
+      url: `${SITE_URL}/about/`,
     },
     publisher: {
       "@type": "Organization",

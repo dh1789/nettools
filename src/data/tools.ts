@@ -224,8 +224,8 @@ export const TOOLS: Tool[] = [
       en: "Look up the manufacturer from a MAC address using OUI database.",
     },
     longDescription: {
-      ko: "MAC 주소 OUI 조회기는 네트워크 장비의 제조사를 빠르게 파악할 수 있는 도구입니다. MAC 주소의 앞 3바이트(OUI)를 기반으로 IEEE에 등록된 제조사 정보를 조회합니다. 네트워크 포렌식, 침입 탐지, 장비 인벤토리 관리 등에 활용됩니다. 다양한 구분자(콜론, 하이픈, 점)로 입력된 MAC 주소를 지원합니다.",
-      en: "The MAC Address OUI Lookup tool helps quickly identify the manufacturer of network devices. It queries IEEE-registered vendor information based on the first 3 bytes (OUI) of a MAC address. Useful for network forensics, intrusion detection, and device inventory management. Supports MAC addresses with various separators (colon, hyphen, dot).",
+      ko: "MAC 주소 OUI 조회기는 네트워크 장비의 제조사를 빠르게 파악할 수 있는 도구입니다. MAC 주소의 앞 3바이트(OUI)를 기반으로 IEEE에 등록된 제조사 정보를 조회합니다. 네트워크 포렌식, 침입 탐지, 장비 인벤토리 관리 등에 활용됩니다. 다양한 구분자(콜론, 하이픈, 점)로 입력된 MAC 주소를 지원합니다. 데이터 출처: IEEE Registration Authority의 공개 OUI 레지스트리(MA-L/MA-M/MA-S)를 가공해 조회용으로 제공합니다.",
+      en: "The MAC Address OUI Lookup tool helps quickly identify the manufacturer of network devices. It queries IEEE-registered vendor information based on the first 3 bytes (OUI) of a MAC address. Useful for network forensics, intrusion detection, and device inventory management. Supports MAC addresses with various separators (colon, hyphen, dot). Data source: the public OUI registries (MA-L/MA-M/MA-S) published by the IEEE Registration Authority, processed here for lookup.",
     },
     category: "network",
     keywords: [
@@ -482,8 +482,8 @@ export const TOOLS: Tool[] = [
       en: "Search well-known port numbers (0-65535). Find service names, protocols, and descriptions.",
     },
     longDescription: {
-      ko: "포트 번호 사전은 TCP/UDP 포트 번호와 서비스 이름을 빠르게 검색할 수 있는 참고 도구입니다. IANA에 등록된 Well-known 포트(0-1023), 등록 포트(1024-49151), 동적 포트(49152-65535) 정보를 포함합니다. 포트 번호로 서비스를 찾거나, 서비스 이름으로 포트를 검색할 수 있습니다. 방화벽 설정, 네트워크 트러블슈팅, 보안 감사에 필수적인 도구입니다.",
-      en: "The Port Number Dictionary is a quick reference tool for TCP/UDP port numbers and service names. Includes IANA-registered well-known ports (0-1023), registered ports (1024-49151), and dynamic ports (49152-65535). Search by port number to find services, or by service name to find port numbers. Essential for firewall configuration, network troubleshooting, and security audits.",
+      ko: "포트 번호 사전은 TCP/UDP 포트 번호와 서비스 이름을 빠르게 검색할 수 있는 참고 도구입니다. IANA에 등록된 Well-known 포트(0-1023), 등록 포트(1024-49151), 동적 포트(49152-65535) 정보를 포함합니다. 포트 번호로 서비스를 찾거나, 서비스 이름으로 포트를 검색할 수 있습니다. 방화벽 설정, 네트워크 트러블슈팅, 보안 감사에 필수적인 도구입니다. 데이터 출처: IANA Service Name and Transport Protocol Port Number Registry를 기반으로, 현대 인프라(K8s·Redis·Kafka 등)에서 실제 자주 쓰이는 포트를 자체 선별하고 한/영 설명을 더했습니다.",
+      en: "The Port Number Dictionary is a quick reference tool for TCP/UDP port numbers and service names. Includes IANA-registered well-known ports (0-1023), registered ports (1024-49151), and dynamic ports (49152-65535). Search by port number to find services, or by service name to find port numbers. Essential for firewall configuration, network troubleshooting, and security audits. Data source: based on the IANA Service Name and Transport Protocol Port Number Registry, with a hand-picked set of ports common in modern infrastructure (K8s, Redis, Kafka, etc.) and added Korean/English descriptions.",
     },
     category: "network",
     keywords: [
@@ -2076,8 +2076,8 @@ export const TOOLS: Tool[] = [
       en: "Look up HTTP status codes (1xx–5xx) with descriptions and usage. Covers 400, 404, 500, and more.",
     },
     longDescription: {
-      ko: "HTTP 상태 코드 사전은 웹 개발과 API 디버깅에 필수적인 참조 도구입니다. 1xx(정보), 2xx(성공), 3xx(리다이렉트), 4xx(클라이언트 오류), 5xx(서버 오류) 범주의 30개 이상의 상태 코드를 한국어/영어로 검색하고 확인할 수 있습니다. 각 코드의 의미, 일반적인 사용 사례, 발생 원인을 상세히 설명합니다. API 오류 분석, 웹 서버 로그 해석, HTTP 클라이언트 구현에 활용하세요.",
-      en: "The HTTP Status Code Dictionary is an essential reference tool for web development and API debugging. Search and look up 30+ status codes across 1xx (informational), 2xx (success), 3xx (redirect), 4xx (client error), and 5xx (server error) categories in Korean/English. Each code includes meaning, common use cases, and root causes. Use it for API error analysis, web server log interpretation, and HTTP client implementation.",
+      ko: "HTTP 상태 코드 사전은 웹 개발과 API 디버깅에 필수적인 참조 도구입니다. 1xx(정보), 2xx(성공), 3xx(리다이렉트), 4xx(클라이언트 오류), 5xx(서버 오류) 범주의 30개 이상의 상태 코드를 한국어/영어로 검색하고 확인할 수 있습니다. 각 코드의 의미, 일반적인 사용 사례, 발생 원인을 상세히 설명합니다. API 오류 분석, 웹 서버 로그 해석, HTTP 클라이언트 구현에 활용하세요. 데이터 출처: IETF RFC 9110 등 HTTP 표준과 IANA 상태 코드 레지스트리를 기반으로, 각 코드에 실무 발생 맥락을 자체 작성해 더했습니다.",
+      en: "The HTTP Status Code Dictionary is an essential reference tool for web development and API debugging. Search and look up 30+ status codes across 1xx (informational), 2xx (success), 3xx (redirect), 4xx (client error), and 5xx (server error) categories in Korean/English. Each code includes meaning, common use cases, and root causes. Use it for API error analysis, web server log interpretation, and HTTP client implementation. Data source: based on the HTTP standards (IETF RFC 9110 and others) and the IANA status code registry, with hands-on operational context written for each code.",
     },
     category: "network",
     keywords: [

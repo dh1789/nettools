@@ -138,17 +138,21 @@ const sections: DocSection[] = [
     body: {
       ko: (
         <p>
-          NetTools는 19년 경력의 네트워크 보안 개발자가 만들었습니다. 방화벽, 침입 탐지 시스템,
-          네트워크 모니터링 등 다양한 보안 인프라를 설계하고 운영해온 경험을 바탕으로,
-          실제 현장에서 필요한 도구를 직접 개발했습니다.
+          NetTools와 블로그 글은 <strong>beomanro</strong>(필명)가 만들고 씁니다. 19년 경력의
+          네트워크·보안 개발자로, 방화벽·침입 탐지 시스템·네트워크 모니터링 등 보안 인프라를
+          설계하고 운영해온 경험을 바탕으로 실제 현장에서 필요한 도구를 직접 개발하고,
+          각 도구의 배경 지식을 블로그에 정리합니다. 문의는 <a href="/contact">연락처</a>로
+          받습니다.
         </p>
       ),
       en: (
         <p>
-          NetTools was built by a network security developer with 19 years of experience.
-          Drawing on experience designing and operating security infrastructure —
-          firewalls, intrusion detection systems, network monitoring — the tools are built
-          for what is actually needed in the field.
+          NetTools and its blog are built and written by <strong>beomanro</strong> (pen name),
+          a network and security developer with 19 years of experience. Drawing on years of
+          designing and operating security infrastructure — firewalls, intrusion detection
+          systems, network monitoring — the tools are built for what is actually needed in the
+          field, with the background behind each one written up on the blog. Reach out via the{" "}
+          <a href="/contact">contact page</a>.
         </p>
       ),
     },
