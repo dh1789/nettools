@@ -1,0 +1,98 @@
+---
+title: "Port Numbers in Practice — Well-known to Ephemeral"
+description: "A practical tour of TCP/UDP port ranges (well-known, registered, dynamic), a table of ports you actually meet in production, copy-paste ss/lsof/nc commands for firewall work and troubleshooting, and a security take on changing default ports."
+category: network
+keywords:
+  - port numbers
+  - TCP port
+  - UDP port
+  - well known ports
+  - port number list
+  - firewall ports
+  - check open ports
+  - ephemeral ports
+publishedAt: "2026-07-08"
+relatedTools:
+  - port-dictionary
+  - ufw-rules-builder
+  - dns-lookup
+author: beomanro
+---
+
+## Why ports exist
+
+An IP address only identifies *which machine*. When one server runs a web server, mail, and SSH at once, something must tell packets which process to reach — that's the **port number** (0–65535, 16 bits). Only the combination of IP and port, like `192.0.2.10:443`, forms a communication endpoint (a socket).
+
+## The three ranges — IANA's port scheme
+
+IANA divides the port space into three ranges.
+
+| Range | Span | Purpose |
+|-------|------|---------|
+| Well-known | 0–1023 | Standard services (HTTP 80, SSH 22 …). Binding requires root on Unix |
+| Registered | 1024–49151 | Vendor/application registrations (PostgreSQL 5432, Kafka 9092 …) |
+| Dynamic (ephemeral) | 49152–65535 | Temporarily assigned by the OS for outgoing connections |
+
+One caveat worth knowing — **Linux's actual default ephemeral range differs from the IANA recommendation.** Check `cat /proc/sys/net/ipv4/ip_local_port_range` and you'll usually see `32768 60999`. When debugging outbound-connection issues on NAT devices or firewalls, this is the range that matters.
+
+## Ports you actually meet
+
+A mix of classic services and modern infrastructure. For full search, use the [port number dictionary](/tools/net/port-dictionary/).
+
+| Port | Protocol | Service |
+|------|----------|---------|
+| 22 | TCP | SSH |
+| 53 | TCP/UDP | DNS — see the [DNS lookup tool](/tools/net/dns-lookup/) |
+| 80 / 443 | TCP | HTTP / HTTPS |
+| 123 | UDP | NTP |
+| 3306 / 5432 | TCP | MySQL / PostgreSQL |
+| 6379 | TCP | Redis |
+| 8080 / 8443 | TCP | HTTP alternates (proxies, dev) |
+| 9092 | TCP | Kafka |
+| 2379–2380 | TCP | etcd (K8s control plane) |
+| 6443 | TCP | Kubernetes API server |
+| 10250 | TCP | kubelet API |
+
+## Copy-paste troubleshooting commands
+
+**"Who is using this port?"** — Linux:
+
+```bash
+ss -tlnp                 # listening TCP ports + process
+ss -tlnp | grep :8080    # a specific port
+lsof -i :8080            # process detail for that port
+```
+
+macOS has no `ss`, so:
+
+```bash
+lsof -iTCP -sTCP:LISTEN -n -P
+```
+
+**"Is the remote port open?"**
+
+```bash
+nc -zv host.example.com 443          # TCP connect test
+nc -zvu host.example.com 53          # UDP (verdict can be unreliable)
+curl -v telnet://host.example.com:443
+```
+
+UDP has no connection concept, so `nc -u`'s "open" verdict is fuzzy: no response can mean open *or* filtered.
+
+**"How do I open it in the firewall?"** — for UFW, the [UFW rules builder](/tools/net/ufw-rules-builder/) generates the exact syntax without typos.
+
+## Security take — how much does changing default ports help
+
+Moving SSH from 22 to 2222 genuinely **reduces automated-scanner noise**, but it is not a security boundary. A full port scan (`nmap -p-`) finds it within a minute, and the banner identifies the service. Use port changes to cut log noise; put the real defense in key-only auth, fail2ban, and source-restricted firewall rules.
+
+Another common trap — **"closed" and "filtered" are different.** Closed means the host answered with RST (the host is alive); filtered means a firewall dropped the packet. Reading scan output with this distinction is what separates a service problem from a firewall problem.
+
+## Frequent mistakes
+
+- **Binding below 1024** — if binding port 80 fails in a container, look at the `CAP_NET_BIND_SERVICE` capability or use an unprivileged port (8080) behind a proxy.
+- **Ephemeral port exhaustion via TIME_WAIT** — on gateways with high connection rates, tens of thousands of timewait entries in `ss -s` suggest exhaustion; widen `ip_local_port_range` or use connection pooling.
+- **Same port, different protocol** — TCP 53 and UDP 53 are separate. DNS normally uses UDP 53 but switches to TCP 53 for responses over 512 bytes or zone transfers (AXFR). Opening only UDP in the firewall causes intermittent lookup failures.
+
+## Summary
+
+A port is "the process address behind an IP." Remember the range scheme (0–1023 / 1024–49151 / dynamic) and Linux's real ephemeral range (32768–60999), and three commands — `ss`, `lsof`, `nc` — cover most port troubleshooting. Search individual ports in the [port number dictionary](/tools/net/port-dictionary/), and generate firewall rules with the [UFW rules builder](/tools/net/ufw-rules-builder/).

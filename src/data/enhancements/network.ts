@@ -642,6 +642,16 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
           en: "Using VLSM requires routing protocols (OSPF, EIGRP, etc.) that support classless routing. RIPv1 does not support VLSM, so RIPv2 or higher must be used.",
         },
       },
+      {
+        title: {
+          ko: "큰 서브넷부터 할당하는 이유",
+          en: "Why Allocate the Largest Subnet First",
+        },
+        description: {
+          ko: "VLSM은 반드시 호스트 수가 큰 서브넷부터 배치합니다. 서브넷은 자기 크기의 배수 경계에서만 시작할 수 있어서(예: /25는 .0 또는 .128), 작은 블록을 먼저 흩어 놓으면 큰 블록이 들어갈 연속 공간이 사라지는 단편화가 생깁니다. 이 계산기도 입력을 내림차순으로 정렬해 배치합니다.",
+          en: "VLSM must place the largest subnets first. A subnet can only start on a boundary that is a multiple of its own size (e.g., a /25 starts at .0 or .128), so scattering small blocks first fragments the space and leaves no contiguous room for large ones. This calculator sorts requests in descending order for the same reason.",
+        },
+      },
     ],
     relatedTools: ["subnet-calculator", "cidr-to-range", "ip-lookup"],
     extraFaqs: [
@@ -673,6 +683,16 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "초기 네트워크 블록이 부족할 경우 더 큰 CIDR 블록으로 교체하거나, 추가 블록을 확보해야 합니다. 설계 시 향후 성장을 감안하여 20~30% 여유 공간을 두는 것이 권장됩니다. 또한 각 서브넷 사이에 빈 공간을 확보해두면 추후 확장이 용이합니다.",
           en: "If the initial network block is insufficient, switch to a larger CIDR block or acquire additional blocks. It's recommended to reserve 20-30% extra space for future growth during design. Leaving gaps between subnets also makes future expansion easier.",
+        },
+      },
+      {
+        question: {
+          ko: "클라우드 VPC에서도 VLSM 계산이 그대로 통하나요?",
+          en: "Does VLSM math apply directly to cloud VPCs?",
+        },
+        answer: {
+          ko: "기본 원리는 같지만 예약 주소 수가 다릅니다. 온프레미스는 서브넷당 2개(네트워크·브로드캐스트)를 빼지만, AWS는 서브넷당 5개, Azure도 5개를 예약합니다. 예로 /28은 일반 환경에서 14 호스트지만 AWS에선 11개만 사용 가능합니다. 클라우드 설계 시 이 차이를 반영해 한 단계 큰 프리픽스를 잡는 것이 안전합니다.",
+          en: "The math is the same, but reserved addresses differ. On-prem subtracts 2 per subnet (network + broadcast), while AWS reserves 5 and Azure also 5. A /28 gives 14 hosts on-prem but only 11 usable in AWS. For cloud designs, size one prefix step larger to absorb this difference.",
         },
       },
     ],

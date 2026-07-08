@@ -906,6 +906,16 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
           en: "YAML's | (literal block) preserves newlines, > (folded block) converts them to spaces. In JSON, these are represented with \\n escapes.",
         },
       },
+      {
+        title: {
+          ko: "암시적 타입 변환 함정 (Norway Problem)",
+          en: "Implicit Typing Pitfalls (The Norway Problem)",
+        },
+        description: {
+          ko: "YAML 1.1은 no, off, yes 같은 단어를 불리언으로 해석합니다. 국가 코드 NO(노르웨이)가 false로 바뀌는 것이 대표 사례입니다. 버전 문자열 1.20도 숫자 1.2로 잘릴 수 있으므로, 의도한 문자열은 따옴표로 감싸야 안전합니다.",
+          en: "YAML 1.1 interprets words like no, off, and yes as booleans. The classic example: the country code NO (Norway) becomes false. A version string like 1.20 can also collapse to the number 1.2 — quote strings explicitly to stay safe.",
+        },
+      },
     ],
     relatedTools: ["json-formatter", "json-schema-validator", "json-csv-converter"],
     extraFaqs: [
@@ -937,6 +947,16 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "네, kubectl은 JSON도 지원하며 프로그래밍 방식으로 매니페스트를 생성할 때 JSON이 편리합니다. 또한 API 서버는 내부적으로 JSON을 사용하므로 디버깅 시 JSON 형태가 도움될 수 있습니다.",
           en: "Yes, kubectl supports JSON and it's convenient for generating manifests programmatically. Also, the API server uses JSON internally, so JSON form can help during debugging.",
+        },
+      },
+      {
+        question: {
+          ko: "숫자나 국가 코드가 엉뚱한 값으로 변환되는 이유는 뭔가요?",
+          en: "Why do numbers or country codes convert to unexpected values?",
+        },
+        answer: {
+          ko: "YAML의 암시적 타입 변환 때문입니다. 따옴표 없는 no/off/yes는 불리언으로, 3.10 같은 값은 숫자로 해석될 수 있습니다. 문자열로 유지하려면 \"no\", \"3.10\"처럼 따옴표로 감싸세요. 변환 결과에서 따옴표가 사라졌다면 이 규칙에 걸린 것입니다.",
+          en: "It's YAML's implicit typing. Unquoted no/off/yes parse as booleans, and values like 3.10 can parse as numbers. Wrap them in quotes (\"no\", \"3.10\") to keep them as strings. If quotes disappeared in the output, this rule is what caught you.",
         },
       },
     ],
@@ -1072,6 +1092,16 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
           en: "Markdown is a simplified notation for HTML, ultimately converted to HTML. You can use HTML tags directly within Markdown for complex layouts.",
         },
       },
+      {
+        title: {
+          ko: "Markdown 방언 (CommonMark vs GFM)",
+          en: "Markdown Flavors (CommonMark vs GFM)",
+        },
+        description: {
+          ko: "Markdown은 단일 표준이 아닙니다. CommonMark가 기본 규격이고, GitHub Flavored Markdown(GFM)은 여기에 표·취소선·자동링크·체크박스를 더합니다. 같은 문서도 렌더러에 따라 표가 깨지거나 체크박스가 안 보일 수 있는 이유입니다.",
+          en: "Markdown is not a single standard. CommonMark is the base spec; GitHub Flavored Markdown (GFM) adds tables, strikethrough, autolinks, and task checkboxes. That's why the same document can lose its tables or checkboxes depending on the renderer.",
+        },
+      },
     ],
     relatedTools: ["html-entity-encoder", "text-counter", "text-diff", "lorem-ipsum-generator"],
     extraFaqs: [
@@ -1103,6 +1133,16 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "링크는 [텍스트](URL), 이미지는 ![대체텍스트](URL)입니다. 이미지는 느낌표(!)가 추가됩니다. 대체 텍스트는 이미지 로드 실패 시 또는 스크린 리더에서 표시됩니다.",
           en: "Links: [text](URL), Images: ![alt text](URL). Images have an exclamation mark (!) prefix. Alt text displays when the image fails to load or for screen readers.",
+        },
+      },
+      {
+        question: {
+          ko: "GitHub에서는 잘 보이던 표가 다른 곳에서 깨지는 이유는?",
+          en: "Why do tables that render on GitHub break elsewhere?",
+        },
+        answer: {
+          ko: "표는 CommonMark 기본 문법이 아니라 GFM 확장이기 때문입니다. GFM을 지원하지 않는 렌더러(일부 CMS·이메일·문서 도구)는 표를 일반 텍스트로 출력합니다. 이 미리보기는 GFM 표를 지원하므로, 붙여넣어 렌더 여부를 먼저 확인해 보세요.",
+          en: "Because tables are a GFM extension, not core CommonMark. Renderers without GFM support (some CMSs, email clients, doc tools) output tables as plain text. This preview supports GFM tables, so paste your document here first to check how it renders.",
         },
       },
     ],

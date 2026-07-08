@@ -559,6 +559,16 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
           en: "Network speed is measured in bits (bps) while file sizes use bytes (B). Since 1 byte = 8 bits, a 100 Mbps connection has a theoretical maximum download speed of 12.5 MB/s. In practice, protocol overhead typically yields about 10-11 MB/s.",
         },
       },
+      {
+        title: {
+          ko: "스토리지 계층별 단위 관행",
+          en: "Unit Conventions Across the Storage Stack",
+        },
+        description: {
+          ko: "같은 시스템 안에서도 계층마다 관행이 다릅니다. 디스크 제조사·네트워크 장비는 SI(1000), OS 메모리·파일 관리자는 이진(1024), macOS 파인더는 SI, Windows 탐색기는 이진 단위를 씁니다. 모니터링 지표를 비교할 때 이 관행 차이를 모르면 ~7%(GB급)에서 ~10%(TB급)의 유령 오차가 생깁니다.",
+          en: "Conventions differ across layers of the same system. Disk vendors and network gear use SI (1000); OS memory and file managers use binary (1024); macOS Finder uses SI while Windows Explorer uses binary. Comparing monitoring metrics without knowing this produces phantom gaps of ~7% at GB scale up to ~10% at TB scale.",
+        },
+      },
     ],
     relatedTools: ["number-base-converter", "text-counter", "ascii-unicode-table"],
     extraFaqs: [
@@ -590,6 +600,16 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "RAM은 2진수 주소 체계로 작동하므로 용량이 항상 2의 거듭제곱(2, 4, 8, 16, 32 GB 등)입니다. 이진 단위가 하드웨어에 자연스럽게 맞기 때문에, RAM 용량은 SI 단위와 이진 단위 간 차이가 발생하지 않습니다. 8 GB RAM은 정확히 8 GiB(8,589,934,592 바이트)입니다.",
           en: "RAM operates on binary addressing, so capacity is always a power of 2 (2, 4, 8, 16, 32 GB, etc.). Since binary units naturally match the hardware, there is no discrepancy between SI and binary units for RAM. 8 GB of RAM is exactly 8 GiB (8,589,934,592 bytes).",
+        },
+      },
+      {
+        question: {
+          ko: "쿠버네티스의 Mi/Gi와 M/G는 뭐가 다른가요?",
+          en: "In Kubernetes, what's the difference between Mi/Gi and M/G?",
+        },
+        answer: {
+          ko: "리소스 요청/제한에서 Mi·Gi는 이진 단위(1Mi=1,048,576바이트), M·G는 SI 단위(1M=1,000,000바이트)입니다. memory: 512M은 512Mi보다 약 5% 작아서, 단위를 혼용하면 의도보다 낮은 제한으로 OOMKilled가 날 수 있습니다. 메모리는 관례상 Mi/Gi를 쓰는 것이 안전합니다.",
+          en: "In resource requests/limits, Mi and Gi are binary (1Mi = 1,048,576 bytes) while M and G are SI (1M = 1,000,000 bytes). memory: 512M is about 5% smaller than 512Mi, so mixing units can set a lower limit than intended and trigger OOMKilled. Convention is to use Mi/Gi for memory.",
         },
       },
     ],
