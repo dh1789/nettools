@@ -21,9 +21,16 @@
 - **E-E-A-T**: 저자 30편 `beomanro` 필명 + JSON-LD Person + About 프로필 + 바이라인 링크 / Terms 날짜 / 데이터 출처(IEEE·IANA·IETF) — `8f5f0c3`
 - 신규 도구 `nmea-checksum` + 가이드 배포 — `6094c29`
 
-### 남은 follow-up (수동·선택)
-- GSC: 사이트맵 재제출 + 핵심 URL "색인 생성 요청"(5분, UI 자동화 flaky해 수동 권장).
-- 거절 시: 사유 확인 → 보완 후 재신청.
+### 거부 후 색인 회복 조치 (2026-07-05~08 실행 완료)
+- ✅ **WP 잔재 prefix 일괄 삭제 요청 6종**: `/ko/tag/` `/en/tag/` `/ko/category/` `/en/category/` `/ko/author/` `/en/author/` — GSC 삭제 도구, prefix 모드, "요청 처리 중".
+- ✅ **sitemap.xml 재제출**: 제출/읽음 2026-07-05, 성공, 발견 페이지 69→**72**. (도메인 속성은 풀 URL 필요 — 상대경로 "sitemap.xml"은 "주소가 잘못됨" 거절.)
+- ✅ **색인 생성 요청 10/10**: 카테고리 5종 전부 + `/blog/` + nmea·base64 가이드 + subnet-calculator·nmea-checksum 도구.
+- ✅ GitHub repo(dh1789/nettools) = PUBLIC + homepage=beomanro.com (외부 진입점 기존재).
+
+### 남은 follow-up
+- 매주 `site:beomanro.com` 카운트 확인 → **≥20~30건 도달 시에만** AdSense "검토 요청".
+- 신규 가이드 주 1~2편 지속 발행(freshness). 잔여 도구·가이드 색인 요청 일 ~10건씩 추가 가능.
+- (선택) Naver 서치어드바이저 등록 — 한국 트래픽 신호.
 
 ## 1. 2026 승인 요건 (공식 기준)
 
