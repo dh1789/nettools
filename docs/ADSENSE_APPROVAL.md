@@ -24,7 +24,8 @@
 ### 거부 후 색인 회복 조치 (2026-07-05~08 실행 완료)
 - ✅ **WP 잔재 prefix 일괄 삭제 요청 6종**: `/ko/tag/` `/en/tag/` `/ko/category/` `/en/category/` `/ko/author/` `/en/author/` — GSC 삭제 도구, prefix 모드, "요청 처리 중".
 - ✅ **sitemap.xml 재제출**: 제출/읽음 2026-07-05, 성공, 발견 페이지 69→**72**. (도메인 속성은 풀 URL 필요 — 상대경로 "sitemap.xml"은 "주소가 잘못됨" 거절.)
-- ✅ **색인 생성 요청 10/10**: 카테고리 5종 전부 + `/blog/` + nmea·base64 가이드 + subnet-calculator·nmea-checksum 도구.
+- ✅ **색인 생성 요청 누적 18건**(07-05~08, 일일 쿼터 ~9건에서 컷): 카테고리 5 전부 · `/blog/` · 가이드 9편(nmea·base64·ssl·chmod·dns·jwt-generate·cron·regex·subnet-calculation) · 도구 3종(subnet-calculator·nmea-checksum·base64). 잔여(password-generator·jwt-decoder 등)는 다음날 쿼터로.
+- ✅ **콘텐츠 심화(07-08)**: 신규 가이드 `port-numbers-guide`(ko/en, 3301자) 발행 → 총 16편. 최저깊이 도구 4종(yaml-json·markdown-preview·byte-unit·vlsm) concept+FAQ 보강 — 커밋 `ecca708`.
 - ✅ GitHub repo(dh1789/nettools) = PUBLIC + homepage=beomanro.com (외부 진입점 기존재).
 
 ### 남은 follow-up
