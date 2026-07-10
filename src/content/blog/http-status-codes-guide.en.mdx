@@ -1,0 +1,92 @@
+---
+title: "HTTP Status Codes in Practice — What Log Entries Actually Mean"
+description: "HTTP status codes organized by category (1xx–5xx), with real-world causes for the codes you meet in logs (301 vs 302, 401 vs 403, 502 vs 504), debugging steps, and how to reproduce with curl."
+category: network
+keywords:
+  - HTTP status codes
+  - http status code list
+  - 502 bad gateway causes
+  - 401 vs 403
+  - 301 vs 302
+  - 504 gateway timeout
+  - API error debugging
+publishedAt: "2026-07-10"
+relatedTools:
+  - http-status-dictionary
+  - http-headers-checker
+  - dns-lookup
+author: beomanro
+---
+
+## The first digit tells you whose fault it is
+
+The first digit of an HTTP status code is a first-pass assignment of responsibility.
+
+| Class | Meaning | Responsibility |
+|-------|---------|----------------|
+| 1xx | Informational (keep going) | — |
+| 2xx | Success | — |
+| 3xx | Redirect | By design (usually fine) |
+| 4xx | Client error | **The caller** |
+| 5xx | Server error | **The responder** |
+
+When an incident ticket lands: "4xx → start from the caller, auth, request shape; 5xx → start from the server and upstreams." That one line cuts triage time. For individual code lookups, the [HTTP status code dictionary](/tools/net/http-status-dictionary/) is the fast path.
+
+## The confusing pairs
+
+### 301 vs 302 — SEO diverges here
+
+- **301 Moved Permanently**: permanent move. Search engines transfer link equity to the new URL. Use for domain moves and HTTPS migration.
+- **302 Found**: temporary move. Equity does not transfer. Only for "coming back soon" cases — A/B tests, maintenance pages.
+
+Classic mistakes: using 302 for a site migration keeps search engines indexing the old URLs for months; using 301 for temporary maintenance gets permanently cached by browsers and CDNs, so traffic never returns to the old path. Remember: browsers cache 301s aggressively, making rollback painful.
+
+### 401 vs 403 — "who are you" vs "not for you"
+
+- **401 Unauthorized**: authentication failed — credentials missing or wrong. Comes with a `WWW-Authenticate` header. "Please log in."
+- **403 Forbidden**: authenticated, but not allowed. "I know who you are; you still can't have this."
+
+API debugging order: for 401 check token expiry and missing headers (`Authorization: Bearer ...`); for 403 check permissions (scopes, roles) and IP blocklists. Open the token's `exp` claim in the [JWT decoder](/tools/net/jwt-decoder/) — a ten-second verdict on expiry.
+
+### 502 vs 504 — upstream is "dead" vs "slow"
+
+With an app behind a reverse proxy (Nginx, ALB, Cloudflare):
+
+- **502 Bad Gateway**: the upstream **refused the connection or answered garbage**. Typical causes: app process down, port mismatch, container mid-restart.
+- **504 Gateway Timeout**: the upstream **didn't answer in time**. Typical causes: slow queries, deadlocks, exhausted connection pools.
+
+Same "gateway" family, different responses — 502 sends you to "is the process alive" (`systemctl status`, container state); 504 sends you to "what got slow" (slow-query logs, APM).
+
+### 404 vs 410 — missing vs deliberately removed
+
+- **404 Not Found**: resource absent (possibly temporarily).
+- **410 Gone**: intentionally and permanently removed. Search engines tend to drop 410s from the index faster.
+
+## Make curl reproduction a habit
+
+Browsers auto-follow redirects and hide the story. Debug status codes with curl:
+
+```bash
+curl -I https://example.com/path            # headers only (first response code)
+curl -sIL https://example.com/path          # follow the full redirect chain
+curl -s -o /dev/null -w "%{http_code} %{time_total}s\n" https://example.com/api
+```
+
+Seeing exactly which codes the redirect chain hops through exposes 301/302 misconfiguration immediately. For a broader header inspection, the [HTTP headers checker](/tools/net/http-headers-checker/) helps too.
+
+## Other codes you'll meet in logs
+
+| Code | Real-world context |
+|------|-------------------|
+| 400 | Body parsing failed — check JSON syntax and Content-Type first |
+| 405 | Method not allowed — route exists but POST/GET mapping is missing |
+| 408 | Client sent the request too slowly — common on mobile |
+| 429 | Rate limited — honor `Retry-After`, add backoff |
+| 499 | (Nginx extension) client closed connection before response — a timeout-mismatch smell |
+| 503 | Unavailable — deploy in progress, or failing health checks pulled it from the load balancer |
+
+On 429, blind infinite retries make things worse. Respecting `Retry-After` with exponential backoff is the standard response.
+
+## Summary
+
+Split responsibility by first digit (4xx = caller, 5xx = server), then settle the confusing pairs (301/302, 401/403, 502/504) with the criteria above and log reading gets fast. Reproduce with `curl -sIL` instead of a browser. For the meaning and causes of any individual code, search the [HTTP status code dictionary](/tools/net/http-status-dictionary/).

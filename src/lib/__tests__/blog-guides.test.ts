@@ -17,6 +17,7 @@ const GUIDE_SLUGS = [
   "base64-encoding-guide",
   "nmea-checksum-guide",
   "port-numbers-guide",
+  "http-status-codes-guide",
 ];
 
 describe("블로그 가이드 글", () => {

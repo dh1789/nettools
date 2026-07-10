@@ -16,6 +16,8 @@ relatedTools:
 author: beomanro
 ---
 
+> **Scope of this guide** — creating and HMAC-signing tokens (the issuer side). For decoding and verifying tokens you receive, see [JWT Decode and Verify](/blog/jwt-decode-verify/).
+
 ## When You Need to Build a JWT Yourself
 
 While developing or testing an API, you often hit the moment of "I just need one valid JWT right now." You have to poke a protected endpoint with Postman, but going through the full login flow is tedious — and to see how your auth middleware verifies a token, the fastest path is to craft one and feed it in.
