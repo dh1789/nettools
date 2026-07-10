@@ -28,10 +28,15 @@
 - ✅ **콘텐츠 심화(07-08)**: 신규 가이드 `port-numbers-guide`(ko/en, 3301자) 발행 → 총 16편. 최저깊이 도구 4종(yaml-json·markdown-preview·byte-unit·vlsm) concept+FAQ 보강 — 커밋 `ecca708`.
 - ✅ GitHub repo(dh1789/nettools) = PUBLIC + homepage=beomanro.com (외부 진입점 기존재).
 
+### 검색엔진 다변화 (2026-07-10~11 완료)
+- ✅ **Bing 웹마스터**: GSC import로 beomanro.com 등록(소유확인 면제) + sitemap 제출. 로그인 = Google OAuth(dh1789).
+- ✅ **Naver 서치어드바이저**: 계정 호유화28, https://beomanro.com 등록(소유확인 = HTML 태그 meta, 캡차는 사용자 수동) + sitemap.xml 제출(26.07.11). 소유확인 meta는 `src/app/layout.tsx`에 상주. 주의: sitemap 제출 결과를 `alert()`로 표시 — 자동화 시 다이얼로그 처리 필요.
+- ✅ 콘텐츠: `http-status-codes-guide`(ko/en) 발행 → 총 17편. subnet 3편·jwt 2편 "이 글의 범위" 앵글 분화(자기잠식 완화).
+
 ### 남은 follow-up
 - 매주 `site:beomanro.com` 카운트 확인 → **≥20~30건 도달 시에만** AdSense "검토 요청".
-- 신규 가이드 주 1~2편 지속 발행(freshness). 잔여 도구·가이드 색인 요청 일 ~10건씩 추가 가능.
-- (선택) Naver 서치어드바이저 등록 — 한국 트래픽 신호.
+- 신규 가이드 주 1~2편 지속 발행(freshness). 잔여 도구·가이드 색인 요청 일 ~9건씩(gsc-queue.txt 잔여 37).
+- 사용자 직접: AdSense 지급 정보 입력 · 자연 백링크(커뮤니티 소개 글).
 
 ## 1. 2026 승인 요건 (공식 기준)
 
