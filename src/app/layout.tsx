@@ -73,6 +73,11 @@ export default function RootLayout({
         {GSC_VERIFICATION && (
           <meta name="google-site-verification" content={GSC_VERIFICATION} />
         )}
+        {/* Naver Search Advisor 소유확인 */}
+        <meta
+          name="naver-site-verification"
+          content="a65d425fb21c66df74e8c041c77d36dfb54248a7"
+        />
         {/* Google AdSense — publisher ID는 에드센스 승인 후 NEXT_PUBLIC_ADSENSE_ID 환경변수로 설정 */}
         {ADSENSE_ID && (
           <script
