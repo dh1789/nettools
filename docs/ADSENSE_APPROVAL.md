@@ -42,6 +42,11 @@
 - **대조군**: Bing/DDG는 현 페이지 색인 완료(사이트 품질 문제 아님, Google 특이). Naver 등록 5일차 수집 대기. Wayback 스냅샷 0 = WP 시절에도 외부 신호 전무(잃어버린 명성 없음).
 - **결론**: 페널티도 품질 문제도 아닌 "신호 0 도메인의 대수술 재평가 지연". 미색인 감소 추세가 재평가 진행 증거 — 추세 유지 시 계단식 해소 예상. 능동 레버는 자연 백링크 확보뿐.
 
+### 백링크 확보 (2026-07-16 — 유일한 능동 레버 실행)
+- ✅ PR 제출: [Awesome-Geospatial#227](https://github.com/sacridini/Awesome-Geospatial/pull/227) (5.2k★, SaaS 섹션, nmea-checksum — bng2latlong 선례) · [awesome-online-tools#68](https://github.com/Bakumon/awesome-online-tools/pull/68) (Develop 섹션, NetTools 전체). 머지 대기 — 주간 확인.
+- 탈락 판정: free-for-dev(정책상 "generic toolbox sites" 명시 거절), awesome-sysadmin(설치형 오픈소스 전용), awesome-console-services(curl 접근 필수).
+- 잔여 백링크 채널(사용자): 클리앙 팁과강좌 등 국내 커뮤니티 1곳, GeekNews는 대형 업데이트 시 재게시.
+
 ### 남은 follow-up
 - 매주 `site:beomanro.com` 카운트 확인 → **≥20~30건 도달 시에만** AdSense "검토 요청".
 - 신규 가이드 주 1~2편 지속 발행(freshness). 잔여 도구·가이드 색인 요청 일 ~9건씩(gsc-queue.txt 잔여 37).
