@@ -570,7 +570,7 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["number-base-converter", "text-counter", "ascii-unicode-table"],
+    relatedTools: ["number-base-converter", "text-counter", "ascii-unicode-table", "mtu-mss-calculator"],
     extraFaqs: [
       {
         question: {

@@ -62,4 +62,5 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   CodeMinifier: dynamic(() => import("./CodeMinifier").then(m => ({ default: m.CodeMinifier })), { loading }),
   JsonCsvConverter: dynamic(() => import("./JsonCsvConverter").then(m => ({ default: m.JsonCsvConverter })), { loading }),
   NmeaChecksum: dynamic(() => import("./NmeaChecksum").then(m => ({ default: m.NmeaChecksum })), { loading }),
+  MtuMssCalculator: dynamic(() => import("./MtuMssCalculator").then(m => ({ default: m.MtuMssCalculator })), { loading }),
 };

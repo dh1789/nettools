@@ -45,7 +45,7 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["cidr-to-range", "vlsm-calculator", "ip-lookup", "number-base-converter", "ufw-rules-builder"],
+    relatedTools: ["cidr-to-range", "vlsm-calculator", "ip-lookup", "number-base-converter", "ufw-rules-builder", "mtu-mss-calculator"],
     extraFaqs: [
       {
         question: {
@@ -653,7 +653,7 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["subnet-calculator", "cidr-to-range", "ip-lookup"],
+    relatedTools: ["subnet-calculator", "cidr-to-range", "ip-lookup", "mtu-mss-calculator"],
     extraFaqs: [
       {
         question: {
@@ -851,6 +851,84 @@ export const NETWORK_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         answer: {
           ko: "Referrer-Policy는 브라우저가 다른 페이지로 이동할 때 Referer 헤더에 얼마나 많은 정보를 포함할지 제어합니다. strict-origin-when-cross-origin(권장)은 같은 출처에서는 전체 URL을, 다른 출처에서는 출처만 전송합니다. no-referrer는 Referer 정보를 완전히 제거합니다.",
           en: "Referrer-Policy controls how much information the browser includes in the Referer header when navigating. strict-origin-when-cross-origin (recommended) sends the full URL for same-origin and only the origin for cross-origin. no-referrer removes Referer information entirely.",
+        },
+      },
+    ],
+  },
+
+  "mtu-mss-calculator": {
+    howTo: {
+      steps: [
+        {
+          ko: "링크 MTU를 입력합니다. 일반 이더넷은 1500, 점보 프레임 환경은 9000입니다.",
+          en: "Enter the link MTU. Standard Ethernet is 1500; jumbo-frame environments use 9000.",
+        },
+        {
+          ko: "경로에 끼는 캡슐화를 전부 체크합니다. PPPoE 위에 WireGuard처럼 중첩되면 둘 다 선택하세요.",
+          en: "Check every encapsulation on the path. If they nest — like WireGuard over PPPoE — select both.",
+        },
+        {
+          ko: "유효 MTU와 TCP MSS(IPv4/IPv6), 계층별 차감 내역을 확인합니다.",
+          en: "Review the effective MTU, TCP MSS (IPv4/IPv6), and the per-layer breakdown.",
+        },
+        {
+          ko: "계산값이 반영된 iptables·MikroTik 클램프 명령을 복사해 장비에 적용합니다.",
+          en: "Copy the iptables/MikroTik clamp commands with the computed values and apply them to your device.",
+        },
+      ],
+    },
+    relatedConcepts: [
+      {
+        title: {
+          ko: "경로 MTU 탐색 (PMTUD)과 블랙홀",
+          en: "Path MTU Discovery (PMTUD) and Black Holes",
+        },
+        description: {
+          ko: "송신자는 DF 비트를 켠 패킷을 보내고, 경로 중간 라우터가 ICMP 'Fragmentation Needed'로 더 작은 MTU를 알려주는 방식으로 경로 MTU를 찾습니다. 문제는 방화벽이 이 ICMP를 막는 경우 — 큰 패킷만 조용히 사라지는 'PMTUD 블랙홀'이 생깁니다. ping은 되는데 큰 파일 전송이나 TLS 핸드셰이크만 멈추는 증상의 전형적 원인입니다.",
+          en: "Senders probe with DF-bit packets while intermediate routers report smaller MTUs via ICMP 'Fragmentation Needed'. When firewalls drop that ICMP, large packets silently vanish — a 'PMTUD black hole'. It is the classic cause of connections where ping works but large transfers or TLS handshakes stall.",
+        },
+      },
+      {
+        title: {
+          ko: "MSS 클램핑",
+          en: "MSS Clamping",
+        },
+        description: {
+          ko: "TCP 연결 수립 시 SYN 패킷에 실리는 MSS 옵션을 라우터가 터널에 맞는 값으로 재작성하는 기법입니다. 양 끝이 처음부터 작은 세그먼트로 합의하게 만들어, ICMP가 막힌 환경에서도 PMTUD 블랙홀을 우회합니다. UDP에는 적용되지 않는다는 한계가 있습니다.",
+          en: "A router rewrites the MSS option in TCP SYN packets to a value that fits the tunnel, so both ends agree on smaller segments from the start. This sidesteps PMTUD black holes even where ICMP is filtered. It does not apply to UDP.",
+        },
+      },
+      {
+        title: {
+          ko: "단편화(Fragmentation)의 비용",
+          en: "The Cost of Fragmentation",
+        },
+        description: {
+          ko: "MTU를 넘는 패킷은 IPv4에서 라우터가 쪼갤 수 있지만, 조각 하나만 유실돼도 전체 패킷을 재전송해야 하고 방화벽·NAT 장비가 조각을 제대로 다루지 못하는 경우가 많습니다. IPv6는 중간 라우터 단편화 자체를 없앴습니다. 그래서 실무 원칙은 '단편화가 일어나기 전에 MTU/MSS를 맞춰라'입니다.",
+          en: "Oversized IPv4 packets can be fragmented by routers, but losing one fragment forces retransmission of the whole packet, and firewalls/NAT often mishandle fragments. IPv6 removed in-path fragmentation entirely. Hence the operational rule: fix MTU/MSS before fragmentation happens.",
+        },
+      },
+    ],
+    relatedTools: ["subnet-calculator", "vlsm-calculator", "byte-unit-converter"],
+    extraFaqs: [
+      {
+        question: {
+          ko: "ping으로 실제 경로 MTU를 확인하는 방법은?",
+          en: "How do I verify the actual path MTU with ping?",
+        },
+        answer: {
+          ko: "DF 비트를 켜고 페이로드 크기를 조절하며 ping합니다. Linux: ping -M do -s 1472 대상 (1472 = 1500 − IP 20 − ICMP 8). 성공하면 경로 MTU ≥ 1500, 'Frag needed'가 뜨면 크기를 줄여가며 경계를 찾습니다. Windows는 ping -f -l 1472 입니다.",
+          en: "Ping with the DF bit set while adjusting payload size. Linux: ping -M do -s 1472 target (1472 = 1500 − IP 20 − ICMP 8). Success means path MTU ≥ 1500; on 'Frag needed', decrease until you find the boundary. On Windows: ping -f -l 1472.",
+        },
+      },
+      {
+        question: {
+          ko: "터널 안에 터널이 있으면 오버헤드는 어떻게 계산하나요?",
+          en: "How is overhead calculated with a tunnel inside a tunnel?",
+        },
+        answer: {
+          ko: "단순 합산입니다. 예를 들어 PPPoE(8B) 회선 위에 WireGuard(60B)를 올리면 1500 − 8 − 60 = 1432가 유효 MTU입니다. 이 계산기는 선택한 순서대로 각 계층을 차감한 중간값도 표로 보여주므로, 어느 계층에서 얼마가 빠지는지 추적할 수 있습니다.",
+          en: "Simple addition. WireGuard (60B) over a PPPoE (8B) line gives 1500 − 8 − 60 = 1432 effective MTU. The calculator also shows the intermediate MTU after each selected layer, so you can trace where each byte goes.",
         },
       },
     ],

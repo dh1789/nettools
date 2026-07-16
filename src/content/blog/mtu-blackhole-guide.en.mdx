@@ -1,0 +1,95 @@
+---
+title: "VPN On, and Only Some Sites Break — It's Almost Always MTU"
+description: "Ping works, small pages load, but large transfers and certain HTTPS sites stall the moment the VPN comes up. A field guide to the classic tunnel-overhead / PMTUD-black-hole failure: diagnose with ping -M do, fix with MTU sizing or MSS clamping."
+category: network
+keywords:
+  - mtu black hole
+  - vpn some sites not loading
+  - wireguard mtu
+  - mss clamping
+  - pmtud
+  - ping df bit
+  - tunnel mtu
+publishedAt: "2026-07-16"
+relatedTools:
+  - mtu-mss-calculator
+  - subnet-calculator
+  - http-headers-checker
+author: beomanro
+---
+
+## Start with the symptom
+
+You bring up WireGuard. Ping works. Google loads. But cloning from the company GitLab hangs at some percentage, and one particular site takes forever and times out. Kill the VPN and everything is fine again.
+
+That combination — small things work, big things die quietly — is MTU nearly every time. DNS lookups and pings are tiny packets, so they pass. TLS certificate chains and file transfers fill packets to the brim, and that's exactly where things start disappearing.
+
+## It doesn't fit in 1500 anymore
+
+Ethernet's default MTU is 1500 bytes. Put a tunnel on top and the encapsulation headers eat into that budget.
+
+| Setup | Overhead | MTU left |
+|-------|----------|----------|
+| WireGuard (IPv4 outer) | 60B | 1440 |
+| WireGuard (IPv6 outer) | 80B | 1420 |
+| PPPoE + WireGuard | 8 + 60 | 1432 |
+| IPsec ESP tunnel (worst) | ~73B | 1427 |
+| VXLAN | 50B | 1450 |
+| GRE | 24B | 1476 |
+
+If the tunnel interface MTU is set higher than this, packets over the limit exceed 1500 on the wire. Their fate is one of two: fragmented, or dropped.
+
+If your stack isn't in the table, tick it off in the [MTU/MSS calculator](/tools/net/mtu-mss-calculator/) — it handles nested tunnels and shows the per-layer subtraction.
+
+## Why it dies without a single error
+
+Here's how it's supposed to work: the sender marks packets DF (Don't Fragment) and sends big → an intermediate router replies with an ICMP message saying "too big, my MTU is 1440" → the sender resizes and retries. That's Path MTU Discovery (PMTUD).
+
+The problem: firewalls eat that ICMP. Plenty of networks block ICMP wholesale in the name of security. The sender never hears "too big," keeps retransmitting at the same size, and times out. That's a PMTUD black hole.
+
+Which is why there's no error message. The packet was dropped — and so was the notice that it was dropped.
+
+## Diagnosis is one ping
+
+Set the DF bit, control the payload size, and the boundary reveals itself.
+
+```bash
+# Linux/macOS — 1472 = 1500 - IP(20) - ICMP(8)
+ping -M do -s 1472 8.8.8.8
+
+# Windows
+ping -f -l 1472 8.8.8.8
+```
+
+If 1472 passes, the path carries a full 1500. If you get `Frag needed and DF set`, binary-search downward. When 1412 passes and 1413 doesn't, the path MTU is 1412 + 28 = 1440 — exactly matching WireGuard's 60-byte overhead.
+
+Just don't mix up which side of the tunnel you're pinging from. Measure the path that traverses the tunnel interface if you want the tunnel's effective MTU.
+
+## Two fixes
+
+**Lower the tunnel MTU.** The clean fix. For WireGuard it's one line — `MTU = 1420` — or on Linux:
+
+```bash
+ip link set dev wg0 mtu 1420
+```
+
+You'll see 1420 recommended even where 1440 would fit; it also covers the case where the outer path goes over IPv6 (80B overhead), so it's the safe default.
+
+**Clamp the MSS.** From a router/gateway's seat, rewrite the MSS option in passing TCP SYNs down to what the tunnel can carry. Both ends agree on smaller segments from the very start, so it works even where ICMP is filtered.
+
+```bash
+iptables -t mangle -A FORWARD -p tcp --tcp-flags SYN,RST SYN \
+  -j TCPMSS --clamp-mss-to-pmtu
+```
+
+You can pin a value with `--set-mss 1400` instead. MSS is MTU − 40 for IPv4, so an effective MTU of 1440 gives 1400.
+
+Which one? If you control both tunnel ends, sizing the MTU is cleaner. If you're the gateway other people's clients pass through — say, a site-to-site WireGuard on the office router — clamping is the practical choice. One caveat: clamping only helps TCP. UDP-based traffic (QUIC, VoIP) ultimately needs the MTU itself fixed.
+
+## The usual traps
+
+- **Forgetting PPPoE.** Fiber lines are often a clean 1500, but PPPoE circuits start at 1492. Stack a VPN on top and there's another 8 bytes to subtract.
+- **Forgetting IPv6.** The IPv6 header is 40 bytes, so MSS needs 20 bytes more headroom than IPv4. Fix only IPv4 and IPv6 traffic replays the same symptom.
+- **Slamming MTU to 1400 and calling it done.** It works — and shaves a few percent off throughput forever, because every packet is smaller than it needs to be. Measure the boundary, use the exact value.
+
+For the numbers, use the [MTU/MSS calculator](/tools/net/mtu-mss-calculator/); when you're unsure whether responses die entirely or get cut at the header level, the [HTTP headers checker](/tools/net/http-headers-checker/) is a quick companion.

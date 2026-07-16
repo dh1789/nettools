@@ -18,6 +18,7 @@ const GUIDE_SLUGS = [
   "nmea-checksum-guide",
   "port-numbers-guide",
   "http-status-codes-guide",
+  "mtu-blackhole-guide",
 ];
 
 describe("블로그 가이드 글", () => {

@@ -2785,6 +2785,79 @@ export const TOOLS: Tool[] = [
     ],
   },
   {
+    slug: "mtu-mss-calculator",
+    title: {
+      ko: "MTU / MSS 계산기 — 터널·VPN 오버헤드",
+      en: "MTU / MSS Calculator — Tunnel & VPN Overhead",
+    },
+    description: {
+      ko: "WireGuard·IPsec·VXLAN·PPPoE·GRE 등 캡슐화 스택의 오버헤드를 차감해 유효 MTU와 TCP MSS를 계산합니다. 중첩 터널 지원, 클램프 명령 제공.",
+      en: "Subtracts encapsulation overhead (WireGuard, IPsec, VXLAN, PPPoE, GRE, ...) from link MTU to compute effective MTU and TCP MSS. Supports stacked tunnels and generates clamp commands.",
+    },
+    longDescription: {
+      ko: "MTU/MSS 계산기는 터널이나 VPN을 얹을 때 생기는 캡슐화 오버헤드를 계층별로 차감해 실제 사용 가능한 MTU와 TCP MSS(IPv4/IPv6)를 계산합니다. PPPoE 위에 WireGuard를 올리는 것처럼 여러 캡슐화가 중첩되는 실무 구성을 그대로 표현할 수 있고, 각 계층에서 MTU가 얼마로 줄어드는지 브레이크다운 표로 보여줍니다. 계산 결과에 맞춘 iptables MSS 클램프, 인터페이스 MTU 설정, MikroTik 맹글 규칙을 바로 복사할 수 있습니다. 오버헤드 값은 RFC 2516(PPPoE)·RFC 2784(GRE)·RFC 7348(VXLAN)·WireGuard 공식 문서 등 스펙 기준이며, IPsec처럼 암호 스위트에 따라 가변인 항목은 보수적인 worst-case 값으로 계산하고 경고를 표시합니다. 모든 계산은 브라우저에서 처리됩니다.",
+      en: "The MTU/MSS Calculator subtracts per-layer encapsulation overhead to compute the usable MTU and TCP MSS (IPv4/IPv6) when tunnels or VPNs are stacked on a link. Real-world nesting like WireGuard over PPPoE is expressed directly, with a breakdown table showing the MTU after each layer. Matching iptables MSS clamp, interface MTU, and MikroTik mangle commands can be copied right away. Overhead values follow the specs — RFC 2516 (PPPoE), RFC 2784 (GRE), RFC 7348 (VXLAN), the official WireGuard documentation — and variable entries like IPsec are computed with conservative worst-case values plus a warning. All computation happens in your browser.",
+    },
+    category: "network",
+    keywords: [
+      "mtu calculator",
+      "mss calculator",
+      "mtu mss",
+      "wireguard mtu",
+      "ipsec mtu overhead",
+      "vxlan mtu",
+      "pppoe mtu 1492",
+      "mss clamping",
+      "mtu 계산기",
+      "터널 오버헤드",
+      "vpn mtu 설정",
+    ],
+    component: "MtuMssCalculator",
+    datePublished: "2026-07-16",
+    faqs: [
+      {
+        question: {
+          ko: "MTU와 MSS는 뭐가 다른가요?",
+          en: "What is the difference between MTU and MSS?",
+        },
+        answer: {
+          ko: "MTU는 링크가 한 번에 나를 수 있는 IP 패킷 전체 크기(헤더 포함)이고, MSS는 그 안에서 TCP 페이로드가 차지할 수 있는 최대 크기입니다. IPv4에서는 MSS = MTU − 40(IP 20 + TCP 20), IPv6에서는 MTU − 60입니다.",
+          en: "MTU is the total IP packet size (headers included) a link can carry in one frame; MSS is the maximum TCP payload inside it. For IPv4, MSS = MTU − 40 (IP 20 + TCP 20); for IPv6, MTU − 60.",
+        },
+      },
+      {
+        question: {
+          ko: "WireGuard MTU를 왜 1420으로 잡으라고 하나요?",
+          en: "Why is WireGuard MTU commonly set to 1420?",
+        },
+        answer: {
+          ko: "WireGuard의 IPv4 오버헤드는 60바이트라 1500 링크에서는 1440까지 가능하지만, 밖이 IPv6이면 80바이트가 빠져 1420이 됩니다. 어느 쪽으로 나갈지 모르는 일반 환경에서 1420은 양쪽 다 안전한 값이라 기본 권장치로 자리잡았습니다.",
+          en: "WireGuard's overhead is 60 bytes over IPv4 (allowing 1440 on a 1500 link) but 80 bytes over IPv6, which gives 1420. Since traffic may egress either way, 1420 is safe for both and became the common default.",
+        },
+      },
+      {
+        question: {
+          ko: "MSS 클램핑은 언제 필요한가요?",
+          en: "When do I need MSS clamping?",
+        },
+        answer: {
+          ko: "경로 MTU 탐색(PMTUD)이 ICMP 차단으로 깨지는 환경에서, 터널을 지나는 TCP 연결이 큰 패킷을 보내다 조용히 멈추는 것을 막을 때 씁니다. 라우터가 SYN 패킷의 MSS 옵션을 터널에 맞게 낮춰 재작성하는 방식이라, ICMP에 의존하지 않고 문제를 차단합니다.",
+          en: "When Path MTU Discovery breaks (ICMP filtered), TCP flows through a tunnel can stall silently on large packets. MSS clamping rewrites the MSS option in SYN packets down to fit the tunnel, fixing the problem without relying on ICMP.",
+        },
+      },
+      {
+        question: {
+          ko: "IPsec 오버헤드는 왜 고정값이 아닌가요?",
+          en: "Why isn't IPsec overhead a fixed number?",
+        },
+        answer: {
+          ko: "ESP는 암호 알고리즘에 따라 IV 크기와 패딩이 달라집니다. AES-CBC+SHA1 조합의 최악치는 약 73바이트, AES-GCM은 더 작습니다. 이 계산기는 어떤 스위트에서도 안전하도록 worst-case 값을 쓰고 가변 경고를 함께 표시합니다.",
+          en: "ESP's IV size and padding depend on the cipher. Worst case for AES-CBC+SHA1 is about 73 bytes; AES-GCM is smaller. This calculator uses the worst-case value so the result is safe for any suite, and flags it as variable.",
+        },
+      },
+    ],
+  },
+  {
     slug: "nmea-checksum",
     title: {
       ko: "NMEA 0183 체크섬 계산기 / 검증기",
