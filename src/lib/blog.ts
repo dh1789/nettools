@@ -180,6 +180,57 @@ export function getAllPosts(locale: Locale): BlogPost[] {
   return posts;
 }
 
+/** XML 특수문자 이스케이프 */
+function escapeXml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+/**
+ * 블로그 포스트 목록으로 RSS 2.0 XML을 생성한다 (네이버 RSS 제출·일반 구독용).
+ * lastBuildDate는 최신 글 발행일 기준 — 빌드 시각 미사용(결정적 출력).
+ */
+export function generateRssXml(posts: BlogPost[], siteUrl: string): string {
+  const items = posts
+    .map((p) => {
+      const url = `${siteUrl}/blog/${p.slug}/`;
+      const pubDate = new Date(p.frontmatter.publishedAt + "T00:00:00+09:00").toUTCString();
+      return [
+        "    <item>",
+        `      <title>${escapeXml(p.frontmatter.title)}</title>`,
+        `      <link>${url}</link>`,
+        `      <guid isPermaLink="true">${url}</guid>`,
+        `      <description>${escapeXml(p.frontmatter.description)}</description>`,
+        `      <pubDate>${pubDate}</pubDate>`,
+        "    </item>",
+      ].join("\n");
+    })
+    .join("\n");
+
+  const lastBuild = posts.length
+    ? new Date(posts[0].frontmatter.publishedAt + "T00:00:00+09:00").toUTCString()
+    : new Date(0).toUTCString();
+
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<rss version="2.0">',
+    "  <channel>",
+    "    <title>NetTools 블로그 — 네트워크·보안·개발 실무 가이드</title>",
+    `    <link>${siteUrl}/blog/</link>`,
+    "    <description>서브넷, DNS, JWT, MTU 등 네트워크·보안·개발 도구와 실무 가이드</description>",
+    "    <language>ko</language>",
+    `    <lastBuildDate>${lastBuild}</lastBuildDate>`,
+    items,
+    "  </channel>",
+    "</rss>",
+    "",
+  ].join("\n");
+}
+
 /**
  * 특정 슬러그와 로케일의 블로그 포스트를 반환한다.
  * 해당 파일이 없으면 null.

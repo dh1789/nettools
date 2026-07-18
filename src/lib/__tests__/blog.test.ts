@@ -6,6 +6,7 @@ import {
   getAllSlugs,
   getAllPosts,
   getPostBySlug,
+  generateRssXml,
 } from "../blog";
 
 // --- parseFrontmatter ---
@@ -309,5 +310,44 @@ This is test content.`;
     // 대신 없는 슬러그로 테스트
     const post = getPostBySlug("no-such-post", "en");
     expect(post).toBeNull();
+  });
+});
+
+// --- generateRssXml ---
+
+describe("generateRssXml", () => {
+  test("실제 포스트로 유효한 RSS 2.0 구조 생성", () => {
+    const posts = getAllPosts("ko");
+    const xml = generateRssXml(posts, "https://beomanro.com");
+    expect(xml).toContain('<?xml version="1.0" encoding="UTF-8"?>');
+    expect(xml).toContain('<rss version="2.0">');
+    expect(xml).toContain("<channel>");
+    expect((xml.match(/<item>/g) || []).length).toBe(posts.length);
+    expect(xml).toContain("https://beomanro.com/blog/");
+    expect(xml).toContain("<pubDate>");
+  });
+
+  test("XML 특수문자 이스케이프 (&, <)", () => {
+    const posts = getAllPosts("ko").slice(0, 1);
+    posts[0] = {
+      ...posts[0],
+      frontmatter: { ...posts[0].frontmatter, title: 'A & B <C> "D"' },
+    };
+    const xml = generateRssXml(posts, "https://beomanro.com");
+    expect(xml).toContain("A &amp; B &lt;C&gt; &quot;D&quot;");
+    expect(xml).not.toContain("<C>");
+  });
+
+  test("최신 글 발행일 = lastBuildDate (결정적)", () => {
+    const posts = getAllPosts("ko");
+    const xml = generateRssXml(posts, "https://beomanro.com");
+    const expected = new Date(posts[0].frontmatter.publishedAt + "T00:00:00+09:00").toUTCString();
+    expect(xml).toContain(`<lastBuildDate>${expected}</lastBuildDate>`);
+  });
+
+  test("빈 목록도 유효 채널 생성", () => {
+    const xml = generateRssXml([], "https://beomanro.com");
+    expect(xml).toContain("<channel>");
+    expect(xml).not.toContain("<item>");
   });
 });
