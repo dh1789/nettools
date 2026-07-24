@@ -1,0 +1,106 @@
+---
+title: "There's an Unknown Device on Your Router — Identifying It by MAC Address"
+description: "A strange MAC in the DHCP lease list? A vendor lookup solves half the mystery. Covers OUI structure, collecting MACs with arp/ip neigh, and why randomized MACs (2/6/A/E) return no vendor at all."
+category: network
+keywords:
+  - mac address vendor lookup
+  - oui lookup
+  - randomized mac address
+  - private wifi address
+  - identify unknown device
+  - arp command
+publishedAt: "2026-07-25"
+relatedTools:
+  - mac-oui-lookup
+  - ip-lookup
+  - subnet-calculator
+author: beomanro
+---
+
+## It always starts the same way
+
+You open the router admin page and there are more connected devices than you expected. The hostname says `unknown`; all you have is an IP and a MAC address. Is it one of your own devices, or did a neighbor crack the Wi-Fi password? You have to judge from this alone.
+
+In an office it happens even more often. Something is plugged into a switch port that isn't in the asset list. Pre-NAC audits, incident response triage, IP conflict hunts — they all start with "what device is this MAC?"
+
+A MAC address alone can't identify a specific device. But **the manufacturer comes out instantly.** And the manufacturer alone narrows the field a lot. `Espressif` means an IoT gadget (smart plugs, bulbs), `Azurewave` means a laptop/tablet wireless module, `Hon Hai` (Foxconn) points at contract-manufactured hardware.
+
+## A MAC address splits exactly in half
+
+A MAC address is 48 bits — six bytes written like `A4:83:E7:12:34:56`. The structure splits cleanly down the middle.
+
+| Part | Name | Meaning |
+|------|------|---------|
+| First 3 bytes (`A4:83:E7`) | OUI | Identifier IEEE sold to the manufacturer |
+| Last 3 bytes (`12:34:56`) | NIC portion | Serial the manufacturer assigns per device |
+
+The OUI (Organizationally Unique Identifier) is managed by the IEEE Registration Authority, and manufacturers pay for their blocks. Companies like Apple and Samsung own hundreds. That mapping is a public registry — which is why lookups work at all.
+
+Blocks come in three sizes: MA-L (24-bit prefix, 16 million addresses), MA-M (28-bit), and MA-S (36-bit). When a small manufacturer buys an MA-S block, two addresses can share the same first 3 bytes yet belong to different companies — a common source of "this lookup result looks wrong."
+
+The lookup itself is just a paste into the [MAC OUI Lookup](/tools/net/mac-oui-lookup/). Colons, hyphens, or Cisco dot notation (`a483.e712.3456`) are all handled. It merges the full IEEE MA-L/MA-M/MA-S registries.
+
+## Commands that collect MAC addresses
+
+First you need MACs to look up. Devices on the same L2 segment accumulate in your ARP table.
+
+```bash
+# macOS / Windows — full ARP cache
+arp -a
+
+# Linux — the modern tool
+ip neigh
+
+# Ping sweep the segment to populate the ARP table first
+nmap -sn 192.168.0.0/24
+```
+
+Run `nmap -sn` first, then `arp -a`, and you get IP-MAC pairs for every live device in one shot. If you need to work out the range, check it with the [subnet calculator](/tools/net/subnet-calculator/) before sweeping.
+
+One caveat: ARP does not cross routers. MACs from another subnet must be collected inside that segment — from the outside, all you ever see is the gateway's MAC.
+
+## When the lookup says "no registration found"
+
+This is the core of the article. These days, about half of smartphone MACs return nothing — and that's not a broken database, it's **by design**.
+
+If the second bit of the first octet (the U/L bit) is 1, the address is "locally administered" — a declaration that software generated it rather than a factory burning it in. In hex it's easy to spot: **if the second hex digit is 2, 6, A, or E, it's a randomized/local address.**
+
+```text
+X2:XX:XX:XX:XX:XX  ┐
+X6:XX:XX:XX:XX:XX  │ locally administered
+XA:XX:XX:XX:XX:XX  │ (no OUI match is expected)
+XE:XX:XX:XX:XX:XX  ┘
+```
+
+iOS has generated a per-network "Private Wi-Fi Address" since iOS 14, and Android has defaulted to randomized MACs since Android 10. It's a privacy feature — it stops retail Wi-Fi from tracking your movements by MAC. So those `5A:xx` and `D6:xx` entries in your router list are usually family phones.
+
+There's an operational side effect too: MAC filtering and static DHCP reservations break under randomization. If an iPhone keeps showing up as a "new device" on your router, the fix is turning off the private address for that one network.
+
+## Not randomized, still no match
+
+If the address doesn't fit the local pattern (2/6/A/E) and still won't resolve, it's usually one of these:
+
+- **A new OUI**: the IEEE registry keeps growing; a stale lookup DB misses recent blocks.
+- **An MA-S block**: the vendor split happens at 4.5 bytes, not 3.
+- **A virtual MAC**: an address a protocol constructs by specification. Memorize these and you'll recognize them on sight.
+
+| Pattern | Identity |
+|---------|----------|
+| `00:00:5E:00:01:XX` | VRRP virtual router (XX = VRID) |
+| `00:00:0C:07:AC:XX` | Cisco HSRP (XX = group number) |
+| `02:42:XX:XX:XX:XX` | Docker container/bridge |
+| `00:50:56`, `00:0C:29` | VMware virtual machine |
+| `08:00:27` | VirtualBox virtual machine |
+| `33:33:XX:XX:XX:XX` | IPv6 multicast (not a device) |
+| `01:00:5E:XX:XX:XX` | IPv4 multicast (not a device) |
+
+Chasing a destination MAC starting with `01:00:5E` or `33:33` through packet captures, thinking it's a device, is a surprisingly common time sink. If the lowest bit of the first octet is 1, it's multicast — not an individual machine.
+
+## The routine
+
+1. Collect IP-MAC pairs for the segment with `nmap -sn` + `arp -a`.
+2. Attach vendors with an [OUI lookup](/tools/net/mac-oui-lookup/). The vendor alone shrinks the candidate list dramatically.
+3. Second hex digit 2/6/A/E? Assume a phone's randomized MAC first — a failed lookup is the expected result.
+4. Patterns like `00:00:5E` and `02:42` are protocols, not devices.
+
+A MAC is invisible beyond L2 and trivially spoofed (`ip link set dev eth0 address ...`), so it's weak evidence for security decisions. But as the first clue for "what is this thing," it's still the fastest one there is. For the public-IP side of the investigation, pair it with an [IP lookup](/tools/net/ip-lookup/).

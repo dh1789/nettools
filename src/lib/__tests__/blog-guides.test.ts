@@ -19,6 +19,7 @@ const GUIDE_SLUGS = [
   "port-numbers-guide",
   "http-status-codes-guide",
   "mtu-blackhole-guide",
+  "mac-address-oui-guide",
 ];
 
 describe("블로그 가이드 글", () => {

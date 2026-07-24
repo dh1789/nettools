@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${SITE_URL}/about/`,
-      lastModified: new Date("2025-01-01"),
+      lastModified: new Date("2026-06-30"),
       changeFrequency: "yearly",
       priority: 0.5,
     },
@@ -25,13 +25,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${SITE_URL}/privacy/`,
-      lastModified: new Date("2025-01-01"),
+      lastModified: new Date("2026-06-28"),
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
       url: `${SITE_URL}/terms/`,
-      lastModified: new Date("2025-01-01"),
+      lastModified: new Date("2026-06-30"),
       changeFrequency: "yearly",
       priority: 0.3,
     },
