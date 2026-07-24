@@ -42,6 +42,15 @@
 - **대조군**: Bing/DDG는 현 페이지 색인 완료(사이트 품질 문제 아님, Google 특이). Naver 등록 5일차 수집 대기. Wayback 스냅샷 0 = WP 시절에도 외부 신호 전무(잃어버린 명성 없음).
 - **결론**: 페널티도 품질 문제도 아닌 "신호 0 도메인의 대수술 재평가 지연". 미색인 감소 추세가 재평가 진행 증거 — 추세 유지 시 계단식 해소 예상. 능동 레버는 자연 백링크 확보뿐.
 
+### 2026-07-25 캠페인 반복 (실측 + 레버 3종)
+- 실측: `site:` = **1**(변화 없음), GSC 보고서 7/10 스냅샷 동결(랙 15일), 색인 1/미색인 416.
+- **진단 정정**: 미색인 최대 버킷 "크롤링됨-현재 미색인" 258건의 상당수 = **라이브 도구 페이지**(`/tools/net/<slug>/`, 최종 크롤 7/11). WP 잔재는 NOINDEX 130 버킷. → 258은 "실페이지가 품질/신뢰 재평가 대기" 상태로 확정, 9축 판정(신호 0 도메인 재평가 지연)과 일치.
+- ✅ **유효성 재검사 재시작**: 258 버킷(이전 검사 5/11 시작→6/2 실패)에 "새로운 유효성 검사 시작" 클릭 → 상태 "시작됨". Google에 공식 재평가 트리거.
+- ✅ **색인 재요청 9건**(쿼터 소진): `/blog/`+가이드 5(subnet-calculation·http-status·port-numbers·mtu-blackhole·dns-records)+`/category/network/`+도구 2(subnet-calculator·mtu-mss). 주의: 도구 경로는 `/tools/net/<slug>/`(카테고리 프리픽스) — `/tools/<slug>/`는 404.
+- ✅ **백링크 PR**: [awesome-networking#31](https://github.com/facyber/awesome-networking/pull/31) (facyber, 1.2k★, Online tools 섹션 — MXToolbox·NetworkWhois 멀티툴 선례). 머지 대기.
+- 🔶 Naver RSS 재제출: 7월 중순 캡차 미완료로 미등재 확인 → URL 입력·확인 재수행, **캡차 사용자 대기**.
+- ⚠️ **AdSense 콘솔 접근 이상**: koei2418 세션 재선택(pli=1)에도 "액세스가 거부되었습니다" 지속 — 사용자 직접 로그인 확인 필요.
+
 ### 백링크 확보 (2026-07-16 — 유일한 능동 레버 실행)
 - ✅ PR 제출: [Awesome-Geospatial#227](https://github.com/sacridini/Awesome-Geospatial/pull/227) (5.2k★, SaaS 섹션, nmea-checksum — bng2latlong 선례) · [awesome-online-tools#68](https://github.com/Bakumon/awesome-online-tools/pull/68) (Develop 섹션, NetTools 전체). 머지 대기 — 주간 확인.
 - 탈락 판정: free-for-dev(정책상 "generic toolbox sites" 명시 거절), awesome-sysadmin(설치형 오픈소스 전용), awesome-console-services(curl 접근 필수).
