@@ -50,6 +50,9 @@
 - ✅ **백링크 PR**: [awesome-networking#31](https://github.com/facyber/awesome-networking/pull/31) (facyber, 1.2k★, Online tools 섹션 — MXToolbox·NetworkWhois 멀티툴 선례). 머지 대기.
 - 🔶 Naver RSS 재제출: 7월 중순 캡차 미완료로 미등재 확인 → URL 입력·확인 재수행, **캡차 사용자 대기**.
 - ⚠️ **AdSense 콘솔 접근 이상**: koei2418 세션 재선택(pli=1)에도 "액세스가 거부되었습니다" 지속 — 사용자 직접 로그인 확인 필요.
+- ✅ **Naver RSS 등재 완료**(07-25 07:47, 캡차 사용자 입력) — 소유확인+사이트맵+RSS 3종 완비.
+- ✅ **신규 가이드 19편째**: `mac-address-oui-guide`(ko/en) 발행 + sitemap lastmod 실제 날짜 정정 — 커밋 `1ed0738`. IndexNow 200 + Naver 수집요청 등록(08:18).
+- 📈 **Bing 색인 9→약 50건**(7/16→7/25, 5배) — 콘텐츠 품질 무결 + IndexNow 효과 실증. 네이버도 IndexNow 수신 확인(23.07 공지). Google만 재평가 랙 상태.
 
 ### 백링크 확보 (2026-07-16 — 유일한 능동 레버 실행)
 - ✅ PR 제출: [Awesome-Geospatial#227](https://github.com/sacridini/Awesome-Geospatial/pull/227) (5.2k★, SaaS 섹션, nmea-checksum — bng2latlong 선례) · [awesome-online-tools#68](https://github.com/Bakumon/awesome-online-tools/pull/68) (Develop 섹션, NetTools 전체). 머지 대기 — 주간 확인.
