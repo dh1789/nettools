@@ -54,6 +54,13 @@
 - ✅ **신규 가이드 19편째**: `mac-address-oui-guide`(ko/en) 발행 + sitemap lastmod 실제 날짜 정정 — 커밋 `1ed0738`. IndexNow 200 + Naver 수집요청 등록(08:18).
 - 📈 **Bing 색인 9→약 50건**(7/16→7/25, 5배) — 콘텐츠 품질 무결 + IndexNow 효과 실증. 네이버도 IndexNow 수신 확인(23.07 공지). Google만 재평가 랙 상태.
 
+### 2026-07-27 주간 체크 (사이트맵 22일 정체 해소)
+- 실측: `site:` = **1**(3주째 불변, 게이트 <20 → 재검토 요청 보류 유지) · GSC 색인 1/미색인 416(7/10 스냅샷 동결, 랙 17일) · AdSense "주의 필요 / 가치가 별로 없는 콘텐츠 / Ads.txt 찾을 수 없음 / 7-5"(불변) · Bing은 캡차로 측정 불가 · [awesome-networking#31](https://github.com/facyber/awesome-networking/pull/31) OPEN 미머지(3일차).
+- 🚨 **근본 병목 발견 → 해소**: GSC 사이트맵 "마지막으로 읽은 날짜"가 **2026-07-05에서 22일간 정체**(발견 페이지 72 고정). 라이브 `sitemap.xml`은 정상(77 URL, lastmod 7-25) → Google이 재크롤을 안 한 것. **재제출로 7/27 갱신 성공, 발견 페이지 72→77.** 추가로 `rss.xml`을 RSS 유형으로 신규 등록(20건) — 신규 콘텐츠 발견 채널 이중화.
+- ⚠️ **자동화 함정**: GSC 도메인 속성(`sc-domain:`)의 사이트맵 제출은 **전체 URL 필수**(`https://beomanro.com/sitemap.xml`). 상대 경로(`sitemap.xml`)는 오류 없이 무음 실패 — 목록만 보고 성공 판정하면 놓침. 제출 버튼은 `[role=button]` DIV(컨테이너 DIV 오클릭 주의).
+- ads.txt 라이브 재확인: apex 200 + 내용 정확. `www.beomanro.com`은 **DNS 레코드 없음**(위생상 apex 리다이렉트 권장, 게이트는 아님).
+- 색인 요청 누적: GSC 큐 64→46(7/26 9건 + 7/27 9건 전량 REQUESTED) · Naver 큐 39→21(7/26·7/27 각 9건 등록).
+
 ### 백링크 확보 (2026-07-16 — 유일한 능동 레버 실행)
 - ✅ PR 제출: [Awesome-Geospatial#227](https://github.com/sacridini/Awesome-Geospatial/pull/227) (5.2k★, SaaS 섹션, nmea-checksum — bng2latlong 선례) · [awesome-online-tools#68](https://github.com/Bakumon/awesome-online-tools/pull/68) (Develop 섹션, NetTools 전체). 머지 대기 — 주간 확인.
 - 탈락 판정: free-for-dev(정책상 "generic toolbox sites" 명시 거절), awesome-sysadmin(설치형 오픈소스 전용), awesome-console-services(curl 접근 필수).
@@ -61,7 +68,8 @@
 
 ### 남은 follow-up
 - 매주 `site:beomanro.com` 카운트 확인 → **≥20~30건 도달 시에만** AdSense "검토 요청".
-- 신규 가이드 주 1~2편 지속 발행(freshness). 잔여 도구·가이드 색인 요청 일 ~9건씩(gsc-queue.txt 잔여 37).
+- 신규 가이드 주 1~2편 지속 발행(freshness). 잔여 도구·가이드 색인 요청 일 ~9건씩(gsc-queue 46 · naver-queue 21, 2026-07-27 기준).
+- 사이트맵 "마지막으로 읽은 날짜" 주간 확인 — 다시 2주 이상 정체하면 재제출(전체 URL로).
 - 사용자 직접: AdSense 지급 정보 입력 · 자연 백링크(커뮤니티 소개 글).
 
 ## 1. 2026 승인 요건 (공식 기준)
