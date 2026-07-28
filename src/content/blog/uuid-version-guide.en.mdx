@@ -1,0 +1,139 @@
+---
+title: "Switched the PK to UUID and INSERTs Got Slower — v4's Structural Problem and v7"
+description: "Writes degrade as rows grow, buffer pool hit rate slides, reads stay fine. What UUID v4's randomness costs inside a B-tree, when to move to v7 or ULID, and how to store them."
+category: developer
+keywords:
+  - UUID v7
+  - UUID v4 performance
+  - ULID
+  - RFC 9562
+  - UUID_TO_BIN
+  - BINARY(16)
+  - uuid primary key
+  - index fragmentation
+publishedAt: "2026-07-28"
+relatedTools:
+  - uuid-generator
+  - unix-timestamp
+  - mac-oui-lookup
+author: beomanro
+---
+
+## The symptom
+
+You moved a table's PK from `AUTO_INCREMENT` to UUID. Nothing looked wrong in staging. In production, once the table passed a few tens of millions of rows, INSERT latency started showing up. Reads are fine. Only writes degrade. Disk IOPS spikes out of proportion to insert volume, and buffer pool hit rate drifts down.
+
+The code didn't change. Only the data grew. That combination points at the UUID version.
+
+## What a random PK does inside a B-tree
+
+InnoDB's clustered index stores rows physically ordered by PK. When the PK increases monotonically, every insert lands in the last page. That one page is all you need in memory.
+
+UUID v4 is 122 random bits. Insert positions scatter uniformly across the whole index. Three things follow.
+
+- **Page splits**: a value landing in the middle of a full page splits it. Both halves end up roughly half empty. The same row count now needs more pages.
+- **Buffer pool churn**: every insert touches a different page. Once the index outgrows memory, each insert triggers a read I/O.
+- **Secondary index amplification**: InnoDB secondary indexes store the PK value in their leaves. A larger PK inflates every secondary index with it.
+
+The third one is the quiet one. On a table with three indexes, one PK byte effectively costs four.
+
+## What actually differs between versions
+
+RFC 9562 (May 2024, superseding RFC 4122) standardized v6, v7, and v8. In practice the choice is between v4 and v7.
+
+| Version | Layout | Time-ordered | Random bits | Where it fits |
+|---------|--------|--------------|-------------|---------------|
+| v1 | 60b timestamp + 14b clock seq + 48b node (MAC) | partial | none | legacy; leaks MAC |
+| v4 | 122b random | no | 122 | the default; wrong for PKs |
+| v6 | v1 with the timestamp reordered to the front | yes | none | v1 migration only |
+| v7 | 48b Unix ms + 74b random | yes | 74 | **default for new PKs** |
+| ULID | 48b Unix ms + 80b random | yes | 80 | Base32, 26 chars, URL-friendly |
+
+The v7 layout: the first 48 bits are a millisecond Unix timestamp, followed by version (4b), random (12b), variant (2b), random (62b). Because the high bits are chronological, inserts cluster at the right edge of the index. You get AUTO_INCREMENT's locality while keeping distributed generation.
+
+To see it, pull one of each from the [UUID / ULID Generator](/tools/net/uuid-generator/) and compare leading characters. Successive v7 values increase in their first 12 hex digits; v4 values are noise every time. Convert those leading 48 bits to decimal, drop them into the [Unix Timestamp Converter](/tools/net/unix-timestamp/), and you get the generation time back.
+
+## If you are still on v1
+
+The last 48 bits of a v1 UUID are a node identifier. Most implementations put the NIC's MAC address there verbatim. Anyone holding an issued UUID can identify the machine that minted it.
+
+```bash
+# v1 UUID: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+#                                    ^^^^^^^^^^^^ last 12 hex digits = node
+```
+
+`00:c0:4f` is the OUI. Feed it to the [MAC Address OUI Lookup](/tools/net/mac-oui-lookup/) and the vendor comes back. If v1 identifiers leave your network, you are leaking infrastructure detail. Force the random-node option or move to v7.
+
+## Generating
+
+```bash
+# macOS/Linux — v4
+uuidgen
+
+# Python 3.14+ (v7 built in)
+python3 -c "import uuid; print(uuid.uuid7())"
+
+# Python 3.13 and older — uuid6 package
+pip install uuid6 && python3 -c "import uuid6; print(uuid6.uuid7())"
+
+# Node.js — v4 (the standard built-in stops at v4)
+node -e "console.log(crypto.randomUUID())"
+
+# PostgreSQL 18+
+SELECT uuidv7();
+
+# MySQL 8.0 — store v1 in sortable form
+SELECT UUID_TO_BIN(UUID(), 1);
+```
+
+MySQL has no built-in v7 yet. The second argument to `UUID_TO_BIN(uuid, 1)` is the swap flag: it swaps v1's time-low and time-high so the high bits run chronologically. That is a valid stopgap for existing v1 systems, but the MAC-in-node problem stays. Generating v7 in the application and passing it down is the better move.
+
+## Do not leave them stored as strings
+
+Check this before you touch the version: are your UUIDs sitting in `CHAR(36)` or `VARCHAR(36)`?
+
+| Storage | Bytes | PK at 100M rows |
+|---------|-------|-----------------|
+| `CHAR(36)` | 36 | 3.6 GB |
+| `BINARY(16)` | 16 | 1.6 GB |
+| PostgreSQL `uuid` | 16 | 1.6 GB |
+
+That 2 GB difference is replicated into every secondary index. Three indexes make it 8 GB. On top of that, every comparison runs as a string comparison.
+
+```sql
+-- MySQL: string to binary
+ALTER TABLE orders ADD COLUMN id_bin BINARY(16);
+UPDATE orders SET id_bin = UUID_TO_BIN(id);
+-- verify, then swap the PK
+
+-- reading back
+SELECT BIN_TO_UUID(id_bin) FROM orders;
+```
+
+PostgreSQL's `uuid` type is already 16 bytes. Only columns you declared as `text` need `ALTER TABLE ... TYPE uuid USING id::uuid`.
+
+## Choosing
+
+| Situation | Pick |
+|-----------|------|
+| New table PK, distributed generation needed | v7 |
+| PK appears in URLs, needs to be short | ULID (26 chars) |
+| Identifier whose creation time must not leak | v4 |
+| Single database, no distributed generation | BIGINT AUTO_INCREMENT |
+| Existing v1 system | migrate to v6 or v7 |
+
+That last row matters. If you don't need a UUID, not using one is the fastest option. Teams routinely adopt UUIDs on a single database because "we might shard later." The sharding usually never arrives; the index cost starts on day one.
+
+## Migrating v4 to v7
+
+Do not regenerate existing v4 values. Leave anything already exposed alone and switch only newly issued identifiers to v7. Both versions occupy the same 128-bit space, so the column type doesn't change. Collision risk is effectively nil — the version nibble itself differs.
+
+The ordering benefit applies to new rows only. Existing fragmentation stays, so clean it up once with `OPTIMIZE TABLE` (MySQL) or `REINDEX` (PostgreSQL) if you have a window. Both take table locks; run them during low traffic.
+
+## Summary
+
+- A UUID PK that slows writes is usually v4's random insert position.
+- v7's leading 48 bits are chronological, which restores insert locality. Make it the default for new PKs.
+- v1 leaks a MAC address. If it is your external identifier, check now.
+- Before the version, fix string storage: move to `BINARY(16)`.
+- Ask whether you need a UUID at all. When you don't, a sequence always wins.
