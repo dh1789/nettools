@@ -12,6 +12,27 @@ Claude Code(claude.ai/code)가 이 저장소를 다룰 때 참고하는 핵심 �
 - **Dev 포트**: 50000 (`npm run dev` → `0.0.0.0:50000`)
 - **수익화**: 광고 슬롯(`AdSlot`) — 네트워크 독립적
 
+## browser-harness 전용 브라우저 (브라우저 자동화 시 필수)
+
+- **CDP 포트**: `9335`
+- **데이터디렉토리**: `~/chrome-nettools`
+- **BU_NAME**: `nettools` (데몬 소켓 `/tmp/bu-nettools.sock`)
+- 모든 호출에 `BU_CDP_URL=http://127.0.0.1:9335 BU_NAME=nettools` 를 **둘 다** 인라인 지정.
+
+```bash
+curl -s http://127.0.0.1:9335/json/version >/dev/null || \
+open -na "Google Chrome" --args --remote-debugging-port=9335 --user-data-dir="$HOME/chrome-nettools" --no-first-run --no-default-browser-check
+```
+
+⚠️ **BU_CDP_URL 만으론 격리 안 된다** (2026-07-31 실측): 데몬은 `BU_NAME` 당 1개이고
+(`/tmp/bu-<BU_NAME>.sock`, 기본값 `default`) `ensure_daemon()` 은 살아있는 데몬을
+**BU_CDP_URL 비교 없이 재사용**한다. 데몬은 `BU_CDP_URL` 을 자기 기동 시점에만 읽으므로,
+`bu-default` 를 공유하면 **남의 프로젝트 Chrome 이 조작된다** — 실제로 naver-blog 세션이
+9337 대신 이 프로젝트의 **9335 Chrome** 을 조작해 탭이 열린 사고가 있었다(2026-07-31).
+포트·프로필·`BU_NAME` 3개 모두 분리할 것.
+
+> 참고: `./bin/harness` (아래 색인)는 이 프로젝트의 자체 검증 CLI 로, browser-harness 와 무관하다.
+
 ## 운영 가이드 색인 (작업 전 반드시 참조)
 
 | 문서 | 역할 |
