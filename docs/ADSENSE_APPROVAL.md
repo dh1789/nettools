@@ -68,6 +68,13 @@
 - 7/31 실측: `site:` 1 · GSC 색인 1/미색인 **342**(416에서 −74, NOINDEX 130→**80**, 크롤링됨-미색인 258→**234**) · GSC 데이터 최종 업데이트 7/10→**7/24**(파이프 정체 해소) · 유효성 검사 "시작됨"→**"실패함"**(Google 검색 측 부정 판정, AdSense 심사와는 별개 경로) · 라이브 페이지 noindex 오염 없음(전부 `index, follow`).
 - 색인 요청 누적(7/26~31): GSC 54건 전량 REQUESTED(큐 11 잔여) · Naver 40건 등록(도구 47종 완료, 큐 19는 가이드 재요청분).
 
+### 2026-08-03 주간 체크 (심사 3일차 — 색인 지표 동결)
+- 실측: `site:` **1**(불변) · GSC 색인 1 / 미색인 **342**(불변) · 데이터 최종 업데이트 **7/24 그대로**(9일째 정체 재발) · 버킷도 전부 동결(크롤링됨-미색인 234 "실패함" / NOINDEX 80 / 리디렉션 15 / 404 12 / robots 1) · Bing 캡차로 측정 불가 · PR #31 OPEN(10일차 미머지).
+- 사이트맵: sitemap.xml·rss.xml 모두 마지막 읽은 날 **7/27**(7일 경과, 2주 기준 미달로 재제출 보류). 발견 페이지 77 / RSS 20.
+- ✅ **AdSense 배너 소멸 확인** — "지급 정보를 추가하고 사이트를 연결해야 합니다" 경고가 사라짐(사용자 지급 정보 입력 반영). Ads.txt는 **"승인됨"** 유지(7/31 재검토 요청과 함께 재크롤 성사, 26일 스테일 해소).
+- 색인 요청 누적(7/26~8/3): GSC **72건**(8일 연속 무손실, 큐 59 잔여) · Naver **58건**(큐 60). 도구↔가이드 쌍·카테고리 허브를 같은 날 묶어 요청하는 방식으로 전환.
+- 판단: 색인 지표는 7/24 스냅샷에서 멈춰 재평가 신호 없음. 다만 AdSense 심사는 검색 색인과 별개 경로이므로 대기 유지.
+
 ### 백링크 확보 (2026-07-16 — 유일한 능동 레버 실행)
 - ✅ PR 제출: [Awesome-Geospatial#227](https://github.com/sacridini/Awesome-Geospatial/pull/227) (5.2k★, SaaS 섹션, nmea-checksum — bng2latlong 선례) · [awesome-online-tools#68](https://github.com/Bakumon/awesome-online-tools/pull/68) (Develop 섹션, NetTools 전체). 머지 대기 — 주간 확인.
 - 탈락 판정: free-for-dev(정책상 "generic toolbox sites" 명시 거절), awesome-sysadmin(설치형 오픈소스 전용), awesome-console-services(curl 접근 필수).
