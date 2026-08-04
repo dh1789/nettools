@@ -21,6 +21,7 @@ const GUIDE_SLUGS = [
   "mtu-blackhole-guide",
   "mac-address-oui-guide",
   "uuid-version-guide",
+  "totp-time-sync-guide",
 ];
 
 describe("블로그 가이드 글", () => {

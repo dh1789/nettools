@@ -1,0 +1,135 @@
+---
+title: "Your 2FA Code Keeps Getting Rejected — It's Usually the Clock"
+description: "TOTP worked yesterday and fails today, with the same secret and the same app. That points at time drift. Timestep math, server window sizing, the step-boundary trap, and otpauth URI parameter mismatches."
+category: security
+keywords:
+  - TOTP not working
+  - 2FA code invalid
+  - RFC 6238
+  - Google Authenticator time
+  - NTP time sync
+  - otpauth URI
+  - TOTP window
+publishedAt: "2026-08-04"
+relatedTools:
+  - totp-generator
+  - unix-timestamp
+  - qr-code-generator
+author: beomanro
+---
+
+## The symptom
+
+You type the six digits straight off the authenticator and get "invalid code." It isn't a typo. Retrying changes nothing. It worked yesterday, and you didn't reinstall the app. If the same account is enrolled on a second device, that device's code goes through.
+
+That combination rules out the secret. It's the clock.
+
+## TOTP takes the time as input
+
+TOTP (RFC 6238) is HOTP with time in the counter slot. The math:
+
+```
+T = floor((current Unix time - T0) / X)      # T0 = 0, X = 30s by default
+code = truncate(HMAC-SHA1(secret, T)) mod 10^6
+```
+
+Three inputs only — the secret, the algorithm parameters, and T. The secret doesn't change after enrollment. The parameters are fixed. **T is the one variable, and T comes from the clock.**
+
+With a 30-second step, a client and server more than 30 seconds apart compute different values of T, so the codes diverge. The error message is just "invalid code," which hides the cause.
+
+Check your current timestep:
+
+```bash
+# current timestep (30s steps)
+python3 -c "import time; print(int(time.time()) // 30)"
+
+# raw Unix time
+date +%s
+```
+
+Drop that into the [Unix Timestamp Converter](/tools/net/unix-timestamp/) to read it as wall-clock time, and feed the same secret into the [TOTP Code Generator](/tools/net/totp-generator/) to compare against what your app shows. Different codes confirm a time gap.
+
+## Checking and fixing the clock
+
+```bash
+# Linux — sync state and offset
+timedatectl status
+chronyc tracking          # chrony: the "System time" line is your offset
+ntpq -p                   # ntpd: the offset column (ms)
+
+# macOS — force a sync
+sudo sntp -sS time.apple.com
+
+# Windows
+w32tm /query /status
+w32tm /resync
+```
+
+Tens of milliseconds in `chronyc tracking`'s System time is normal. Whole seconds is your answer.
+
+VMs and containers drift the most. A guest whose clock never catches up after the host resumes from sleep, or a container inheriting a host clock that has no NTP, are both common. On phones, the culprit is "set date and time automatically" turned off with a manual time left behind.
+
+## The server-side window
+
+Servers usually accept a few steps on either side. That's the window.
+
+| window | Accepted range | Character |
+|--------|----------------|-----------|
+| 0 | current step only | fails on the slightest drift |
+| 1 | ±30s | **the sane default** |
+| 2 | ±60s | lenient; wider replay surface |
+| 10 | ±5 min | time verification in name only |
+
+A bigger window means fewer failures and a longer useful life for a stolen code. Raising the window because logins keep failing treats the symptom. Fix the clock first.
+
+## The step-boundary trap
+
+A 30-second lifetime doesn't mean the code on screen is good for the full 30 seconds you're looking at it. Step boundaries land on absolute time (`unixtime % 30 == 0`). Start typing with two seconds left and the boundary passes during transit, so the server validates against the next step. With window 0 that's a straight failure.
+
+Under five seconds remaining, wait for the next code. In automation, compute the remaining seconds right after generating and sleep past the boundary.
+
+```bash
+# seconds left in the current step
+python3 -c "import time; print(30 - int(time.time()) % 30)"
+```
+
+## When the clock is right and it still fails
+
+Parameter mismatch. It's all in the `otpauth://` URI.
+
+```
+otpauth://totp/MyService:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=MyService&algorithm=SHA1&digits=6&period=30
+```
+
+| Parameter | Default | Symptom when mismatched |
+|-----------|---------|-------------------------|
+| `algorithm` | SHA1 | server on SHA256, app on SHA1 → always fails |
+| `digits` | 6 | 8-digit issuance, 6-digit entry → always fails |
+| `period` | 30 | 60s server, 30s app → passes by coincidence about half the time |
+| `secret` | — | Base32; case, whitespace, and `=` padding handling differ |
+
+`period` is the confusing one. It lines up roughly every other step, so it reads as "works sometimes, fails often." That looks like drift but survives a clock fix.
+
+Base32 secrets are case-insensitive and the `=` padding is usually dropped. Some implementations pass embedded whitespace straight to the decoder and break, so strip it before pasting.
+
+QR enrollment encodes exactly that URI. If an issuer's QR looks suspect, rebuild the same URI with the [QR Code Generator](/tools/net/qr-code-generator/) and compare — missing parameters show up immediately.
+
+## Diagnostic order
+
+1. Compare Unix time on the app device and the server. A gap over 30 seconds ends the investigation.
+2. Force an NTP sync and retry.
+3. Still failing? Retry with more than five seconds left on the code.
+4. Still failing? Check `algorithm`, `digits`, and `period` against the issuer's docs.
+5. All correct and still failing? Verify the secret wasn't reissued — account recovery and 2FA resets rotate it quietly.
+
+## Keep the backup codes
+
+Put 2FA on one device with a drifting clock and losing that device locks you out of the account. Backup codes issued at enrollment work independently of time, so store them separately. Keeping the secret (or QR) somewhere safe lets you re-enroll on another device.
+
+## Summary
+
+- Most TOTP failures are time drift, not a bad secret. Cross the 30-second step and you get a different code.
+- Check the offset first with `chronyc tracking` / `w32tm /query /status`. Whole seconds is the cause.
+- Don't paper over it by widening the window. ±30s (window 1) is the baseline.
+- With under five seconds left, wait for the next code. Boundaries land on absolute time.
+- Clock correct but still failing → check `algorithm`, `digits`, `period`. A `period` mismatch shows up as "works sometimes."
