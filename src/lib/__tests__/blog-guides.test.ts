@@ -22,6 +22,7 @@ const GUIDE_SLUGS = [
   "mac-address-oui-guide",
   "uuid-version-guide",
   "totp-time-sync-guide",
+  "byte-units-kb-kib-guide",
 ];
 
 describe("블로그 가이드 글", () => {

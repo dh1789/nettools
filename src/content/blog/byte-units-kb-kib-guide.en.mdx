@@ -1,0 +1,144 @@
+---
+title: "You Plugged In a 1TB Drive and Got 931GB — KB vs KiB"
+description: "Not a defect, not format overhead. Manufacturers count in powers of ten; the OS counts in powers of two. Per-unit drift, OS labeling rules, df -h vs df -H, and the Mbps/MB\/s mixup."
+category: general
+keywords:
+  - KB vs KiB
+  - 1TB shows 931GB
+  - gigabyte calculation
+  - IEC binary prefixes
+  - df -h -H
+  - Mbps vs MB/s
+  - disk capacity reporting
+publishedAt: "2026-08-11"
+relatedTools:
+  - byte-unit-converter
+  - number-base-converter
+  - text-counter
+author: beomanro
+---
+
+## The symptom
+
+You bought a 1TB external SSD. Windows Explorer says 931GB. Sixty-nine gigabytes are missing. You try another PC and get the same number. Plug it into a Mac and it reads 1TB.
+
+It isn't defective, and it isn't format overhead. The same number is being counted two ways.
+
+## Two kinds of gigabyte
+
+Drive manufacturers count in powers of ten: 1TB = 1,000,000,000,000 bytes. Operating systems count in powers of two: 1TB = 1,099,511,627,776 bytes (2^40).
+
+Both print "TB" and the values differ. That's where the confusion starts.
+
+IEC named the binary side separately in 1998 — KiB (kibibyte), MiB, GiB, TiB. Windows and plenty of other software still label binary values as KB, MB, GB.
+
+| Unit | SI (decimal) | IEC (binary) | 1 SI unit in binary |
+|------|--------------|--------------|---------------------|
+| K | 1,000 | 1,024 | 0.977 KiB (−2.3%) |
+| M | 10^6 | 2^20 = 1,048,576 | 0.954 MiB (−4.6%) |
+| G | 10^9 | 2^30 = 1,073,741,824 | 0.931 GiB (−6.9%) |
+| T | 10^12 | 2^40 | 0.909 TiB (−9.1%) |
+| P | 10^15 | 2^50 | 0.888 PiB (−11.2%) |
+
+**The gap widens as units grow** — 2.3% at kilo, 9.1% at tera. Those "missing 69GB" are exactly that: 10^12 bytes divided by a GiB is 931.32.
+
+To see any value both ways at once, drop it into the [Byte Unit Converter](/tools/net/byte-unit-converter/) — SI and binary results appear side by side.
+
+## Every OS counts differently
+
+| Environment | Counts in | Labels it |
+|-------------|-----------|-----------|
+| Windows Explorer | binary | "GB" (really GiB) |
+| macOS 10.6+ | decimal | "GB" (really GB) |
+| Linux `df -h` | binary | "G" |
+| Linux `df -H` | decimal | "G" |
+| Drive manufacturers | decimal | "TB" |
+| RAM manufacturers | binary | "GB" (really GiB) |
+
+That table explains why a drive reading 1TB on a Mac reads 931GB on Windows. Both are correct; they count differently.
+
+Note the RAM exception. Memory is built in powers of two because of addressing, so an 8GB module really is 8 GiB — the opposite of storage.
+
+## Checking from the command line
+
+```bash
+# binary (1024) — G is effectively GiB
+df -h
+
+# decimal (1000) — matches the manufacturer's label
+df -H
+
+# directory size: binary vs decimal
+du -sh  /var/log
+du -sh --si /var/log     # GNU coreutils
+
+# exact byte counts
+lsblk -b                 # Linux block devices
+stat -c %s file          # Linux
+stat -f %z file          # macOS
+```
+
+When capacity is disputed, drop the human-friendly `-h` / `-H` flags and read raw bytes. There's only one raw value, so there's nothing to argue about.
+
+On Windows, use PowerShell:
+
+```powershell
+(Get-Item .\file.iso).Length          # bytes
+(Get-PSDrive C).Used                  # bytes
+```
+
+## Characters aren't bytes either
+
+Separate from capacity, string length trips people up just as often. In UTF-8 a Korean syllable takes 3 bytes and an emoji takes 4. "안녕" is two characters and six bytes.
+
+```bash
+echo -n "안녕" | wc -c   # 6 (bytes)
+echo -n "안녕" | wc -m   # 2 (characters)
+```
+
+If a `VARCHAR(10)` column overflows at four Korean characters, that column is counting bytes. The [Text Counter](/tools/net/text-counter/) reports character and byte counts together.
+
+## Mbps vs MB/s
+
+Networking adds one more mixup. Link speed is quoted in bits; file transfer speed in bytes. A factor of eight.
+
+| Link | Theoretical max |
+|------|-----------------|
+| 100 Mbps | 12.5 MB/s |
+| 500 Mbps | 62.5 MB/s |
+| 1 Gbps | 125 MB/s |
+| 10 Gbps | 1,250 MB/s |
+
+Gigabit service downloading at roughly 110 MB/s is normal. Subtract protocol overhead (Ethernet framing, IP, TCP headers) from the theoretical 125 and you land about there. Expecting 1000 MB/s means misreading the unit.
+
+Lowercase b is bits, uppercase B is bytes. That's why the b in Mbps is lowercase.
+
+## Choosing in code
+
+When you write a byte-to-human formatter, you have to pick 1000 or 1024.
+
+```js
+// match the OS display → 1024
+const BIN = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
+// match storage vendors and cloud invoices → 1000
+const SI  = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+function human(bytes, base = 1024, units = BIN) {
+  let i = 0;
+  while (bytes >= base && i < units.length - 1) { bytes /= base; i++; }
+  return `${bytes.toFixed(1)} ${units[i]}`;
+}
+```
+
+Pick this way: showing free disk space to a user means matching that OS's convention. Showing an invoice or quota means following the service's definition — most cloud providers bill on SI (10^9).
+
+Whichever you choose, **keep the label consistent with the value.** Dividing by 1024 and printing "GB" adds one more instance of the confusion this article is about.
+
+## Summary
+
+- 1TB reading as 931GB is correct: 10^12 bytes expressed in GiB.
+- The gap grows with the unit — 2.3% at K, 9.1% at T.
+- Storage counts decimal, RAM counts binary, Windows counts binary but labels "GB".
+- When capacity is disputed, read raw bytes with `lsblk -b` or `stat`.
+- Mbps is bits, MB/s is bytes. Divide by eight.
+- In code, 1000 or 1024 is fine — just make the label match the value.
