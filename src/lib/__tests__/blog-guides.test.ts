@@ -23,6 +23,7 @@ const GUIDE_SLUGS = [
   "uuid-version-guide",
   "totp-time-sync-guide",
   "byte-units-kb-kib-guide",
+  "bcrypt-cost-factor-guide",
 ];
 
 describe("블로그 가이드 글", () => {

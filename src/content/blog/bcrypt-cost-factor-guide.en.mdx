@@ -1,0 +1,168 @@
+---
+title: "You Moved Servers and Login Now Takes 3 Seconds — bcrypt Cost Is an Exponent"
+description: "Raising cost by two multiplies time by four. How to pick and measure a cost, the silent 72-byte truncation, what $2a$ / $2b$ / $2y$ mean, and how to raise cost with zero downtime."
+category: security
+keywords:
+  - bcrypt cost factor
+  - slow login
+  - bcrypt 72 bytes
+  - password hashing
+  - $2b$ prefix
+  - Argon2 comparison
+  - bcrypt rehash
+publishedAt: "2026-08-18"
+relatedTools:
+  - bcrypt-generator
+  - hash-generator
+  - password-generator
+author: beomanro
+---
+
+## The symptom
+
+Login responses went from 300ms to 3 seconds. The code didn't change. You moved servers, or cut the container's CPU allocation, or somebody bumped the cost setting. When logins arrive concurrently the thread pool drains first and everything else queues behind it.
+
+If DB queries are fine and only login is slow, suspect password hashing.
+
+## Cost is an exponent, not a multiplier
+
+bcrypt's cost factor is the exponent on the iteration count. The actual work is 2^cost rounds.
+
+| cost | Rounds | Relative time |
+|------|--------|---------------|
+| 10 | 1,024 | 1× |
+| 11 | 2,048 | 2× |
+| 12 | 4,096 | **4×** |
+| 13 | 8,192 | 8× |
+| 14 | 16,384 | 16× |
+
+Nudging cost from 10 to 12 is 4×. From 12 to 14 is 16×. Two digits in a config file move response time by an order of magnitude.
+
+Absolute times vary by CPU, so measuring on your deployment target is the only reliable method.
+
+```bash
+# Python
+python3 -c "
+import bcrypt, time
+for c in (10, 11, 12, 13):
+    t = time.time(); bcrypt.hashpw(b'benchmark', bcrypt.gensalt(c))
+    print(f'cost {c}: {(time.time()-t)*1000:.0f}ms')
+"
+
+# Node.js
+node -e "
+const b=require('bcrypt');
+for (const c of [10,11,12,13]) {
+  const t=Date.now(); b.hashSync('benchmark', c);
+  console.log('cost '+c+': '+(Date.now()-t)+'ms');
+}
+"
+```
+
+To eyeball the output while adjusting, generate hashes at different costs in the [BCrypt Hash Generator](/tools/net/bcrypt-generator/).
+
+## Choosing a cost
+
+Don't start from a number. Work backwards from **the login latency you can afford.**
+
+| Question | Guidance |
+|----------|----------|
+| Time budget for a login response | 250ms – 1s |
+| Cost that fits that budget | measure, don't guess |
+| Floor | 10 (the 2026 lower bound) |
+
+Run the concurrency math too. At 250ms per hash, one core handles four logins per second. On a 4-core box, a peak of 50 logins/sec saturates on hashing alone. Do that arithmetic before raising cost.
+
+Password hashing is deliberately slow. Slowness is the feature, so you don't optimize it — you **choose how slow on purpose.**
+
+## It truncates at 72 bytes
+
+bcrypt reads at most 72 bytes of input and silently discards the rest. Two passwords sharing their first 72 bytes validate against each other.
+
+```bash
+python3 -c "
+import bcrypt
+a = b'A'*72 + b'-first'
+b_ = b'A'*72 + b'-second'
+h = bcrypt.hashpw(a, bcrypt.gensalt(10))
+print(bcrypt.checkpw(b_, h))   # True — different passwords, accepted
+"
+```
+
+This bites services that encourage long passphrases. In UTF-8 a Korean syllable is 3 bytes, so 24 characters already hits 72. Emoji fill it faster.
+
+The fix is to compress to a fixed length before bcrypt sees it.
+
+```js
+import crypto from 'crypto';
+// SHA-256 → base64 = 44 bytes, always under 72
+const pre = crypto.createHash('sha256').update(password).digest('base64');
+const hash = await bcrypt.hash(pre, 12);
+```
+
+Pass base64 or hex, not the raw binary digest — some implementations stop at an embedded null byte. If you want a feel for input byte counts, check digest lengths in the [Hash Generator](/tools/net/hash-generator/).
+
+## $2a$ vs $2b$ vs $2y$
+
+The prefix on a hash string is the algorithm version.
+
+| Prefix | Origin | Today |
+|--------|--------|-------|
+| `$2a$` | original (1999) | some implementations had an 8-bit character bug |
+| `$2x$` / `$2y$` | PHP's response to that bug | PHP-ecosystem legacy |
+| `$2b$` | OpenBSD's official fix (2014) | **default for new hashes** |
+
+Most libraries dispatch on the prefix during verification, so existing `$2a$` hashes keep working. Only new hashes need to be `$2b$`.
+
+Read the structure like this:
+
+```
+$2b$12$LQv3c1yqBWVHxkd0LHAkCO....
+ │   │  └─ 22-char salt + 31-char hash (bcrypt base64)
+ │   └──── cost = 12
+ └──────── algorithm $2b$
+```
+
+The cost lives inside the hash, so a stored hash tells you which cost produced it. That fact powers the next section.
+
+## Raising cost with zero downtime
+
+You can't bulk-rehash existing entries — you don't have the plaintext. But **at the moment a login succeeds, the plaintext is in your hand.** Rehash there.
+
+```js
+const TARGET_COST = 12;
+
+if (await bcrypt.compare(password, user.hash)) {
+  if (bcrypt.getRounds(user.hash) < TARGET_COST) {
+    user.hash = await bcrypt.hash(password, TARGET_COST);
+    await user.save();
+  }
+  // proceed with login
+}
+```
+
+Active users migrate first. Accounts that never log in stay at the old cost — and those accounts aren't authenticating anyway.
+
+The same hook handles an algorithm swap. Moving to Argon2id? Verify with bcrypt, rehash with Argon2.
+
+## Is bcrypt still fine?
+
+Argon2 won the 2015 Password Hashing Competition. For a new system, Argon2id is the first choice; being memory-hard gives it better GPU-cracking resistance.
+
+That doesn't make bcrypt broken. bcrypt with a sane cost remains a valid choice in 2026. What is not up for debate is **using MD5, SHA-1, or SHA-256 directly on passwords** — those are built to be fast, and fast is exactly the problem.
+
+| Use | Pick |
+|-----|------|
+| New system passwords | Argon2id |
+| Existing bcrypt system | fine to keep — re-examine cost |
+| File integrity / checksums | SHA-256 |
+| SHA-256 alone for passwords | **don't** |
+
+## Summary
+
+- Cost is an exponent. +2 is 4×. Measure before changing the number.
+- Benchmark on your deployment hardware, not somebody else's numbers.
+- Derive cost from your latency budget (250ms–1s) and login concurrency.
+- Input truncates at 72 bytes. Accepting long passphrases? Pre-hash with SHA-256 + base64.
+- Generate `$2b$`. Existing `$2a$` hashes can stay as long as verification works.
+- Raise cost by rehashing on successful login — no downtime, no migration job.
