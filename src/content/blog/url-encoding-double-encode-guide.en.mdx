@@ -1,0 +1,160 @@
+---
+title: "There's a %2520 in Your URL — Tracking Down Double Encoding"
+description: "How a space becomes %20 and then %2520. When to use encodeURI vs encodeURIComponent, why + means different things in a path and a query, and where proxies and redirect chains stack an extra encode."
+category: developer
+keywords:
+  - double encoding
+  - "%2520"
+  - encodeURIComponent
+  - percent encoding
+  - urlencode plus
+  - RFC 3986
+  - redirect_uri encoding
+publishedAt: "2026-08-19"
+relatedTools:
+  - url-encoder
+  - http-headers-checker
+  - base64
+author: beomanro
+---
+
+## The symptom
+
+You added a post-login redirect back to the original page. The address bar shows this:
+
+```
+/login?next=https%253A%252F%252Fexample.com%252Fdocs
+```
+
+Spot a `%25` and you have double encoding. A download link showing `report%20final.pdf` as literal text, or a search query where spaces stayed as `+` and returned nothing, are the same family.
+
+## %25 is the tell
+
+Percent encoding maps bytes to `%XX`. A space is `%20`. But **`%` is itself an encodable character**, and `%` encodes to `%25`.
+
+Encode an already-encoded string again and every leading `%` becomes `%25`.
+
+| Original | Encoded once | Encoded twice |
+|----------|--------------|---------------|
+| (space) | `%20` | `%2520` |
+| `/` | `%2F` | `%252F` |
+| `&` | `%26` | `%2526` |
+| `?` | `%3F` | `%253F` |
+| `한` | `%ED%95%9C` | `%25ED%2595%259C` |
+
+**A `%25` means one encode too many.** Decode once and you get the five-character string `%20`; decode twice for an actual space.
+
+Count the layers by decoding repeatedly:
+
+```bash
+python3 -c "
+from urllib.parse import unquote
+s = '%2520hello%2520world'
+for i in range(4):
+    print(i, s)
+    s2 = unquote(s)
+    if s2 == s: break
+    s = s2
+"
+```
+
+For a quick check, paste it into the [URL Encoder / Decoder](/tools/net/url-encoder/) and hit decode until the original appears — the number of presses is the number of encodes.
+
+## encodeURI vs encodeURIComponent
+
+The most common cause in JavaScript. The two differ in which characters they touch.
+
+| Function | Reserved chars (`: / ? # & = + $ , @`) | Use for |
+|----------|----------------------------------------|---------|
+| `encodeURI` | **preserved** | encoding a whole URL |
+| `encodeURIComponent` | **encoded** | encoding one parameter value |
+
+Use `encodeURI` on a parameter value and the `&` and `=` inside it survive, splitting your query string.
+
+```js
+const next = 'https://example.com/a?b=1&c=2';
+
+`/login?next=${encodeURI(next)}`
+// /login?next=https://example.com/a?b=1&c=2
+// → the server reads next=https://example.com/a?b=1 and a separate c=2
+
+`/login?next=${encodeURIComponent(next)}`
+// /login?next=https%3A%2F%2Fexample.com%2Fa%3Fb%3D1%26c%3D2   ✓
+```
+
+Conversely, **wrapping an already-`encodeURIComponent`d value in `encodeURI`** is the classic route to `%2520`. Usually a router or HTTP client already encodes, and application code encodes again on top.
+
+One rule: **encode exactly once, right before the value enters the URL.**
+
+## + in a query vs + in a path
+
+The same `+` is read differently depending on where it sits.
+
+| Position | What `+` means | How to write a space |
+|----------|----------------|----------------------|
+| Query string (`application/x-www-form-urlencoded`) | space | `+` or `%20` |
+| Path | literal `+` | `%20` only |
+| Form body | space | `+` |
+
+Send `C++ tutorial` as a query without encoding the pluses and the server reads `C  tutorial`. Move a path file named `a+b.pdf` into a query and it becomes `a b.pdf`.
+
+Python splits this into two functions:
+
+```python
+from urllib.parse import quote, quote_plus
+
+quote('C++ tutorial')        # 'C%2B%2B%20tutorial'   for paths
+quote_plus('C++ tutorial')   # 'C%2B%2B+tutorial'     for queries
+```
+
+For a one-off value in the shell, jq is convenient:
+
+```bash
+printf '%s' 'C++ tutorial' | jq -sRr @uri
+# C%2B%2B%20tutorial
+```
+
+## Where the layers stack
+
+| Point | How it stacks |
+|-------|---------------|
+| Framework auto-encoding + manual encoding | router or HTTP client already encoded; app code encodes again |
+| Reverse proxy | proxy decodes once before the backend, which also expects to decode |
+| Redirect chain | reassembling `Location` re-encodes an already-encoded URL |
+| Nested parameters | OAuth flows where `redirect_uri` carries its own query |
+| Logs and monitoring | a collector encodes URLs for storage and that value gets reused |
+
+When redirects are the suspect, read the raw header. The address bar pretty-prints a decoded form, which is not the bytes on the wire.
+
+```bash
+curl -sI 'https://example.com/redirect?next=...' | grep -i '^location'
+```
+
+The [HTTP Header Checker](/tools/net/http-headers-checker/) shows the raw `Location` too.
+
+## Signature verification is where it hurts
+
+Webhook and API signatures compare byte strings. Different encodings of the same content don't match.
+
+- Case: RFC 3986 recommends **uppercase hex** like `%2F`. `%2f` is valid but produces a different signing string.
+- Over-encoding unreserved characters: `~` needs no encoding, yet some implementations send `%7E`.
+- Parameter order: check whether the signing spec pins a sort order.
+
+The only durable fix is agreeing on a normalization rule with the spec and hard-coding that same rule on both sides. A large share of "the signature fails sometimes" is this.
+
+## Diagnostic order
+
+1. Look for `%25`. If it's there, double encoding is confirmed.
+2. Decode repeatedly to count the layers.
+3. Trace the code path where the value joins the URL and find every encode call. More than one? Keep one.
+4. If it crosses a proxy or gateway, check that hop's decoding behavior.
+5. See whether spaces arrive as `+` or `%20` and match the path/query function accordingly.
+
+## Summary
+
+- `%25` signals one encode too many. `%2520` is a space.
+- `encodeURIComponent` for values, `encodeURI` for whole URLs. Using `encodeURI` on a value splits your query.
+- Encode once, immediately before the value enters the URL.
+- `+` is a space in queries, a literal in paths. Python splits this as `quote_plus` vs `quote`.
+- Debug redirects with the raw `Location` header, not the address bar.
+- For signatures, normalize hex case and over-encoding on both sides.

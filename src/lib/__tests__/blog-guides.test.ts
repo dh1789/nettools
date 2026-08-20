@@ -24,6 +24,7 @@ const GUIDE_SLUGS = [
   "totp-time-sync-guide",
   "byte-units-kb-kib-guide",
   "bcrypt-cost-factor-guide",
+  "url-encoding-double-encode-guide",
 ];
 
 describe("블로그 가이드 글", () => {
