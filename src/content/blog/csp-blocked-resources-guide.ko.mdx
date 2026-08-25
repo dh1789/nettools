@@ -1,0 +1,173 @@
+---
+title: "CSP 넣었더니 사이트가 깨졌다 — 차단 로그 읽는 법"
+description: "Refused to load 에러의 출처를 지시어 단위로 추적한다. default-src 폴백이 안 먹는 지시어, nonce가 있으면 unsafe-inline이 무시되는 규칙, Report-Only로 먼저 재는 순서까지 정리했다."
+category: security
+keywords:
+  - Content Security Policy
+  - CSP 오류
+  - default-src
+  - unsafe-inline
+  - CSP nonce
+  - frame-ancestors
+  - Report-Only
+publishedAt: "2026-08-26"
+relatedTools:
+  - csp-generator
+  - http-headers-checker
+  - hash-generator
+author: beomanro
+---
+
+## 증상부터
+
+CSP 헤더를 붙이고 배포했다. 페이지가 하얗게 뜨고 콘솔에 이게 쌓인다.
+
+```
+Refused to load the script 'https://cdn.example.com/app.js' because it
+violates the following Content Security Policy directive: "default-src 'self'".
+Note that 'script-src-elem' was not explicitly set, so 'default-src' is used
+as a fallback.
+```
+
+이 메시지는 필요한 걸 다 말해준다. **차단된 리소스**, **위반한 지시어**, 그리고 **그 지시어가 폴백으로 온 것인지**까지. 마지막 문장이 가장 중요하다 — `script-src`를 안 썼기 때문에 `default-src`가 대신 적용됐다는 뜻이다.
+
+## default-src는 폴백이지만 전부는 아니다
+
+`default-src`를 좁게 잡고 나머지를 생략하면 대부분의 지시어가 거기로 떨어진다. 그런데 **폴백을 받지 않는 지시어**가 있고, 여기서 사고가 난다.
+
+| 지시어 | `default-src` 폴백 |
+|--------|------------------|
+| `script-src` · `style-src` · `img-src` · `font-src` | 받는다 |
+| `connect-src` · `media-src` · `object-src` · `frame-src` · `worker-src` | 받는다 |
+| **`frame-ancestors`** | **안 받는다** |
+| **`form-action`** | **안 받는다** |
+| **`base-uri`** | **안 받는다** |
+| **`report-uri` · `report-to`** | 해당 없음 |
+
+`default-src 'self'`만 써놓고 클릭재킹이 막힌다고 생각하면 틀렸다. `frame-ancestors`는 명시하지 않으면 **제한이 없다.**
+
+```
+Content-Security-Policy: default-src 'self'; frame-ancestors 'none'
+```
+
+## 먼저 Report-Only로 재라
+
+운영 트래픽에 바로 걸지 말고 위반만 수집한다. 헤더 이름만 바꾸면 된다.
+
+```
+Content-Security-Policy-Report-Only: default-src 'self'; report-uri /csp-report
+```
+
+이 헤더는 **차단하지 않는다.** 콘솔에 위반을 남기고 리포트만 보낸다. 두 헤더를 동시에 보내는 것도 가능해서, 느슨한 정책을 강제하면서 조이려는 정책을 Report-Only로 병행 검증하는 게 실전 순서다.
+
+며칠 돌려 위반 목록이 안정되면 그때 `Content-Security-Policy`로 승격한다.
+
+## 'unsafe-inline'이 조용히 무시된다
+
+가장 헷갈리는 규칙이다. **같은 지시어에 nonce나 hash가 하나라도 있으면 CSP3 브라우저는 `'unsafe-inline'`을 무시한다.**
+
+| 지시어 값 | 인라인 스크립트 |
+|-----------|----------------|
+| `script-src 'unsafe-inline'` | 전부 실행 |
+| `script-src 'unsafe-inline' 'nonce-abc123'` | **nonce 붙은 것만** 실행 |
+| `script-src 'unsafe-inline' 'sha256-...'` | **hash 일치하는 것만** 실행 |
+| `script-src 'nonce-abc123'` | nonce 붙은 것만 실행 |
+
+의도한 동작이다. 구형 브라우저 호환용으로 `'unsafe-inline'`을 남겨두되 최신 브라우저에서는 무시되게 하는 설계다. 문제는 **`'unsafe-inline'`을 넣었으니 인라인이 다 될 거라 믿고** nonce를 추가했다가 나머지 인라인 스크립트가 전부 죽는 경우다.
+
+`'unsafe-eval'`은 별개다. nonce가 있어도 무시되지 않는다.
+
+## nonce와 hash 중 무엇을 쓸 것인가
+
+| | nonce | hash |
+|---|-------|------|
+| 값 | 요청마다 새로 생성한 난수 | 스크립트 내용의 SHA-256 |
+| 필요 조건 | **동적 서버 렌더링** | 내용이 고정 |
+| 정적 호스팅 | **불가**(응답마다 달라야 함) | 가능 |
+| 스크립트 수정 시 | 그대로 | **hash 재계산 필요** |
+
+정적 사이트에는 nonce를 쓸 수 없다. 같은 HTML이 캐시돼 여러 응답에 재사용되므로 nonce가 재사용되고, 그러면 nonce의 의미가 사라진다.
+
+hash는 이렇게 계산한다. 여는 태그와 닫는 태그를 뺀 **스크립트 내용 그대로**가 대상이다.
+
+```bash
+printf '%s' 'console.log("hi")' | openssl dgst -sha256 -binary | openssl base64
+# S9+3vNGiFXCwqDXX2hDcaJnvVhbGdIhO2SzFdWK+u5g=
+```
+
+```
+script-src 'sha256-S9+3vNGiFXCwqDXX2hDcaJnvVhbGdIhO2SzFdWK+u5g='
+```
+
+공백 하나만 달라져도 hash가 바뀐다. 빌드 파이프라인이 HTML을 minify한다면 **minify 이후 내용**으로 계산해야 한다. [해시 생성기](/tools/net/hash-generator/)로 값만 빠르게 확인할 수 있다.
+
+## 자주 걸리는 것들
+
+| 차단 대상 | 필요한 지시어 |
+|-----------|--------------|
+| 인라인 `<script>` | `script-src` + nonce/hash |
+| 인라인 `style=` 속성 | `style-src 'unsafe-inline'` 또는 hash |
+| `eval()` · `new Function()` · 문자열 `setTimeout` | `script-src 'unsafe-eval'` |
+| `data:` URI 이미지 | `img-src data:` |
+| 웹폰트 | `font-src` |
+| `fetch` · XHR · WebSocket · EventSource | `connect-src` |
+| `<iframe>` 삽입 | `frame-src` |
+| Web Worker · Service Worker | `worker-src` |
+| 소스맵 | 차단 안 됨(개발자도구 전용) |
+
+`connect-src`를 빠뜨리는 경우가 많다. 분석 스크립트, 에러 수집기, 폰트 CDN이 전부 여기 걸린다. WebSocket은 `wss:` 스킴까지 맞춰야 한다.
+
+React의 `style` prop은 인라인 스타일 **속성**을 만들지 않고 CSSOM으로 처리되는 경우가 많아 대체로 무사하지만, CSS-in-JS 라이브러리가 런타임에 `<style>` 태그를 주입하면 `style-src`에 걸린다.
+
+## frame-ancestors는 meta 태그로 안 된다
+
+CSP는 `<meta http-equiv="Content-Security-Policy">`로도 넣을 수 있다. 하지만 **meta에서는 무시되는 지시어**가 있다.
+
+- `frame-ancestors`
+- `report-uri` · `report-to`
+- `sandbox`
+
+이들은 **HTTP 응답 헤더로만** 동작한다. meta에 써놓고 클릭재킹 방어가 됐다고 믿으면 실제로는 무방비다. `frame-ancestors`는 `X-Frame-Options`를 대체하는 지시어이고, 둘 다 있으면 최신 브라우저는 `frame-ancestors`를 따른다.
+
+실제로 어떤 헤더가 나가는지는 응답에서 확인한다.
+
+```bash
+curl -sI https://example.com | grep -i '^content-security-policy'
+```
+
+[HTTP 헤더 검사기](/tools/net/http-headers-checker/)로도 헤더 원문을 그대로 볼 수 있다.
+
+## 위반 리포트 수집
+
+`report-uri`는 구식이지만 지원 범위가 넓고, `report-to`가 후속 표준이다. 전환기라 **둘 다 보내는 게** 현실적이다.
+
+```
+Content-Security-Policy:
+  default-src 'self';
+  report-uri /csp-report;
+  report-to csp-endpoint
+Reporting-Endpoints: csp-endpoint="https://example.com/csp-report"
+```
+
+리포트는 `application/csp-report` 타입의 POST로 온다. 수집기를 붙일 때 두 가지를 각오해야 한다.
+
+- **브라우저 확장이 만드는 위반이 대량으로 섞인다.** `chrome-extension:` 같은 스킴은 필터링한다.
+- `blocked-uri`가 `inline`이나 `eval`처럼 URI가 아닌 값으로 올 수 있다.
+
+## 진단 순서
+
+1. 콘솔 에러에서 **차단된 리소스**와 **위반 지시어**를 읽는다.
+2. "was not explicitly set, so 'default-src' is used as a fallback" 문구가 있으면 해당 지시어를 명시적으로 추가한다.
+3. 같은 지시어에 nonce/hash가 있는지 본다. 있으면 `'unsafe-inline'`은 무시되고 있다.
+4. `curl -sI`로 실제 나가는 헤더를 확인한다 — 프록시나 CDN이 헤더를 덧쓰거나 합칠 수 있다.
+5. 헤더가 두 번 나가면 **둘 다 적용**된다(교집합). 완화가 아니라 강화 방향으로 합쳐진다.
+6. 정책을 만들 때는 [CSP 생성기](/tools/net/csp-generator/)로 지시어 누락부터 점검한다.
+
+## 정리
+
+- 에러 메시지의 마지막 문장이 폴백 여부를 알려준다. 그게 곧 고칠 지시어다.
+- `frame-ancestors` · `form-action` · `base-uri`는 `default-src` 폴백을 받지 않는다. 명시해야 한다.
+- nonce나 hash가 있으면 같은 지시어의 `'unsafe-inline'`은 무시된다.
+- 정적 호스팅에는 nonce를 못 쓴다. hash를 쓰되 minify 이후 내용으로 계산한다.
+- `frame-ancestors` · `report-uri` · `sandbox`는 meta 태그에서 동작하지 않는다.
+- 조일 때는 항상 `Content-Security-Policy-Report-Only`로 며칠 재고 나서 승격한다.

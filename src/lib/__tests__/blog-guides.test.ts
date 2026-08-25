@@ -25,6 +25,7 @@ const GUIDE_SLUGS = [
   "byte-units-kb-kib-guide",
   "bcrypt-cost-factor-guide",
   "url-encoding-double-encode-guide",
+  "csp-blocked-resources-guide",
 ];
 
 describe("블로그 가이드 글", () => {

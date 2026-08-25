@@ -1,0 +1,173 @@
+---
+title: "CSP Broke My Site — Reading the Block Log"
+description: "Trace a Refused to load error back to the directive that caused it. Which directives never fall back to default-src, why a nonce silently disables unsafe-inline, and how to measure with Report-Only before you enforce."
+category: security
+keywords:
+  - Content Security Policy
+  - CSP error
+  - default-src
+  - unsafe-inline
+  - CSP nonce
+  - frame-ancestors
+  - Report-Only
+publishedAt: "2026-08-26"
+relatedTools:
+  - csp-generator
+  - http-headers-checker
+  - hash-generator
+author: beomanro
+---
+
+## The symptom
+
+You shipped a CSP header. The page renders blank and the console fills with this.
+
+```
+Refused to load the script 'https://cdn.example.com/app.js' because it
+violates the following Content Security Policy directive: "default-src 'self'".
+Note that 'script-src-elem' was not explicitly set, so 'default-src' is used
+as a fallback.
+```
+
+The message tells you everything you need: the **blocked resource**, the **violated directive**, and whether that directive arrived **as a fallback**. That last sentence matters most — it means you never set `script-src`, so `default-src` stood in for it.
+
+## default-src is a fallback, but not for everything
+
+Set `default-src` tightly and omit the rest, and most directives fall back to it. But some **never take the fallback**, and that is where sites get hurt.
+
+| Directive | Falls back to `default-src` |
+|-----------|----------------------------|
+| `script-src` · `style-src` · `img-src` · `font-src` | yes |
+| `connect-src` · `media-src` · `object-src` · `frame-src` · `worker-src` | yes |
+| **`frame-ancestors`** | **no** |
+| **`form-action`** | **no** |
+| **`base-uri`** | **no** |
+| **`report-uri` · `report-to`** | n/a |
+
+Writing `default-src 'self'` and assuming you are protected from clickjacking is wrong. Leave `frame-ancestors` unset and it is **unrestricted**.
+
+```
+Content-Security-Policy: default-src 'self'; frame-ancestors 'none'
+```
+
+## Measure with Report-Only first
+
+Don't enforce against production traffic on day one. Collect violations instead — change only the header name.
+
+```
+Content-Security-Policy-Report-Only: default-src 'self'; report-uri /csp-report
+```
+
+This header **blocks nothing.** It logs violations to the console and sends reports. You can send both headers at once, which is the practical sequence: enforce a loose policy while validating a stricter one in Report-Only.
+
+Run it for a few days, and once the violation list stabilizes, promote it to `Content-Security-Policy`.
+
+## 'unsafe-inline' gets silently ignored
+
+The most confusing rule in CSP. **If a directive contains any nonce or hash, CSP3 browsers ignore `'unsafe-inline'` in that same directive.**
+
+| Directive value | Inline scripts |
+|-----------------|----------------|
+| `script-src 'unsafe-inline'` | all run |
+| `script-src 'unsafe-inline' 'nonce-abc123'` | **only nonced ones** run |
+| `script-src 'unsafe-inline' 'sha256-...'` | **only hash-matching ones** run |
+| `script-src 'nonce-abc123'` | only nonced ones run |
+
+This is intentional: keep `'unsafe-inline'` for old browsers and let modern ones ignore it. The trap is **assuming `'unsafe-inline'` still covers everything** after adding one nonce — every other inline script dies.
+
+`'unsafe-eval'` is separate. A nonce does not disable it.
+
+## nonce or hash?
+
+| | nonce | hash |
+|---|-------|------|
+| Value | fresh random per request | SHA-256 of the script content |
+| Requires | **dynamic server rendering** | fixed content |
+| Static hosting | **not possible** (must differ per response) | works |
+| When script changes | unchanged | **recompute the hash** |
+
+Nonces don't work on static sites. The same HTML gets cached and reused across responses, so the nonce is reused too — which defeats the point.
+
+Compute a hash over the **script content only**, excluding the opening and closing tags.
+
+```bash
+printf '%s' 'console.log("hi")' | openssl dgst -sha256 -binary | openssl base64
+# S9+3vNGiFXCwqDXX2hDcaJnvVhbGdIhO2SzFdWK+u5g=
+```
+
+```
+script-src 'sha256-S9+3vNGiFXCwqDXX2hDcaJnvVhbGdIhO2SzFdWK+u5g='
+```
+
+One byte of whitespace changes the hash. If your build minifies HTML, compute it against the **post-minify** content. The [Hash Generator](/tools/net/hash-generator/) is a quick way to check a value.
+
+## What usually gets blocked
+
+| Blocked | Directive you need |
+|---------|-------------------|
+| Inline `<script>` | `script-src` + nonce/hash |
+| Inline `style=` attribute | `style-src 'unsafe-inline'` or a hash |
+| `eval()` · `new Function()` · string `setTimeout` | `script-src 'unsafe-eval'` |
+| `data:` URI images | `img-src data:` |
+| Web fonts | `font-src` |
+| `fetch` · XHR · WebSocket · EventSource | `connect-src` |
+| `<iframe>` embeds | `frame-src` |
+| Web Workers · Service Workers | `worker-src` |
+| Source maps | not blocked (devtools only) |
+
+`connect-src` is the one people forget. Analytics, error collectors, and font CDNs all land there. WebSockets need the `wss:` scheme spelled out.
+
+React's `style` prop usually survives, since it goes through CSSOM rather than emitting an inline style **attribute** — but CSS-in-JS libraries that inject `<style>` tags at runtime hit `style-src`.
+
+## frame-ancestors does not work in a meta tag
+
+CSP can be delivered via `<meta http-equiv="Content-Security-Policy">`. But some directives are **ignored in meta**.
+
+- `frame-ancestors`
+- `report-uri` · `report-to`
+- `sandbox`
+
+These only work as **HTTP response headers**. Put `frame-ancestors` in a meta tag and you have no clickjacking protection at all. It supersedes `X-Frame-Options`; when both are present, modern browsers follow `frame-ancestors`.
+
+Check what actually goes over the wire.
+
+```bash
+curl -sI https://example.com | grep -i '^content-security-policy'
+```
+
+The [HTTP Header Checker](/tools/net/http-headers-checker/) shows the raw header too.
+
+## Collecting violation reports
+
+`report-uri` is deprecated but widely supported; `report-to` is the successor. During the transition, **send both**.
+
+```
+Content-Security-Policy:
+  default-src 'self';
+  report-uri /csp-report;
+  report-to csp-endpoint
+Reporting-Endpoints: csp-endpoint="https://example.com/csp-report"
+```
+
+Reports arrive as POSTs with type `application/csp-report`. Two things to expect when you wire up a collector:
+
+- **Browser extensions generate a flood of violations.** Filter schemes like `chrome-extension:`.
+- `blocked-uri` can be a non-URI value such as `inline` or `eval`.
+
+## Diagnostic order
+
+1. Read the **blocked resource** and the **violated directive** from the console error.
+2. If it says "was not explicitly set, so 'default-src' is used as a fallback", add that directive explicitly.
+3. Check whether the directive contains a nonce or hash — if so, `'unsafe-inline'` is being ignored.
+4. Confirm the header on the wire with `curl -sI`; proxies and CDNs can overwrite or merge it.
+5. Two CSP headers means **both apply** (intersection). Merging tightens, never loosens.
+6. When authoring a policy, run it through the [CSP Generator](/tools/net/csp-generator/) to catch missing directives.
+
+## Summary
+
+- The last sentence of the error names the fallback. That is the directive to fix.
+- `frame-ancestors`, `form-action`, and `base-uri` never fall back to `default-src`. Set them.
+- A nonce or hash makes `'unsafe-inline'` inert in that same directive.
+- Static hosting can't use nonces. Use hashes, computed on post-minify content.
+- `frame-ancestors`, `report-uri`, and `sandbox` do nothing in a meta tag.
+- Always measure with `Content-Security-Policy-Report-Only` for a few days before enforcing.
