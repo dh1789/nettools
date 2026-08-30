@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AdSlot } from "./AdSlot";
 import type { FAQ, HowTo, RelatedConcept, UsageExample } from "@/data/tools";
 import { getToolBySlug } from "@/data/tools";
+import type { GuideLink } from "@/lib/blog";
 
 interface ToolLayoutProps {
   title: string;
@@ -14,9 +15,82 @@ interface ToolLayoutProps {
   howTo?: HowTo;
   relatedConcepts?: RelatedConcept[];
   relatedTools?: string[];
+  relatedGuides?: GuideLink[];
   usageExamples?: UsageExample[];
   locale?: "ko" | "en";
   children: ReactNode;
+}
+
+function RelatedGuidesSection({
+  guides,
+  locale,
+}: {
+  guides: GuideLink[];
+  locale: "ko" | "en";
+}) {
+  const heading = locale === "ko" ? "관련 가이드" : "Related Guides";
+  return (
+    <section style={{ marginTop: "1rem" }}>
+      <h2
+        style={{
+          fontSize: "1.25rem",
+          fontWeight: 700,
+          color: "var(--text-primary, #111)",
+          marginBottom: "1rem",
+        }}
+      >
+        {heading}
+      </h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        {guides.map((g) => (
+          <Link
+            key={g.slug}
+            href={`/blog/${g.slug}/`}
+            style={{
+              display: "block",
+              padding: "0.875rem 1rem",
+              border: "1px solid var(--border, #e5e7eb)",
+              borderRadius: "8px",
+              background: "var(--background, #f9fafb)",
+              textDecoration: "none",
+            }}
+          >
+            <span
+              style={{
+                display: "block",
+                fontSize: "0.9375rem",
+                fontWeight: 600,
+                color: "var(--info-text, #1d4ed8)",
+                marginBottom: "0.25rem",
+              }}
+            >
+              {g.title}
+            </span>
+            <span
+              style={{
+                display: "block",
+                fontSize: "0.875rem",
+                color: "var(--text-secondary, #6b7280)",
+                lineHeight: 1.6,
+              }}
+            >
+              {g.description}
+            </span>
+            <span
+              style={{
+                display: "block",
+                marginTop: "0.375rem",
+                fontSize: "0.75rem",
+                color: "var(--text-tertiary, #9ca3af)",
+              }}
+            >
+              {locale === "ko" ? `${g.readingTime}분 읽기` : `${g.readingTime} min read`}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function FaqSection({ faqs, locale }: { faqs: FAQ[]; locale: "ko" | "en" }) {
@@ -339,7 +413,7 @@ function RelatedToolsSection({
         {tools.map((t) => (
           <Link
             key={t.slug}
-            href={`/tools/net/${t.slug}`}
+            href={`/tools/net/${t.slug}/`}
             style={{
               display: "inline-block",
               padding: "0.5rem 0.875rem",
@@ -367,6 +441,7 @@ export function ToolLayout({
   howTo,
   relatedConcepts,
   relatedTools,
+  relatedGuides,
   usageExamples,
   locale = "ko",
   children,
@@ -442,6 +517,21 @@ export function ToolLayout({
           >
             {longDescription}
           </p>
+        </section>
+      )}
+
+      {/* 관련 가이드 — 도구→가이드 교차링크 (가이드 고아 방지) */}
+      {relatedGuides && relatedGuides.length > 0 && (
+        <section
+          style={{
+            background: "var(--surface, #fff)",
+            border: "1px solid var(--border, #e5e5e5)",
+            borderRadius: "12px",
+            padding: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <RelatedGuidesSection guides={relatedGuides} locale={locale} />
         </section>
       )}
 

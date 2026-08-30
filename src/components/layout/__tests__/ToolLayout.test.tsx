@@ -265,4 +265,62 @@ describe("ToolLayout", () => {
     expect(screen.getByText("Step 1: Enter your input.")).toBeInTheDocument();
     expect(screen.getByText("Subnet Mask")).toBeInTheDocument();
   });
+
+  const sampleRelatedGuides = [
+    {
+      slug: "subnet-calculation-guide",
+      title: "서브넷 계산 실무 가이드",
+      description: "CIDR 에서 호스트 수까지 손으로 계산하는 법",
+      readingTime: 7,
+    },
+    {
+      slug: "subnet-mask-explained",
+      title: "서브넷 마스크 쉽게 이해하기",
+      description: "255.255.255.0 이 무엇을 뜻하는지",
+      readingTime: 5,
+    },
+  ];
+
+  test("relatedGuides 전달 시 '관련 가이드' 섹션과 /blog/<slug>/ 링크 표시", () => {
+    render(
+      <ToolLayout
+        title="도구"
+        description="설명"
+        relatedGuides={sampleRelatedGuides}
+        locale="ko"
+      >
+        <div>본체</div>
+      </ToolLayout>
+    );
+    expect(screen.getByText("관련 가이드")).toBeInTheDocument();
+    expect(screen.getByText("서브넷 계산 실무 가이드")).toBeInTheDocument();
+    const links = screen.getAllByRole("link");
+    expect(links.map((l) => l.getAttribute("href"))).toEqual([
+      "/blog/subnet-calculation-guide/",
+      "/blog/subnet-mask-explained/",
+    ]);
+  });
+
+  test("relatedGuides 미전달 또는 빈 배열 시 '관련 가이드' 섹션 미표시", () => {
+    render(
+      <ToolLayout title="도구" description="설명" relatedGuides={[]}>
+        <div>본체</div>
+      </ToolLayout>
+    );
+    expect(screen.queryByText("관련 가이드")).not.toBeInTheDocument();
+  });
+
+  test("relatedGuides 영어 locale 시 'Related Guides' 제목", () => {
+    render(
+      <ToolLayout
+        title="Tool"
+        description="Desc"
+        relatedGuides={sampleRelatedGuides}
+        locale="en"
+      >
+        <div>body</div>
+      </ToolLayout>
+    );
+    expect(screen.getByText("Related Guides")).toBeInTheDocument();
+  });
 });

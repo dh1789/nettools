@@ -37,6 +37,14 @@ export interface TocItem {
   id: string;
 }
 
+/** 도구 페이지 '관련 가이드' 섹션용 직렬화 링크 (client component 로 넘기는 최소 필드) */
+export interface GuideLink {
+  slug: string;
+  title: string;
+  description: string;
+  readingTime: number;
+}
+
 const CONTENT_DIR = path.resolve(process.cwd(), "src/content/blog");
 const REQUIRED_FIELDS: (keyof BlogFrontmatter)[] = [
   "title",
@@ -178,6 +186,26 @@ export function getAllPosts(locale: Locale): BlogPost[] {
   );
 
   return posts;
+}
+
+/**
+ * 도구 slug 를 relatedTools 에 가진 가이드를 최신순으로 반환한다 (도구→가이드 역참조).
+ * 가이드는 도구를 링크하지만 도구는 가이드를 링크하지 않아 고아가 되는 문제의 해법.
+ */
+export function getGuidesForTool(toolSlug: string, locale: Locale): BlogPost[] {
+  return getAllPosts(locale).filter(
+    (p) => p.frontmatter.relatedTools?.includes(toolSlug) ?? false,
+  );
+}
+
+/** BlogPost → GuideLink (본문·toc 제외, RSC→client 경계 통과용) */
+export function toGuideLinks(posts: BlogPost[]): GuideLink[] {
+  return posts.map((p) => ({
+    slug: p.slug,
+    title: p.frontmatter.title,
+    description: p.frontmatter.description,
+    readingTime: p.readingTime,
+  }));
 }
 
 /** XML 특수문자 이스케이프 */
