@@ -18,7 +18,7 @@ const GUIDES: { slug: string; title: { ko: string; en: string } }[] = [
 ];
 
 export function HomeContent() {
-  const { locale, t, tf } = useLocale();
+  const { locale, t, tf, href } = useLocale();
 
   return (
     <main style={{ maxWidth: "960px", margin: "0 auto", padding: "2rem 1rem" }}>
@@ -74,7 +74,7 @@ export function HomeContent() {
               }}
             >
               <Link
-                href={`/category/${category.id}/`}
+                href={href(`/category/${category.id}/`)}
                 style={{
                   color: "inherit",
                   textDecoration: "none",
@@ -143,7 +143,7 @@ export function HomeContent() {
           {GUIDES.map((g) => (
             <Link
               key={g.slug}
-              href={`/blog/${g.slug}/`}
+              href={href(`/blog/${g.slug}/`)}
               style={{
                 display: "block",
                 padding: "0.875rem 1rem",
@@ -162,7 +162,7 @@ export function HomeContent() {
         </div>
         <p style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
           <Link
-            href="/blog/"
+            href={href("/blog/")}
             style={{ color: "var(--info-text, #1d4ed8)", textDecoration: "none" }}
           >
             {locale === "ko" ? "모든 가이드 보기 →" : "View all guides →"}

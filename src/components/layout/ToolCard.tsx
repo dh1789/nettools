@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLocale } from "@/lib/LocaleProvider";
 
 interface ToolCardProps {
   slug: string;
@@ -9,9 +10,10 @@ interface ToolCardProps {
 }
 
 export default function ToolCard({ slug, title, description }: ToolCardProps) {
+  const { href } = useLocale();
   return (
     <Link
-      href={`/tools/net/${slug}`}
+      href={href(`/tools/net/${slug}/`)}
       style={{
         display: "block",
         padding: "1.25rem",

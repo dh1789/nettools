@@ -1,5 +1,15 @@
-import { generateToolMetadata, generateToolJsonLd } from "../seo";
+import {
+  generateToolMetadata,
+  generateToolJsonLd,
+  generateBlogMetadata,
+  generateBlogJsonLd,
+  generateCategoryMetadata,
+  localeAlternates,
+  localizeSitemapEntries,
+} from "../seo";
 import type { Tool } from "@/data/tools";
+import { CATEGORIES } from "@/data/tools";
+import type { BlogPost } from "../blog";
 
 const mockTool: Tool = {
   slug: "test-tool",
@@ -49,23 +59,158 @@ const mockToolWithHowTo: Tool = {
   },
 };
 
-describe("generateToolMetadata", () => {
-  test("alternates에 languages(hrefLang) 속성이 포함되지 않아야 한다", () => {
-    const metadata = generateToolMetadata(mockTool, "ko");
+const KO_URL = "https://beomanro.com/tools/net/test-tool/";
+const EN_URL = "https://beomanro.com/en/tools/net/test-tool/";
 
-    expect(metadata.alternates).toBeDefined();
-    expect(metadata.alternates?.canonical).toBe(
-      "https://beomanro.com/tools/net/test-tool/"
-    );
-    // 존재하지 않는 /ko/, /en/ 경로로의 hrefLang 링크가 없어야 함
-    expect(metadata.alternates).not.toHaveProperty("languages");
+describe("generateToolMetadata", () => {
+  // 2026-08-30 반전: 이전엔 /en/ 경로가 없어 hreflang 을 금지했다. /en/ 정적 라우트가
+  // 생겼으므로 ko/en/x-default 3종 hreflang 이 반드시 있어야 한다.
+  test("ko: canonical 은 무프리픽스, hreflang ko/en/x-default 포함", () => {
+    const metadata = generateToolMetadata(mockTool, "ko");
+    expect(metadata.alternates?.canonical).toBe(KO_URL);
+    expect(metadata.alternates?.languages).toEqual({
+      ko: KO_URL,
+      en: EN_URL,
+      "x-default": KO_URL,
+    });
   });
 
-  test("canonical URL이 올바르게 생성되어야 한다", () => {
-    const metadata = generateToolMetadata(mockTool, "ko");
-    expect(metadata.alternates?.canonical).toBe(
-      "https://beomanro.com/tools/net/test-tool/"
+  test("en: canonical 은 /en/ 자기 자신, hreflang 은 ko 와 동일 집합", () => {
+    const metadata = generateToolMetadata(mockTool, "en");
+    expect(metadata.alternates?.canonical).toBe(EN_URL);
+    expect(metadata.alternates?.languages).toEqual({
+      ko: KO_URL,
+      en: EN_URL,
+      "x-default": KO_URL,
+    });
+    expect(metadata.openGraph).toMatchObject({ url: EN_URL, locale: "en_US" });
+  });
+
+  test("title 접미사가 로케일을 따른다 (en 페이지에 한국어 접미사 금지 — TR-7)", () => {
+    expect(String(generateToolMetadata(mockTool, "ko").title)).toContain("무료 온라인 도구");
+    const enTitle = String(generateToolMetadata(mockTool, "en").title);
+    expect(enTitle).not.toMatch(/[가-힣]/);
+    expect(enTitle).toContain("Test Tool");
+  });
+});
+
+describe("generateToolJsonLd — 로케일 URL", () => {
+  test("en: WebApplication.url 과 BreadcrumbList 가 /en/ URL, inLanguage 는 단일 로케일", () => {
+    const graph = JSON.parse(generateToolJsonLd(mockTool, "en"))["@graph"];
+    const app = graph.find((n: { "@type": string | string[] }) =>
+      Array.isArray(n["@type"]) && n["@type"].includes("WebApplication"),
     );
+    expect(app.url).toBe(EN_URL);
+    expect(app.inLanguage).toBe("en");
+    const crumbs = graph.find((n: { "@type": string }) => n["@type"] === "BreadcrumbList");
+    const items = crumbs.itemListElement.map((i: { item: string }) => i.item);
+    expect(items[0]).toBe("https://beomanro.com/en/");
+    expect(items[items.length - 1]).toBe(EN_URL);
+  });
+
+  test("ko: 기존 무프리픽스 URL 유지", () => {
+    const graph = JSON.parse(generateToolJsonLd(mockTool, "ko"))["@graph"];
+    const app = graph.find((n: { "@type": string | string[] }) =>
+      Array.isArray(n["@type"]) && n["@type"].includes("WebApplication"),
+    );
+    expect(app.url).toBe(KO_URL);
+    expect(app.inLanguage).toBe("ko");
+  });
+});
+
+const mockPost: BlogPost = {
+  slug: "test-guide",
+  locale: "en",
+  frontmatter: {
+    title: "Test Guide",
+    description: "Test description",
+    category: "network",
+    keywords: ["a", "b", "c"],
+    publishedAt: "2026-08-01",
+    relatedTools: ["test-tool"],
+    author: "beomanro",
+  },
+  content: "## A\n\ntext",
+  readingTime: 3,
+  toc: [],
+};
+
+describe("generateBlogMetadata / JsonLd — 로케일 URL", () => {
+  test("en 가이드: canonical /en/blog/, hreflang 3종", () => {
+    const m = generateBlogMetadata(mockPost, "en");
+    expect(m.alternates?.canonical).toBe("https://beomanro.com/en/blog/test-guide/");
+    expect(m.alternates?.languages).toEqual({
+      ko: "https://beomanro.com/blog/test-guide/",
+      en: "https://beomanro.com/en/blog/test-guide/",
+      "x-default": "https://beomanro.com/blog/test-guide/",
+    });
+  });
+
+  test("en 가이드 JSON-LD: url·mainEntityOfPage 가 /en/, 브레드크럼 'Blog'", () => {
+    const graph = JSON.parse(generateBlogJsonLd(mockPost, "en"))["@graph"];
+    const posting = graph.find((n: { "@type": string }) => n["@type"] === "BlogPosting");
+    expect(posting.url).toBe("https://beomanro.com/en/blog/test-guide/");
+    expect(posting.mainEntityOfPage["@id"]).toBe("https://beomanro.com/en/blog/test-guide/");
+    const crumbs = graph.find((n: { "@type": string }) => n["@type"] === "BreadcrumbList");
+    expect(crumbs.itemListElement[1]).toMatchObject({
+      name: "Blog",
+      item: "https://beomanro.com/en/blog/",
+    });
+  });
+});
+
+describe("generateCategoryMetadata — 로케일 URL", () => {
+  test("en 카테고리: canonical /en/category/, title 에 한국어 없음", () => {
+    const m = generateCategoryMetadata(CATEGORIES[0], "en");
+    expect(m.alternates?.canonical).toBe("https://beomanro.com/en/category/network/");
+    expect(m.alternates?.languages?.en).toBe("https://beomanro.com/en/category/network/");
+    expect(String(m.title)).not.toMatch(/[가-힣]/);
+  });
+});
+
+describe("localeAlternates", () => {
+  test("ko 경로를 받아 canonical(로케일별)과 hreflang 3종을 만든다", () => {
+    expect(localeAlternates("/about/", "ko")).toEqual({
+      canonical: "https://beomanro.com/about/",
+      languages: {
+        ko: "https://beomanro.com/about/",
+        en: "https://beomanro.com/en/about/",
+        "x-default": "https://beomanro.com/about/",
+      },
+    });
+    expect(localeAlternates("/", "en").canonical).toBe("https://beomanro.com/en/");
+  });
+});
+
+describe("localizeSitemapEntries — ko 엔트리마다 en 트윈 + hreflang", () => {
+  test("1 ko 엔트리 → ko/en 2 엔트리, 둘 다 alternates.languages 보유", () => {
+    const out = localizeSitemapEntries([
+      { url: "https://beomanro.com/blog/x/", lastmod: "2026-08-01", priority: 0.7 },
+    ]);
+    expect(out).toHaveLength(2);
+    expect(out.map((e) => e.url)).toEqual([
+      "https://beomanro.com/blog/x/",
+      "https://beomanro.com/en/blog/x/",
+    ]);
+    for (const e of out) {
+      expect(e.alternates?.languages).toEqual({
+        ko: "https://beomanro.com/blog/x/",
+        en: "https://beomanro.com/en/blog/x/",
+        "x-default": "https://beomanro.com/blog/x/",
+      });
+      expect(e.priority).toBe(0.7);
+      expect(e.lastModified).toEqual(new Date("2026-08-01"));
+    }
+  });
+
+  test("홈 / 은 /en/ 로", () => {
+    const out = localizeSitemapEntries([{ url: "https://beomanro.com/", priority: 1.0 }]);
+    expect(out[1].url).toBe("https://beomanro.com/en/");
+  });
+
+  test("이미 /en/ 인 입력은 중복 생성하지 않는다", () => {
+    const out = localizeSitemapEntries([{ url: "https://beomanro.com/en/blog/x/", priority: 0.7 }]);
+    expect(out).toHaveLength(1);
   });
 });
 

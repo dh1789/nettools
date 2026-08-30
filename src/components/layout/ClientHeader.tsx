@@ -6,7 +6,7 @@ import Link from "next/link";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function ClientHeader() {
-  const { t } = useLocale();
+  const { t, href } = useLocale();
 
   return (
     <header
@@ -25,7 +25,7 @@ export function ClientHeader() {
         }}
       >
         <Link
-          href="/"
+          href={href("/")}
           style={{
             fontWeight: 700,
             fontSize: "1.125rem",
@@ -37,19 +37,19 @@ export function ClientHeader() {
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", fontSize: "0.875rem" }}>
           <Link
-            href="/"
+            href={href("/")}
             style={{ textDecoration: "none", color: "var(--text-secondary)" }}
           >
             {t(T.navTools)}
           </Link>
           <Link
-            href="/blog/"
+            href={href("/blog/")}
             style={{ textDecoration: "none", color: "var(--text-secondary)" }}
           >
             {t(T.blogTitle)}
           </Link>
           <a
-            href="/about"
+            href={href("/about/")}
             style={{ textDecoration: "none", color: "var(--text-secondary)" }}
           >
             {t(T.navAbout)}

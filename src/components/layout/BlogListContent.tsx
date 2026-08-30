@@ -17,7 +17,7 @@ interface BlogListContentProps {
 }
 
 export function BlogListContent({ posts }: BlogListContentProps) {
-  const { locale, t: tr, tf } = useLocale();
+  const { locale, t: tr, tf, href } = useLocale();
 
   return (
     <div style={{ maxWidth: "960px", margin: "0 auto", padding: "0 1rem" }}>
@@ -79,7 +79,7 @@ export function BlogListContent({ posts }: BlogListContentProps) {
             return (
               <Link
                 key={post.slug}
-                href={`/blog/${post.slug}`}
+                href={href(`/blog/${post.slug}/`)}
                 style={{
                   display: "block",
                   background: "var(--surface, #fff)",

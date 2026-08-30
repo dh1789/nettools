@@ -1,12 +1,15 @@
 import type { MDXComponents } from "mdx/types";
 import { generateHeadingId } from "./blog";
+import { type Locale, localePath } from "./i18n";
 import { ComparisonTable } from "@/components/blog/ComparisonTable";
 
 /**
  * MDX 렌더링용 커스텀 컴포넌트.
  * 헤딩에 ID를 부여하여 TOC 링크와 연결한다.
+ * 본문의 내부 링크(`/tools/net/...`)는 로케일 프리픽스를 붙여 en 가이드가 en 도구로 연결되게 한다.
  */
-export const mdxComponents: MDXComponents = {
+export function getMdxComponents(locale: Locale): MDXComponents {
+  return {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ComparisonTable: ComparisonTable as any,
   h2: ({ children, ...props }) => {
@@ -98,7 +101,7 @@ export const mdxComponents: MDXComponents = {
   ),
   a: ({ children, href, ...props }) => (
     <a
-      href={href}
+      href={typeof href === "string" && href.startsWith("/") ? localePath(href, locale) : href}
       style={{
         color: "var(--info-text, #1d4ed8)",
         textDecoration: "underline",
@@ -179,4 +182,8 @@ export const mdxComponents: MDXComponents = {
       {children}
     </strong>
   ),
-};
+  };
+}
+
+/** ko 기본 세트 (기존 import 호환) */
+export const mdxComponents: MDXComponents = getMdxComponents("ko");

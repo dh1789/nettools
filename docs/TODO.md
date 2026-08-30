@@ -43,7 +43,7 @@
 > **🟢 2026-06-26 재심사 제출 완료** — 계정 `koei2418` / `pub-6842181130818480`. 과거(2026-01-16) "가치가 별로 없는 콘텐츠"로 거절 → 콘텐츠 심화·ads.txt·코드 배포 후 재심사 요청. 상태 "준비 중"(검토 중). 결과 며칠~2주.
 
 - [x] 🔴 색인 지원 (코드 가능분 완료, 2026-06-24) — ✅ 홈에 가이드 8편 1-hop 섹션 추가(`HomeContent`, 색인된 홈→가이드 발견 신호) · ✅ 내부링크 trailing-slash 전체 정규화 · ✅ canonical/noindex 점검(`/tools/net` noindex=홈 중복 통합 의도, 정상). 🙋 **남은 GSC sitemap 제출·핵심 URL 색인 요청은 사용자만 가능**(코드 불가)
-- [x] 🔴 가이드 ko 14/14 심화 ✅ (2026-06-24, build 검증) — 도구 워크드 예제·엣지케이스·명령어표·1인칭+교차링크. subnet 3편 distinct 앵글 클러스터 분리(subnet-guide는 CIDR/VLSM로 retitle). 내부링크 trailing-slash 전체 정규화. **en 패리티 보류**: ko=primary(DEFAULT_LOCALE=ko), en은 hreflang 변형이라 AdSense 평가 비대상 — 필요 시 후속
+- [x] 🔴 가이드 ko 14/14 심화 ✅ (2026-06-24, build 검증) — 도구 워크드 예제·엣지케이스·명령어표·1인칭+교차링크. subnet 3편 distinct 앵글 클러스터 분리(subnet-guide는 CIDR/VLSM로 retitle). 내부링크 trailing-slash 전체 정규화. **en 패리티**: ~~en은 hreflang 변형이라 AdSense 평가 비대상~~ → **2026-08-30 정정**: 당시 hreflang 도 /en/ 경로도 없었다. en 은 클라이언트 토글로만 보여 검색엔진에 두 달간 비가시(TR-10). `/en/` 정적 라우트 + hreflang 도입으로 해소
 - [x] 🟡 privacy 애드센스 디스클로저 보강 ✅ (2026-06-24) — 제3자 쿠키·웹비콘·IP 명시 + aboutads.info/youronlinechoices 옵트아웃 + partner-sites 링크 + 날짜 갱신 (legal 페이지 ko 단일, en 변형 없음). lint/test/verify 통과
 - [x] 🟡 Contact 페이지 ✅ (2026-06-24) — footer 링크 + i18n navContact + sitemap 등록. tsc/lint/test(677)/verify 통과
 - [x] 🟡 가이드 저자 바이라인 ✅ (2026-06-24) — 28편 전부 author:NetTools Team 보유 확인 + BlogLayout 헤더 가시 바이라인 추가(JSON-LD 기존 보유). tsc/lint/test 통과

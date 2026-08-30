@@ -6,7 +6,7 @@ import { CATEGORIES } from "@/data/tools";
 import Link from "next/link";
 
 export function ClientFooter() {
-  const { t, locale } = useLocale();
+  const { t, locale, href } = useLocale();
 
   return (
     <footer
@@ -28,7 +28,7 @@ export function ClientFooter() {
         {CATEGORIES.map((category) => (
           <Link
             key={category.id}
-            href={`/category/${category.id}/`}
+            href={href(`/category/${category.id}/`)}
             style={{ color: "var(--text-tertiary)", textDecoration: "none" }}
           >
             {category.icon} {category.title[locale]}
@@ -36,19 +36,19 @@ export function ClientFooter() {
         ))}
       </nav>
       <p style={{ marginTop: "0.75rem", fontSize: "0.75rem" }}>
-        <Link href="/blog/" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
+        <Link href={href("/blog/")} style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
           {t(T.blogTitle)}
         </Link>
-        <a href="/about" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
+        <a href={href("/about/")} style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
           {t(T.navAbout)}
         </a>
-        <a href="/contact" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
+        <a href={href("/contact/")} style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
           {t(T.navContact)}
         </a>
-        <a href="/privacy" style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
+        <a href={href("/privacy/")} style={{ color: "var(--text-tertiary)", textDecoration: "none", marginRight: "1rem" }}>
           {t(T.footerLinkPrivacy)}
         </a>
-        <a href="/terms" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>
+        <a href={href("/terms/")} style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>
           {t(T.footerLinkTerms)}
         </a>
       </p>

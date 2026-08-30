@@ -6,6 +6,7 @@ import { AdSlot } from "./AdSlot";
 import type { FAQ, HowTo, RelatedConcept, UsageExample } from "@/data/tools";
 import { getToolBySlug } from "@/data/tools";
 import type { GuideLink } from "@/lib/blog";
+import { localePath } from "@/lib/i18n";
 
 interface ToolLayoutProps {
   title: string;
@@ -45,7 +46,7 @@ function RelatedGuidesSection({
         {guides.map((g) => (
           <Link
             key={g.slug}
-            href={`/blog/${g.slug}/`}
+            href={localePath(`/blog/${g.slug}/`, locale)}
             style={{
               display: "block",
               padding: "0.875rem 1rem",
@@ -413,7 +414,7 @@ function RelatedToolsSection({
         {tools.map((t) => (
           <Link
             key={t.slug}
-            href={`/tools/net/${t.slug}/`}
+            href={localePath(`/tools/net/${t.slug}/`, locale)}
             style={{
               display: "inline-block",
               padding: "0.5rem 0.875rem",

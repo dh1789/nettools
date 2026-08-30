@@ -8,8 +8,8 @@ import { ToolLayout } from "./ToolLayout";
 
 interface ToolPageContentProps {
   tool: Tool;
-  /** 서버(page.tsx)에서 getGuidesForTool 로 계산해 넘긴 로케일별 관련 가이드 */
-  relatedGuides?: Record<"ko" | "en", GuideLink[]>;
+  /** 서버(ToolRoute)에서 라우트 로케일로 계산해 넘긴 관련 가이드 */
+  relatedGuides?: GuideLink[];
 }
 
 export function ToolPageContent({ tool, relatedGuides }: ToolPageContentProps) {
@@ -26,7 +26,7 @@ export function ToolPageContent({ tool, relatedGuides }: ToolPageContentProps) {
       howTo={tool.howTo}
       relatedConcepts={tool.relatedConcepts}
       relatedTools={tool.relatedTools}
-      relatedGuides={relatedGuides?.[locale]}
+      relatedGuides={relatedGuides}
       usageExamples={tool.usageExamples}
       locale={locale}
     >

@@ -42,6 +42,41 @@ export function t(translatable: Translatable, locale: Locale): string {
   return translatable[locale] || translatable[DEFAULT_LOCALE];
 }
 
+// ─── 로케일 URL (2026-08-30) ───
+// URL 이 언어의 단일 진실: ko 는 무프리픽스(`/blog/`), en 은 `/en` 프리픽스(`/en/blog/`).
+// 이전엔 `?lang=en`/버튼이 클라이언트에서 텍스트만 바꿔 정적 HTML 은 늘 ko 였고,
+// hreflang 도 없어 en 콘텐츠가 검색엔진에 전혀 노출되지 않았다(TR-10).
+
+const NON_ROUTABLE = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i;
+
+/** `/en` 프리픽스 제거. `/english/` 같은 유사 경로는 건드리지 않는다. */
+export function stripLocalePrefix(path: string): string {
+  if (path === "/en") return "/";
+  if (path.startsWith("/en/")) return path.slice(3) || "/";
+  return path;
+}
+
+/** 경로의 로케일 판별 (`/en`, `/en/...` → en, 나머지 ko). */
+export function localeFromPath(path: string): Locale {
+  return path === "/en" || path.startsWith("/en/") ? "en" : "ko";
+}
+
+/**
+ * 내부 경로에 로케일 프리픽스를 붙이고 trailing slash 를 보장한다(TR-3).
+ * 외부 URL·`mailto:`·`#hash` 는 그대로 반환. 쿼리/해시는 보존.
+ */
+export function localePath(path: string, locale: Locale): string {
+  if (NON_ROUTABLE.test(path)) return path;
+  const m = path.match(/^([^?#]*)(.*)$/);
+  let p = m ? m[1] : path;
+  const suffix = m ? m[2] : "";
+  if (!p.startsWith("/")) p = `/${p}`;
+  p = stripLocalePrefix(p);
+  const last = p.slice(p.lastIndexOf("/") + 1);
+  if (!p.endsWith("/") && !last.includes(".")) p += "/";
+  return (locale === "en" ? `/en${p}` : p) + suffix;
+}
+
 // ─── 번역 사전 ───
 
 export const T = {

@@ -495,6 +495,59 @@ BU_CDP_URL=http://127.0.0.1:9335 BU_NAME=nettools browser-harness < "$SCRIPT"
 
 ---
 
+### TR-10. 클라이언트 언어 토글은 검색엔진에 보이지 않는다 (en 콘텐츠 SEO 가치 0)
+
+**증상**: ko/en 쌍으로 가이드 25편을 썼는데 GSC·`site:` 어디에도 영어 페이지가 없다. `?lang=en` 이나 언어 버튼으로 본 화면은 영어인데, `curl` 로 받은 HTML 은 어떤 URL 이든 `<html lang="ko">` + 한국어 본문이고 `hreflang` 도 없다.
+
+**원인**: 언어가 **URL 이 아니라 React 상태**였다. `LocaleProvider` 가 mount 후 `navigator.language`/localStorage 로 텍스트만 갈아끼웠다. 정적 export 는 URL 당 HTML 하나만 굽고, 그 HTML 은 `DEFAULT_LOCALE`(ko) 로 고정된다(TR-7 의 반대편 함정). 검색엔진은 URL 단위로 문서를 색인하므로 URL 이 하나면 언어도 하나다. `docs/TODO.md` 의 "en 은 hreflang 변형" 기록은 사실이 아니었다 — hreflang 태그 자체가 없었다.
+
+**회복**: 로케일을 라우트가 결정하게 한다.
+- `app/(ko)/…`(무프리픽스) 와 `app/(en)/en/…` **루트 레이아웃 2개**(route group). 각자 `<html lang>` 과 `LocaleProvider initialLocale` 을 고정. `SiteShell` 이 공용 껍데기.
+- 동적 라우트는 `ToolRoute`/`BlogPostRoute`/`CategoryRoute` 빌더를 로케일만 달리 호출.
+- 메타: `localeAlternates(path, locale)` → canonical(자기 로케일) + `hreflang` ko/en/x-default. 사이트맵은 `localizeSitemapEntries` 가 ko 시드마다 en 트윈을 붙인다.
+- 내부 링크는 `useLocale().href(path)` / `localePath(path, locale)` 로만 만든다(프리픽스 + trailing slash). 언어 전환은 반대 로케일 URL 로 **이동**(`LanguageSwitcher`).
+- 브라우저 언어 자동 스왑 제거 — URL 이 단일 진실.
+
+**검증**: `npm run build` 후 `out/en/**/index.html` 이 존재하고 `<html lang="en">`, `<h1>` 영어, `<link rel="alternate" hreflang="…">` 3종이 ko/en 양쪽에 있는지 grep. `out/sitemap.xml` 에 `/en/` URL 과 `xhtml:link` 가 있는지 확인.
+
+**자동 차단 후보**: lint — `src/components/layout/**` 의 `href="/…"` 리터럴(로케일 헬퍼 미경유) 경고. 미구현.
+
+**최초 발견**: 2026-08-29 AdSense 접근법 적대적 재평가. en.mdx 25편이 두 달간 검색 비가시였음.
+
+---
+
+### TR-11. `title.template` 과 페이지 제목 접미사가 겹쳐 `| NetTools | NetTools`
+
+**증상**: 라이브 `<title>` 이 `서브넷 계산기 — 무료 온라인 도구 | NetTools | NetTools`. 모든 도구·가이드·법적 문서 페이지에서 수 개월간 지속(검색 결과 스니펫에 그대로 노출).
+
+**원인**: 루트 레이아웃 `metadata.title.template = "%s | NetTools"` 가 **자식 세그먼트**의 문자열 title 에 접미사를 붙이는데, `seo.ts` 의 생성기도 `… | NetTools` 를 붙여 반환했다. 홈(`app/(ko)/page.tsx`)만 레이아웃과 같은 세그먼트라 템플릿이 적용되지 않아 정상으로 보였고, 그래서 눈에 안 띄었다.
+
+**회복**: 페이지 레벨 생성기는 접미사 없는 제목만 반환(`${title} — 무료 온라인 도구`). 템플릿을 피해야 하는 브랜드 전체 제목(홈)은 `title: { absolute: "…" }`. `/en/` 홈은 `(en)/layout.tsx` 의 자식 세그먼트라 템플릿이 붙으므로 absolute 가 필수.
+
+**검증**: `npm run build` 후 `grep -o '<title>[^<]*' out/**/index.html | grep -c 'NetTools | NetTools'` 가 0.
+
+**자동 차단 후보**: 빌드 후 `out/` 전수 grep 을 `bin/harness smoke` 에 추가 — 미구현.
+
+**최초 발견**: 2026-08-30 /en/ 라우트 빌드 검증 중. 라이브 확인으로 기존 결함임을 확정.
+
+---
+
+### TR-12. 루트 레이아웃을 route group 으로 나누면 `404.html` 이 껍데기만 남는다
+
+**증상**: `app/layout.tsx` 를 지우고 `app/(ko)/layout.tsx`·`app/(en)/layout.tsx` 두 루트 레이아웃으로 나눈 뒤, `out/404.html` 이 `<html>`(lang 없음) + `404: This page could not be found.` 만 있는 Next 내장 기본 문서로 바뀐다. 헤더·푸터·다크모드 CSS 전부 없음. 빌드는 성공하므로 눈치채기 어렵다.
+
+**원인**: 전역 `/_not-found` 라우트는 어느 route group 에도 속하지 않아 감쌀 루트 레이아웃이 없다. Next 는 이때 내부 기본 레이아웃으로 대체한다. `app/not-found.tsx` 를 두어도 같은 이유로 기본 껍데기에 감싸지므로(자체 `<html>` 을 넣으면 중첩) 해결이 안 된다.
+
+**회복**: Next 15.4+ 의 `experimental.globalNotFound: true` + `app/global-not-found.tsx`. 이 파일은 **문서 전체(`<html>`/`<body>`)를 스스로 렌더**해야 하므로 `SiteShell` 을 그대로 감싼다. `metadata` 로 `robots: { index: false }` 와 절대 제목을 준다. 로케일을 알 수 없으니 ko 껍데기 + `/` `/en/` 양쪽 링크.
+
+**검증**: `npm run build` 후 `grep -o '<html[^>]*>' out/404.html` 이 `lang="ko"` 를 포함하고 `grep -c NetTools out/404.html` ≥ 1.
+
+**자동 차단 후보**: `bin/harness smoke` 에 `out/404.html` lang 검사 추가 — 미구현.
+
+**최초 발견**: 2026-08-30 /en/ 라우트 도입(TR-10) 빌드 검증 중.
+
+---
+
 ### 함정 추가 가이드
 
 새 함정 발견 시 다음 형식으로 추가:

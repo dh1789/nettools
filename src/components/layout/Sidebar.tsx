@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/lib/LocaleProvider";
-import { T } from "@/lib/i18n";
+import { T, stripLocalePrefix } from "@/lib/i18n";
 import { CATEGORIES, getToolsByCategory } from "@/data/tools";
 
 interface SidebarProps {
@@ -12,7 +12,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onNavigate }: SidebarProps) {
-  const { locale, t } = useLocale();
+  const { locale, t, href } = useLocale();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
@@ -20,8 +20,9 @@ export function Sidebar({ onNavigate }: SidebarProps) {
     setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  // 활성 판정은 로케일 프리픽스를 벗긴 ko 기준 경로로 비교 (/en/tools/... 도 매칭)
   const isActive = (path: string) => {
-    const normalized = pathname.replace(/\/$/, "");
+    const normalized = stripLocalePrefix(pathname || "/").replace(/\/$/, "");
     const target = path.replace(/\/$/, "");
     return normalized === target;
   };
@@ -30,7 +31,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
     <nav style={{ padding: "1rem 0" }}>
       {/* Home */}
       <Link
-        href="/"
+        href={href("/")}
         onClick={onNavigate}
         style={{
           display: "flex",
@@ -109,7 +110,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
                   return (
                     <Link
                       key={tool.slug}
-                      href={toolPath}
+                      href={href(toolPath)}
                       onClick={onNavigate}
                       style={{
                         display: "block",

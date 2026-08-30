@@ -323,4 +323,23 @@ describe("ToolLayout", () => {
     );
     expect(screen.getByText("Related Guides")).toBeInTheDocument();
   });
+
+  test("en locale 에서는 관련 가이드·관련 도구 링크가 /en/ 프리픽스를 가진다", () => {
+    render(
+      <ToolLayout
+        title="Tool"
+        description="Desc"
+        relatedGuides={[sampleRelatedGuides[0]]}
+        relatedTools={["cidr-to-range"]}
+        locale="en"
+      >
+        <div>body</div>
+      </ToolLayout>
+    );
+    const hrefs = screen.getAllByRole("link").map((l) => l.getAttribute("href"));
+    expect(hrefs).toEqual([
+      "/en/blog/subnet-calculation-guide/",
+      "/en/tools/net/cidr-to-range/",
+    ]);
+  });
 });

@@ -1,39 +1,25 @@
 "use client";
 
 import { type ReactNode } from "react";
-import { useLocale } from "@/lib/LocaleProvider";
 import { BlogLayout } from "./BlogLayout";
 import type { BlogFrontmatter, TocItem } from "@/lib/blog";
 
-interface PostMeta {
+export interface PostMeta {
   frontmatter: BlogFrontmatter;
   readingTime: number;
   toc: TocItem[];
 }
 
 interface BlogPostContentProps {
-  koMeta: PostMeta | null;
-  enMeta: PostMeta | null;
-  koContent: ReactNode;
-  enContent: ReactNode;
+  meta: PostMeta;
+  content: ReactNode;
 }
 
-export function BlogPostContent({
-  koMeta,
-  enMeta,
-  koContent,
-  enContent,
-}: BlogPostContentProps) {
-  const { locale } = useLocale();
-
-  const meta = locale === "ko"
-    ? (koMeta || enMeta)!
-    : (enMeta || koMeta)!;
-
-  const content = locale === "ko"
-    ? (koContent || enContent)
-    : (enContent || koContent);
-
+/**
+ * 라우트가 로케일을 결정하므로 한 로케일의 글만 받는다.
+ * (이전엔 ko/en 본문을 둘 다 내려보내 클라이언트에서 골랐다 — HTML 2배, en 은 검색엔진 비가시)
+ */
+export function BlogPostContent({ meta, content }: BlogPostContentProps) {
   return (
     <BlogLayout
       title={meta.frontmatter.title}

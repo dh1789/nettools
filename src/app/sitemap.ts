@@ -1,5 +1,10 @@
 import { TOOLS, CATEGORIES } from "@/data/tools";
-import { generateSitemapEntries, generateBlogSitemapEntries } from "@/lib/seo";
+import {
+  generateSitemapEntries,
+  generateBlogSitemapEntries,
+  localizeSitemapEntries,
+  type SitemapSeed,
+} from "@/lib/seo";
 import { getAllPosts } from "@/lib/blog";
 import type { MetadataRoute } from "next";
 
@@ -7,70 +12,50 @@ export const dynamic = "force-static";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://beomanro.com";
 
+/**
+ * ko 기준 시드를 만들고 localizeSitemapEntries 가 /en/ 트윈 + hreflang 을 붙인다.
+ * 모든 URL 은 trailing slash 포함(TR-3). 결과 엔트리 수 = 시드 × 2.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const entries = generateSitemapEntries(TOOLS);
+  const now = new Date();
 
-  const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: `${SITE_URL}/about/`,
-      lastModified: new Date("2026-06-30"),
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-    {
-      url: `${SITE_URL}/contact/`,
-      lastModified: new Date("2026-06-24"),
-      changeFrequency: "yearly",
-      priority: 0.4,
-    },
-    {
-      url: `${SITE_URL}/privacy/`,
-      lastModified: new Date("2026-06-28"),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${SITE_URL}/terms/`,
-      lastModified: new Date("2026-06-30"),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
+  const staticPages: SitemapSeed[] = [
+    { url: `${SITE_URL}/about/`, lastmod: "2026-06-30", changeFrequency: "yearly", priority: 0.5 },
+    { url: `${SITE_URL}/contact/`, lastmod: "2026-06-24", changeFrequency: "yearly", priority: 0.4 },
+    { url: `${SITE_URL}/privacy/`, lastmod: "2026-06-28", changeFrequency: "yearly", priority: 0.3 },
+    { url: `${SITE_URL}/terms/`, lastmod: "2026-06-30", changeFrequency: "yearly", priority: 0.3 },
   ];
 
-  const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((cat) => ({
+  const categoryPages: SitemapSeed[] = CATEGORIES.map((cat) => ({
     url: `${SITE_URL}/category/${cat.id}/`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
+    lastmod: now,
+    changeFrequency: "weekly",
     priority: 0.7,
   }));
 
+  const toolPages: SitemapSeed[] = generateSitemapEntries(TOOLS).map((e) => ({
+    url: e.url,
+    lastmod: e.lastmod ?? now,
+    changeFrequency: "monthly",
+    priority: e.priority,
+  }));
+
   const blogPosts = getAllPosts("ko");
-  const blogEntries = generateBlogSitemapEntries(blogPosts);
-
-  const blogListPage: MetadataRoute.Sitemap = blogPosts.length > 0
-    ? [{
-        url: `${SITE_URL}/blog/`,
-        lastModified: new Date(),
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      }]
+  const blogListPage: SitemapSeed[] = blogPosts.length > 0
+    ? [{ url: `${SITE_URL}/blog/`, lastmod: now, changeFrequency: "weekly", priority: 0.7 }]
     : [];
+  const blogPages: SitemapSeed[] = generateBlogSitemapEntries(blogPosts).map((e) => ({
+    url: e.url,
+    lastmod: e.lastmod ?? now,
+    changeFrequency: "monthly",
+    priority: e.priority,
+  }));
 
-  return [
+  return localizeSitemapEntries([
     ...staticPages,
     ...categoryPages,
-    ...entries.map((entry) => ({
-      url: entry.url,
-      lastModified: entry.lastmod ? new Date(entry.lastmod) : new Date(),
-      changeFrequency: "monthly" as const,
-      priority: entry.priority,
-    })),
+    ...toolPages,
     ...blogListPage,
-    ...blogEntries.map((entry) => ({
-      url: entry.url,
-      lastModified: entry.lastmod ? new Date(entry.lastmod) : new Date(),
-      changeFrequency: "monthly" as const,
-      priority: entry.priority,
-    })),
-  ];
+    ...blogPages,
+  ]);
 }

@@ -3,7 +3,7 @@
 import { type ReactNode, useState } from "react";
 import Link from "next/link";
 import { useLocale } from "@/lib/LocaleProvider";
-import { T } from "@/lib/i18n";
+import { T, localePath } from "@/lib/i18n";
 import { getToolBySlug } from "@/data/tools";
 import { AdSlot } from "./AdSlot";
 import type { TocItem } from "@/lib/blog";
@@ -150,7 +150,7 @@ function RelatedToolsSection({
         {tools.map((tool) => (
           <Link
             key={tool.slug}
-            href={`/tools/net/${tool.slug}`}
+            href={localePath(`/tools/net/${tool.slug}/`, locale)}
             style={{
               display: "inline-block",
               padding: "0.5rem 0.875rem",
@@ -182,7 +182,7 @@ export function BlogLayout({
   relatedTools,
   children,
 }: BlogLayoutProps) {
-  const { locale, t: tr, tf } = useLocale();
+  const { locale, t: tr, tf, href } = useLocale();
 
   const dateStr = new Date(publishedAt).toLocaleDateString(
     locale === "ko" ? "ko-KR" : "en-US",
@@ -196,7 +196,7 @@ export function BlogLayout({
       {/* 뒤로가기 + 브레드크럼 */}
       <nav style={{ marginBottom: "1rem" }}>
         <Link
-          href="/blog"
+          href={href("/blog/")}
           style={{
             fontSize: "0.875rem",
             color: "var(--text-secondary, #6b7280)",
@@ -256,7 +256,7 @@ export function BlogLayout({
               }}
             >
               · {locale === "ko" ? "글쓴이" : "By"}{" "}
-              <a href="/about/" style={{ color: "inherit", textDecoration: "underline" }}>
+              <a href={href("/about/")} style={{ color: "inherit", textDecoration: "underline" }}>
                 {author}
               </a>
             </span>
