@@ -127,8 +127,11 @@
 
 ### 2026-08-30 구조 수정 착수 (사용자 승인 "할 수 있는 부분 먼저 다 처리")
 - ✅ **도구→가이드 교차링크**(`94fc2f9`): 가이드 `relatedTools` 역참조로 도구 페이지에 '관련 가이드' 섹션. 33/47 도구 커버(subnet-calculator 6편, base64 4편 …). 관련 도구 링크 trailing slash 정규화.
-- ✅ **/en/ 정적 라우트 + hreflang**(TR-10): 루트 레이아웃 2개(`(ko)`/`(en)`), `SiteShell` 공용, 라우트 빌더 3종. 모든 페이지에 canonical(자기 로케일) + hreflang ko/en/x-default. 사이트맵 ko 시드 × 2. 언어 전환은 URL 이동. 브라우저 언어 자동 스왑 제거. 가이드 HTML 은 로케일 한 편만 담아 크기 절반.
-- 효과 기대: 색인 가능 URL 83 → 166. 영어권 네트워킹 SERP 진입. GSC 내부 링크 그래프에 도구↔가이드 양방향 반영.
+- ✅ **/en/ 정적 라우트 + hreflang**(`833d653`, TR-10): 루트 레이아웃 2개(`(ko)`/`(en)`), `SiteShell` 공용, 라우트 빌더 3종. 모든 페이지에 canonical(자기 로케일) + hreflang ko/en/x-default. 사이트맵 ko 시드 × 2 = **166 URL**. 언어 전환은 URL 이동. 브라우저 언어 자동 스왑 제거. 가이드 HTML 194KB → 144KB(로케일 한 편만).
+- ✅ 부수 발견·수정: `<title>` 이 수개월간 `… | NetTools | NetTools` 로 중복 노출되던 기존 결함(TR-11) · 루트 레이아웃 분리로 404 가 껍데기만 남는 문제는 `globalNotFound` 로 해소(TR-12).
+- ✅ 배포·전파(8/30 20:10): 라이브 `/en/` 200·`lang="en"`·hreflang 3종 확인 → **IndexNow 166 URL POST 200** → **GSC 사이트맵 재제출 즉시 재크롤: 발견 페이지 82 → 166, RSS 26**.
+- 운영: 스크래치패드(`/private/tmp`)는 macOS 가 3일 미접근 파일을 지워 `weekly_0817.py`·`sitemap_resubmit.py` 가 두 번 소실됐다 → 운영 스크립트를 `~/.claude/projects/-Users-idongho-proj-nettools/ops/` 로 이전(`bh` 락 래퍼 포함). 주간 크론만 유지(월 10:17), en 색인·GSC 실적·링크 수 추적 추가.
+- 효과 기대: 색인 가능 URL 83 → 166. 영어권 네트워킹 SERP 진입. GSC 내부 링크 그래프에 도구↔가이드 양방향 반영. 다음 주간 체크부터 `site:beomanro.com/en/` 추적.
 - ⏳ 니치 정리(general 도구 noindex) — 후속 판단.
 
 ### 백링크 확보 (2026-07-16 — 유일한 능동 레버 실행)

@@ -5,6 +5,8 @@
   "main": "worker.ts",
   "assets": {
     "directory": "out",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // 미존재 경로에 out/404.html 을 서빙 (기본값 "none" 은 빈 본문 404 — TR-12)
+    "not_found_handling": "404-page"
   }
 }

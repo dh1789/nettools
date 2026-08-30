@@ -465,7 +465,7 @@ git log -- next.config.js  # 회귀 도입 커밋 식별
 
 **원인**: `browser-harness < script.py` 는 **stdin 리다이렉트**라 프로세스 cmdline 에 스크립트명이 남지 않는다(`browser-harness` 만 보인다). 따라서 `pgrep -f "sitemap_resubmit\|gsc_batch"` 는 항상 0건 매칭 → 게이트 즉시 통과. `pgrep -f browser-harness` 로 바꿔도 장수 데몬 프로세스 4개가 상시 매칭돼 반대로 영원히 대기한다.
 
-**회복**: 락 디렉토리로 직렬화한다. `scratchpad/bh` 래퍼 사용:
+**회복**: 락 디렉토리로 직렬화한다. 래퍼 `~/.claude/projects/-Users-idongho-proj-nettools/ops/bh` 사용(스크래치패드 `/private/tmp` 는 macOS 가 3일 미접근 파일을 지우므로 운영 스크립트는 이 durable 경로에 둔다):
 ```bash
 LOCKDIR=/tmp/bh-nettools.lockdir
 for i in {1..180}; do mkdir "$LOCKDIR" 2>/dev/null && { trap 'rmdir "$LOCKDIR"' EXIT; break; }; sleep 5; done
@@ -540,9 +540,11 @@ BU_CDP_URL=http://127.0.0.1:9335 BU_NAME=nettools browser-harness < "$SCRIPT"
 
 **회복**: Next 15.4+ 의 `experimental.globalNotFound: true` + `app/global-not-found.tsx`. 이 파일은 **문서 전체(`<html>`/`<body>`)를 스스로 렌더**해야 하므로 `SiteShell` 을 그대로 감싼다. `metadata` 로 `robots: { index: false }` 와 절대 제목을 준다. 로케일을 알 수 없으니 ko 껍데기 + `/` `/en/` 양쪽 링크.
 
-**검증**: `npm run build` 후 `grep -o '<html[^>]*>' out/404.html` 이 `lang="ko"` 를 포함하고 `grep -c NetTools out/404.html` ≥ 1.
+**검증**: `npm run build` 후 `grep -o '<html[^>]*>' out/404.html` 이 `lang="ko"` 를 포함하고 `grep -c NetTools out/404.html` ≥ 1. 라이브는 `curl -s https://beomanro.com/없는경로/ | grep -c NetTools` ≥ 1.
 
-**자동 차단 후보**: `bin/harness smoke` 에 `out/404.html` lang 검사 추가 — 미구현.
+**함께 걸린 것**: Cloudflare Workers Static Assets 는 `wrangler.jsonc` 의 `assets.not_found_handling` 기본값이 `"none"` 이라 `404.html` 이 있어도 **빈 본문 404** 를 보낸다(라이브에서 수개월간 그랬다). `"not_found_handling": "404-page"` 를 설정해야 파일이 서빙된다.
+
+**자동 차단 후보**: `bin/harness smoke` 에 `out/404.html` lang 검사 + 라이브 404 본문 길이 검사 추가 — 미구현.
 
 **최초 발견**: 2026-08-30 /en/ 라우트 도입(TR-10) 빌드 검증 중.
 
