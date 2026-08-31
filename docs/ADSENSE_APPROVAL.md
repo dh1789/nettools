@@ -134,6 +134,13 @@
 - 효과 기대: 색인 가능 URL 83 → 166. 영어권 네트워킹 SERP 진입. GSC 내부 링크 그래프에 도구↔가이드 양방향 반영. 다음 주간 체크부터 `site:beomanro.com/en/` 추적.
 - ⏳ 니치 정리(general 도구 noindex) — 후속 판단.
 
+### 2026-08-31 주간 체크 (구조 수정 D+1 — 판정은 다음 주부터)
+- 실측: `site:` **1**(6주 연속) · **`site:/en/` 0**(배포 22시간, 첫 측정점) · GSC **데이터 최종 업데이트 8/21 동결**(색인 1/미색인 222·버킷 전부 8/24 측정치와 동일 — 스냅샷이 안 굴러 8/30 구조 수정 효과는 이번 주 판정 불가).
+- ✅ **사이트맵 8/30 재크롤 유지: 발견 166 / RSS 26** — /en/ 83 URL 이 GSC 에 인식된 상태.
+- GSC 실적 3개월: 클릭 **1** · 노출 **56**(8/29 대비 +3) · 게재순위 33.2. 신규 노출 쿼리 `aes cmac calculator`(해당 도구 없음 — 니치 수요 신호). 링크 보고서: 외부 16 · **내부 0 불변**(교차링크 배포 20시간, 그래프 랙).
+- AdSense 8/8 기준선 불변 · Ads.txt "찾을 수 없음" 4주째(라이브 정상) · Bing 캡차로 4주 연속 측정 불가 · PR #31 OPEN 46일차.
+- 다음 주 관전점: GSC 스냅샷 갱신 시 ① /en/ 크롤 유입 ② 내부 링크 그래프 0 탈출 ③ `site:/en/` 첫 색인.
+
 ### 백링크 확보 (2026-07-16 — 유일한 능동 레버 실행)
 - ✅ PR 제출: [Awesome-Geospatial#227](https://github.com/sacridini/Awesome-Geospatial/pull/227) (5.2k★, SaaS 섹션, nmea-checksum — bng2latlong 선례) · [awesome-online-tools#68](https://github.com/Bakumon/awesome-online-tools/pull/68) (Develop 섹션, NetTools 전체). 머지 대기 — 주간 확인.
 - 탈락 판정: free-for-dev(정책상 "generic toolbox sites" 명시 거절), awesome-sysadmin(설치형 오픈소스 전용), awesome-console-services(curl 접근 필수).
