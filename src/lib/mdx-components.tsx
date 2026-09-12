@@ -171,6 +171,60 @@ export function getMdxComponents(locale: Locale): MDXComponents {
       {...props}
     />
   ),
+  // 표는 래퍼로 감싸 좁은 화면에서 표만 가로 스크롤되게 한다(본문이 밀리지 않도록)
+  table: ({ children, ...props }) => (
+    <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", marginBottom: "1.5rem" }}>
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          fontSize: "0.9375rem",
+          lineHeight: 1.6,
+        }}
+        {...props}
+      >
+        {children}
+      </table>
+    </div>
+  ),
+  thead: ({ children, ...props }) => (
+    <thead style={{ background: "var(--input-bg, #f9fafb)" }} {...props}>
+      {children}
+    </thead>
+  ),
+  th: ({ children, ...props }) => (
+    <th
+      style={{
+        padding: "0.625rem 0.75rem",
+        fontSize: "0.875rem",
+        fontWeight: 700,
+        color: "var(--text-primary, #111)",
+        textAlign: "left",
+        borderBottom: "2px solid var(--border, #e5e7eb)",
+      }}
+      {...props}
+    >
+      {children}
+    </th>
+  ),
+  td: ({ children, ...props }) => (
+    <td
+      style={{
+        padding: "0.625rem 0.75rem",
+        color: "var(--text-primary, #111)",
+        borderBottom: "1px solid var(--border-light, #f3f4f6)",
+        verticalAlign: "top",
+      }}
+      {...props}
+    >
+      {children}
+    </td>
+  ),
+  del: ({ children, ...props }) => (
+    <del style={{ color: "var(--text-tertiary, #9ca3af)" }} {...props}>
+      {children}
+    </del>
+  ),
   strong: ({ children, ...props }) => (
     <strong
       style={{

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import type { Metadata } from "next";
 import { getAllSlugs, getPostBySlug } from "@/lib/blog";
 import type { Locale } from "@/lib/i18n";
@@ -26,9 +27,12 @@ export async function BlogPostRoute({ slug, locale }: { slug: string; locale: Lo
   const post = getPostBySlug(slug, locale);
   if (!post) notFound();
 
+  // remark-gfm 없이는 마크다운 표가 파이프 문자 그대로 출력된다(2026-09-12 실측: 기존
+  // 가이드 전부 표가 깨진 채 라이브에 나가 있었다 — TR-13).
   const compiled = await compileMDX({
     source: post.content,
     components: getMdxComponents(locale),
+    options: { mdxOptions: { remarkPlugins: [remarkGfm] } },
   });
   const jsonLd = generateBlogJsonLd(post, locale);
 

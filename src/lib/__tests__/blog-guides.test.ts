@@ -26,6 +26,7 @@ const GUIDE_SLUGS = [
   "bcrypt-cost-factor-guide",
   "url-encoding-double-encode-guide",
   "csp-blocked-resources-guide",
+  "vulnerability-scan-report-response",
 ];
 
 describe("블로그 가이드 글", () => {

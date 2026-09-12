@@ -550,6 +550,43 @@ BU_CDP_URL=http://127.0.0.1:9335 BU_NAME=nettools browser-harness < "$SCRIPT"
 
 ---
 
+### TR-13. MDX 마크다운 표가 파이프 문자 그대로 출력된다 (remark-gfm 누락)
+
+**증상**: 가이드 본문의 `| 컬럼 | 컬럼 |` 표가 표로 그려지지 않고 파이프가 섞인 한 줄 텍스트로 나온다. 빌드는 성공하고, 개발 중에도 "글이 길어서 그런가" 하고 넘기기 쉽다. 2026-09-12 실측 시점에 **가이드 26편 전부, 라이브까지 표가 깨진 상태**였다(csp 가이드 본문에 파이프 102개).
+
+**원인**: 표·취소선·자동링크는 **GFM 확장**이고 CommonMark 가 아니다. `next-mdx-remote` 의 `compileMDX` 는 기본적으로 GFM 을 켜지 않으므로 `remark-gfm` 을 명시해야 한다. `mdxComponents` 에 `table` 매핑이 없던 것도 겹쳐, 표가 렌더돼도 스타일이 없었다.
+
+**회복**:
+```bash
+npm i remark-gfm
+```
+```tsx
+// components/layout/BlogPostRoute.tsx
+import remarkGfm from "remark-gfm";
+
+const compiled = await compileMDX({
+  source: post.content,
+  components: getMdxComponents(locale),
+  options: { mdxOptions: { remarkPlugins: [remarkGfm] } },
+});
+```
+`lib/mdx-components.tsx` 에 `table`/`thead`/`th`/`td`/`del` 을 추가한다. `table` 은 `overflow-x: auto` 래퍼로 감싸 좁은 화면에서 **표만** 가로 스크롤되게 한다(본문이 밀리면 안 된다).
+
+**검증**: 빌드 후 표가 있는 가이드에서 `grep -c '<table' out/blog/<slug>/index.html` 이 1 이상, 그리고 본문 영역의 파이프 개수가 코드블록 안의 것만 남아야 한다.
+```bash
+python3 -c "
+import re,html
+s=open('out/blog/<slug>/index.html').read()
+m=re.search(r'class=\"blog-content\".*?>(.*?)</section>', s, re.S)
+print('pipes:', html.unescape(re.sub(r'<[^>]+>',' ',m.group(1))).count('|'))"
+```
+
+**자동 차단 후보**: `bin/harness smoke` 에 "본문에 `|` 를 포함한 가이드는 `<table>` 도 있어야 한다" 규칙 추가 — 미구현.
+
+**최초 발견**: 2026-09-12 신규 가이드 발행 중. 기존 26편 전체에 소급 적용됨.
+
+---
+
 ### 함정 추가 가이드
 
 새 함정 발견 시 다음 형식으로 추가:
