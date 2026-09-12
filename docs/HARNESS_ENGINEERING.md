@@ -587,6 +587,44 @@ print('pipes:', html.unescape(re.sub(r'<[^>]+>',' ',m.group(1))).count('|'))"
 
 ---
 
+### TR-14. 라이브러리가 CJS 와 ESM 에서 서로 다르게 동작한다 (Jest 는 통과, 빌드는 실패)
+
+**증상**: 테스트 전부 통과 → `npm run build` 에서
+`TypeError: Cannot read properties of undefined (reading 'UTF-8')`, 프리렌더 중단.
+
+**원인**: Jest 는 `require` 로 **CJS**(`dist/qrcode.js`) 를, webpack 은 `import` 로 **ESM**(`dist/qrcode.mjs`) 을 집는다.
+`qrcode-generator` 2.0.4 는 두 빌드의 내용이 다르다 — ESM 에는 `stringToBytesFuncs` 가 **아예 없다**.
+
+더 위험한 건 에러가 나는 쪽이 아니라 **조용히 틀리는 쪽**이었다. 이 라이브러리의 기본 바이트 인코더는 빌드마다 다르게 UTF-8 이 아니다:
+
+| 빌드 | `stringToBytes` | `'사무실 비밀번호'`(UTF-8 22바이트) |
+|---|---|---|
+| CJS | Shift_JIS 표 | 8바이트로 뭉개짐 |
+| ESM | `c & 0xff` latin-1 절단 | 8바이트로 뭉개짐 |
+
+에러 없이 인코딩이 끝나고 QR 도 멀쩡히 그려진다. **스캔해 봐야 드러난다.**
+
+**회복**: 인코딩을 라이브러리에 맡기지 말고 직접 넣는다. 내부 Byte 모드가 `qrcode.stringToBytes(data)` 로 호출 시점에 조회하므로 교체가 먹는다.
+
+```ts
+const utf8 = new TextEncoder();
+qrcode.stringToBytes = (s: string) => Array.from(utf8.encode(s));
+```
+
+**교훈 — 테스트가 표시값만 보면 놓친다.** `byteLength` 를 따로 계산해 검사하던 테스트는 표시값이 맞아서 통과했고, 실제 행렬은 틀려 있었다. 인코딩 결과가 행렬에 반영됐는지 보려면 바이트 수가 버전(크기)을 바꾼다는 성질을 쓴다 — 한글 n자(3n바이트)는 ASCII 3n자와 같은 모듈 수여야 한다. latin-1 절단이면 한글 100자가 69 대신 **41** 이 나온다.
+
+```ts
+it.each([10, 50, 100, 300])("한글 %i자가 ASCII 3n자와 같은 버전을 만든다", (n) => {
+  expect(ok("가".repeat(n)).count).toBe(ok("a".repeat(n * 3)).count);
+});
+```
+
+**자동 차단 후보**: 없음(라이브러리별 사정). 대신 규칙으로 — **외부 라이브러리를 새로 넣을 때 CJS/ESM 양쪽 동작을 확인하고, 산출물을 되읽어 검증하는 테스트를 둔다.** QR 은 `BarcodeDetector` 로 되읽고(`ops/verify_qr.py`), 표는 `<table>` 개수를 센다(TR-13).
+
+**최초 발견**: 2026-09-12 QR 생성기 클라이언트 전환 중.
+
+---
+
 ### 함정 추가 가이드
 
 새 함정 발견 시 다음 형식으로 추가:

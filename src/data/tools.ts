@@ -1415,12 +1415,12 @@ export const TOOLS: Tool[] = [
       en: "QR Code Generator",
     },
     description: {
-      ko: "URL, 텍스트, 연락처 등을 QR 코드로 변환합니다. PNG로 다운로드할 수 있습니다.",
-      en: "Convert URLs, text, and contact info into QR codes. Download as PNG.",
+      ko: "URL, 텍스트, 와이파이 접속 정보 등을 QR 코드로 변환합니다. PNG·SVG로 내려받을 수 있습니다.",
+      en: "Convert URLs, text, and Wi-Fi credentials into QR codes. Download as PNG or SVG.",
     },
     longDescription: {
-      ko: "QR 코드 생성기는 URL, 텍스트, 연락처 정보 등을 QR 코드 이미지로 즉시 변환합니다. 생성된 QR 코드는 PNG 형식으로 다운로드하거나 클립보드에 복사할 수 있습니다. 오류 수정 레벨 설정, 크기 조절 기능을 제공합니다. 브라우저에서 완전히 실행되어 개인 정보가 서버에 전송되지 않습니다.",
-      en: "The QR Code Generator instantly converts URLs, text, and contact information into QR code images. Generated QR codes can be downloaded as PNG or copied to the clipboard. Supports error correction level and size adjustment. Runs entirely in the browser — your data is never sent to a server.",
+      ko: "QR 코드 생성기는 URL, 텍스트, 와이파이 접속 정보, 연락처 등을 QR 코드로 즉시 변환합니다. 오류 수정 레벨(L/M/Q/H)과 크기를 고를 수 있고, 화면용 PNG 와 인쇄용 SVG 로 내려받을 수 있습니다. 인코딩은 전부 브라우저 안에서 이뤄지며 입력한 내용은 어디에도 전송되지 않습니다 — 네트워크 요청이 발생하지 않으므로 폐쇄망에서도 그대로 쓸 수 있습니다.",
+      en: "The QR Code Generator instantly converts URLs, text, Wi-Fi credentials, and contact information into QR codes. Choose the error correction level (L/M/Q/H) and size, then download a PNG for screens or an SVG for print. Encoding happens entirely in your browser and what you type is never transmitted anywhere — no network request is made, so it works the same on an air-gapped network.",
     },
     category: "general",
     keywords: [

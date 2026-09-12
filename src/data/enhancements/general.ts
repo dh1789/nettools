@@ -423,20 +423,20 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
     howTo: {
       steps: [
         {
-          ko: "인코딩할 데이터를 입력합니다: URL, 텍스트, 연락처 정보 등.",
-          en: "Enter the data to encode: URL, text, contact information, etc.",
+          ko: "인코딩할 데이터를 입력합니다: URL, 텍스트, 와이파이 접속 정보(WIFI:T:WPA;S:이름;P:비밀번호;;), 연락처 등. 입력하는 즉시 QR 코드가 만들어집니다.",
+          en: "Enter the data to encode: URL, text, Wi-Fi credentials (WIFI:T:WPA;S:name;P:password;;), contact information, etc. The QR code is generated as you type.",
         },
         {
-          ko: "필요에 따라 오류 수정 레벨(L/M/Q/H)과 크기를 조절합니다.",
-          en: "Adjust the error correction level (L/M/Q/H) and size as needed.",
+          ko: "오류 수정 레벨을 고릅니다. 화면에 띄우거나 깨끗한 종이에 인쇄한다면 L 또는 M, 장비 라벨처럼 긁히거나 일부가 가려지는 곳에는 Q 또는 H 를 씁니다.",
+          en: "Pick the error correction level. Use L or M for screens or clean printed pages; use Q or H for equipment labels that get scratched or partly covered.",
         },
         {
-          ko: "생성된 QR 코드를 미리보기로 확인합니다.",
-          en: "Preview the generated QR code.",
+          ko: "크기를 고릅니다. 모듈 경계가 정수 픽셀에 떨어지도록 실제 크기가 맞춰지며, 표시된 모듈 수와 픽셀 크기로 확인할 수 있습니다.",
+          en: "Pick the size. The actual size is snapped so module edges land on whole pixels; the module count and pixel size are shown below the code.",
         },
         {
-          ko: "PNG로 다운로드하거나 클립보드에 복사하여 사용합니다.",
-          en: "Download as PNG or copy to clipboard for use.",
+          ko: "화면·문서용으로는 PNG, 라벨 인쇄용으로는 확대해도 깨지지 않는 SVG 를 내려받습니다.",
+          en: "Download a PNG for screens and documents, or an SVG for label printing — it stays sharp at any size.",
         },
       ],
     },
@@ -459,6 +459,16 @@ export const GENERAL_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         description: {
           ko: "QR 코드는 단순 텍스트 외에도 URL, Wi-Fi 접속 정보(WIFI:S:이름;T:WPA;P:비밀번호;;), 연락처(vCard), 이메일(mailto:), 전화번호(tel:), 위치 좌표(geo:) 등 다양한 데이터 유형을 인코딩할 수 있습니다.",
           en: "Beyond plain text, QR codes can encode URLs, Wi-Fi credentials (WIFI:S:name;T:WPA;P:password;;), contacts (vCard), email (mailto:), phone numbers (tel:), geolocation (geo:), and more.",
+        },
+      },
+      {
+        title: {
+          ko: "생성 방식이 곧 유출 경로다",
+          en: "How the Code Is Generated Is Itself a Disclosure Path",
+        },
+        description: {
+          ko: "흔한 웹 QR 생성기는 인코딩할 내용을 이미지 API 의 쿼리스트링에 실어 보냅니다(`?data=...`). 이러면 와이파이 비밀번호, 내부 호스트명, 사내 시스템 URL 이 제3자 서버의 액세스 로그와 중간 경유 프록시 기록에 그대로 남습니다. 쿼리스트링은 TLS 로 감싸도 서버 로그에는 평문으로 적힙니다. QR 인코딩은 외부 데이터가 필요 없는 순수 계산이므로, 생성기는 브라우저 안에서 끝내는 것이 맞습니다 — 이 도구는 네트워크 요청을 하지 않으며, 그래서 인터넷이 없는 망에서도 동작합니다.",
+          en: "Many web QR generators put the content to encode into an image API's query string (`?data=...`). That leaves Wi-Fi passwords, internal hostnames, and intranet URLs in a third party's access logs and in any intermediate proxy records. TLS protects the query string in transit but the server still writes it to its logs in the clear. QR encoding is pure computation that needs no external data, so a generator should finish the job in the browser — this one makes no network request, which is also why it works on a network with no internet access.",
         },
       },
     ],

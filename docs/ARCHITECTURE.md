@@ -288,9 +288,13 @@ curl -X POST https://api.indexnow.org/indexnow \
 | `DnsLookup` | Cloudflare DoH | 조회 도구 — 성격상 불가피 |
 | `IpLookup` | ipwho.is / ip.guide | 조회 도구 — 성격상 불가피 |
 | `WhoisLookup` · `HttpHeadersChecker` · `SslChecker` | 자체 Worker `/api/*` → 대상 서버 | 조회 도구 — 성격상 불가피 |
-| **`QrCodeGenerator`** | **`api.qrserver.com` 으로 사용자 입력 전송** | ❌ **위반** — 아래 |
+| `QrCodeGenerator` | 없음 (2026-09-12 수정 전: `api.qrserver.com` 으로 사용자 입력 전송) | ✅ 해소 |
 
-**`QrCodeGenerator` 는 고쳐야 한다.** QR 에 넣는 내용(URL·와이파이 비밀번호·연락처)이 제3자 서버로 나가는데, 이건 조회 도구처럼 "성격상 불가피"한 경우가 아니다. QR 인코딩은 순수 클라이언트로 구현 가능하다. 슬로건을 직접 반증하는 항목이라 우선순위가 높다.
+**`QrCodeGenerator` 수정 완료 (2026-09-12).** 이전 구현은 QR 에 넣는 내용(URL·와이파이 비밀번호·연락처)을 이미지 API 쿼리스트링(`?data=...`)에 실어 보냈다. 조회 도구와 달리 QR 인코딩은 외부 데이터가 필요 없는 순수 계산이라 "성격상 불가피"에 해당하지 않았고, 무엇보다 도구 페이지의 `longDescription` 이 이미 "브라우저에서 완전히 실행되어 개인 정보가 서버에 전송되지 않습니다" 라고 적어 두고 있었다 — 문구가 구현보다 먼저 맞는 말을 하고 있던 셈이다.
+
+인코딩을 `src/lib/qr.ts` 로 옮겼다(`qrcode-generator` 2.0.4, 의존성 0개). 화면 표시·PNG·SVG 전부 클라이언트에서 만든다.
+
+**검증 방식** — 생성한 코드를 브라우저 `BarcodeDetector` 로 되읽어 원문과 대조한다. 표가 렌더된다고 표가 맞는 게 아니듯, QR 은 모양이 나온다고 읽히는 게 아니다. 실측(`ops/verify_qr.py`): ASCII URL·한글·와이파이 문자열(한글 SSID)·이모지 혼합·779바이트 장문 5건 전부 라운드트립 일치, 다운로드한 PNG 와 래스터화한 SVG 도 원문으로 디코딩, L/M/Q/H 네 레벨 모두 판독, 네트워크 요청 **0건**.
 
 ### 광고·트래킹 스크립트 금지 (2026-09-12 결정)
 
