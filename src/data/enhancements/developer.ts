@@ -185,7 +185,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["yaml-json-converter", "json-schema-validator", "json-csv-converter", "code-minifier", "html-entity-encoder", "http-status-dictionary", "sql-formatter", "text-diff", "unix-timestamp", "url-encoder"],
+    relatedTools: ["yaml-json-converter", "json-schema-validator", "json-csv-converter", "code-minifier", "html-entity-encoder", "http-status-dictionary", "sql-formatter", "text-diff", "unix-timestamp", "url-encoder", "sbom-viewer"],
     extraFaqs: [
       {
         question: {
@@ -1377,7 +1377,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["json-formatter", "yaml-json-converter", "json-csv-converter"],
+    relatedTools: ["json-formatter", "yaml-json-converter", "json-csv-converter", "sbom-viewer"],
     extraFaqs: [
       {
         question: {
@@ -1553,7 +1553,7 @@ export const DEVELOPER_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["json-formatter", "json-schema-validator", "yaml-json-converter", "nmea-checksum"],
+    relatedTools: ["json-formatter", "json-schema-validator", "yaml-json-converter", "nmea-checksum", "sbom-viewer"],
     extraFaqs: [
       {
         question: {

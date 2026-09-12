@@ -115,6 +115,35 @@ src/
 
 `ToolLayout` 이 이 필드들을 섹션으로 자동 렌더한다. **도구 컴포넌트는 `ToolLayout` 을 직접 import 하지 않는다** — `ToolPageContent` 가 바깥에서 감싼다. 컴포넌트는 도구 본체 UI 만 그린다.
 
+### enhancements 분리 — howTo·relatedConcepts·relatedTools 는 여기에
+
+`src/data/enhancements/{network,security,linux,developer,general}.ts` 의 `*_ENHANCEMENTS` 가 `tools.ts` 로딩 직후 `TOOLS[]` 에 머지된다.
+
+```ts
+// enhancements/security.ts
+"sbom-viewer": {
+  howTo: { steps: [{ko,en}, …] },
+  relatedConcepts: [{ title: {ko,en}, description: {ko,en} }, …],
+  relatedTools: ["hash-generator", …],
+  extraFaqs: [{ question: {ko,en}, answer: {ko,en} }, …],   // tools.ts 의 faqs 뒤에 이어붙는다
+  usageExamples: [...],                                      // 선택 — howTo 보다 우선 표시
+}
+```
+
+⚠️ **머지는 덮어쓰기다.** `TOOLS[]` 에 `howTo`/`relatedConcepts`/`relatedTools` 를 써도 같은 slug 의 enhancement 가 있으면 무시된다. 이 셋은 **enhancements 쪽에만** 두고, `tools.ts` 에는 기본 `faqs` 만 둔다.
+
+### 콘텐츠 품질 규약 (테스트가 강제)
+
+`src/data/__tests__/` 의 CMP-41·CMP-61 테스트가 아래를 검사한다. 하나라도 어기면 `npm test` 가 실패한다.
+
+| 규약 | 내용 |
+|---|---|
+| FAQ **6개 이상** | `tools.ts` 의 `faqs` + enhancements 의 `extraFaqs` 합계 |
+| `relatedConcepts` 필수 | enhancements 에 최소 1개 |
+| **양방향 내부 링크** | A 의 `relatedTools` 에 B 가 있으면 **B 의 `relatedTools` 에도 A 가 있어야 한다** |
+
+양방향 규칙 때문에 새 도구를 추가하면 **참조한 도구들의 enhancements 도 함께 수정해야 한다.** 예: `sbom-viewer` 가 `hash-generator`·`json-formatter`·`json-schema-validator`·`json-csv-converter` 를 참조하면 그 4개 항목의 `relatedTools` 에 `"sbom-viewer"` 를 추가한다.
+
 ### 가이드(블로그) 연결
 
 가이드 frontmatter 의 `relatedTools` 에 도구 slug 를 넣으면 **역참조로 도구 페이지에 '관련 가이드' 섹션이 자동 생성**된다(`getGuidesForTool`). 도구 쪽에 따로 쓸 필요 없다.
@@ -199,7 +228,9 @@ npm run build            # 정적 빌드 재현
    ```ts
    FooBar: dynamic(() => import("./FooBar").then(m => ({ default: m.FooBar })), { loading }),
    ```
-4. `src/data/tools.ts` 의 `TOOLS[]` 에 항목 추가 (ko/en 양쪽 문자열 필수)
+4. `src/data/tools.ts` 의 `TOOLS[]` 에 항목 추가 (ko/en 양쪽 문자열 필수, `faqs` 포함)
+5. `src/data/enhancements/<category>.ts` 에 `howTo`·`relatedConcepts`·`relatedTools`·`extraFaqs` 추가
+6. **참조한 도구들의 `relatedTools` 에 새 slug 를 역으로 추가** (양방향 규칙)
 
 ### ④ 검증
 

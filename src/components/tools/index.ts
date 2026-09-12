@@ -63,4 +63,5 @@ export const TOOL_COMPONENTS: Record<string, React.ComponentType> = {
   JsonCsvConverter: dynamic(() => import("./JsonCsvConverter").then(m => ({ default: m.JsonCsvConverter })), { loading }),
   NmeaChecksum: dynamic(() => import("./NmeaChecksum").then(m => ({ default: m.NmeaChecksum })), { loading }),
   MtuMssCalculator: dynamic(() => import("./MtuMssCalculator").then(m => ({ default: m.MtuMssCalculator })), { loading }),
+  SbomViewer: dynamic(() => import("./SbomViewer").then(m => ({ default: m.SbomViewer })), { loading }),
 };

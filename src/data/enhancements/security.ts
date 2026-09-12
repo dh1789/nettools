@@ -267,7 +267,7 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         },
       },
     ],
-    relatedTools: ["jwt-generator", "bcrypt-generator", "password-generator", "base64", "csp-generator", "totp-generator", "uuid-generator"],
+    relatedTools: ["jwt-generator", "bcrypt-generator", "password-generator", "base64", "csp-generator", "totp-generator", "uuid-generator", "sbom-viewer"],
     extraFaqs: [
       {
         question: {
@@ -721,6 +721,86 @@ export const SECURITY_ENHANCEMENTS: Record<string, ToolEnhancement> = {
         result: {
           ko: "Postman 요청이 인증을 통과하고 보호된 리소스 응답을 받습니다.",
           en: "The Postman request passes authentication and returns the protected resource.",
+        },
+      },
+    ],
+  },
+
+  "sbom-viewer": {
+    howTo: {
+      steps: [
+        {
+          ko: "CycloneDX 또는 SPDX JSON 파일을 드롭 영역에 끌어다 놓거나, 클릭해서 선택합니다. JSON 을 직접 붙여넣어도 됩니다.",
+          en: "Drop a CycloneDX or SPDX JSON file onto the drop zone, or click to choose one. You can also paste the JSON directly.",
+        },
+        {
+          ko: "상단 요약에서 총 컴포넌트 수와 라이선스·버전·purl 미기재 건수를 확인합니다.",
+          en: "Check the summary for total components and the counts of missing licenses, versions, and purls.",
+        },
+        {
+          ko: "라이선스 필터에서 '미기재'를 선택해 라이선스가 빠진 항목부터 추려냅니다.",
+          en: "Pick 'Not stated' in the license filter to isolate entries with no license first.",
+        },
+        {
+          ko: "컬럼 머리글을 클릭해 정렬하고, 이름이나 purl 로 검색해 특정 패키지를 찾습니다.",
+          en: "Click a column header to sort, and search by name or purl to locate a specific package.",
+        },
+        {
+          ko: "필요한 범위를 추린 뒤 CSV 로 내보내 검토 문서나 스프레드시트에 붙입니다.",
+          en: "Once the list is narrowed, export CSV and paste it into your review document or spreadsheet.",
+        },
+      ],
+    },
+    relatedConcepts: [
+      {
+        title: { ko: "SBOM", en: "SBOM" },
+        description: {
+          ko: "소프트웨어 자재명세서. 제품에 포함된 오픈소스 패키지와 버전의 목록입니다. 미국 행정명령 14028 이후 공공 조달에서 요구되기 시작했고, 국내에서도 보안 검토 산출물로 요청되는 일이 늘고 있습니다. 취약점이 공개됐을 때 '우리 제품이 영향을 받는가'를 몇 분 안에 답하려면 SBOM 이 먼저 있어야 합니다.",
+          en: "Software Bill of Materials — the list of open-source packages and versions inside a product. Executive Order 14028 pushed it into US public procurement, and it increasingly appears in security reviews elsewhere. Answering 'is our product affected?' within minutes of a CVE disclosure requires having an SBOM first.",
+        },
+      },
+      {
+        title: { ko: "CycloneDX 와 SPDX", en: "CycloneDX vs SPDX" },
+        description: {
+          ko: "SBOM 을 기록하는 두 국제 표준입니다. CycloneDX 는 OWASP 계열로 보안·취약점 대응에 초점이 있고 컴포넌트 중첩 표현이 자유롭습니다. SPDX 는 Linux Foundation 계열로 라이선스 컴플라이언스에서 출발해 필드가 더 형식적입니다. 도구에 따라 출력 형식이 갈리므로 둘 다 읽을 수 있어야 실무에서 쓸 수 있습니다.",
+          en: "The two international standards for recording an SBOM. CycloneDX comes from OWASP, focuses on security and vulnerability workflows, and allows freely nested components. SPDX comes from the Linux Foundation, originated in license compliance, and has more formalized fields. Generators differ in which they emit, so a practical viewer must read both.",
+        },
+      },
+      {
+        title: { ko: "purl (Package URL)", en: "purl (Package URL)" },
+        description: {
+          ko: "패키지를 생태계·이름·버전으로 표기하는 표준 식별자입니다(예: `pkg:deb/ubuntu/openssl@3.0.2`). 취약점 DB 조회의 입력값으로 쓰이기 때문에 purl 이 빠진 컴포넌트는 자동 대조에서 누락됩니다. 이 뷰어가 purl 미기재 건수를 따로 세는 이유입니다.",
+          en: "A standard identifier that encodes a package as ecosystem, name, and version (e.g. `pkg:deb/ubuntu/openssl@3.0.2`). Vulnerability databases take purls as query input, so components without one silently drop out of automated matching — which is why this viewer counts missing purls separately.",
+        },
+      },
+      {
+        title: { ko: "NOASSERTION 과 NONE", en: "NOASSERTION and NONE" },
+        description: {
+          ko: "SPDX 에서 값을 단정할 수 없을 때(NOASSERTION)와 값이 없음을 단정할 때(NONE)를 구분해 쓰는 표기입니다. 문자열이 들어 있어 값이 있는 것처럼 보이지만 실제로는 정보가 없는 상태입니다. 이 뷰어는 둘 다 '미기재'로 정규화해 집계합니다.",
+          en: "SPDX markers for 'cannot assert a value' (NOASSERTION) and 'asserting there is none' (NONE). Both are strings, so they look like data while carrying none. This viewer normalizes both to 'not stated' for counting.",
+        },
+      },
+    ],
+    relatedTools: ["hash-generator", "json-formatter", "json-schema-validator", "json-csv-converter"],
+    extraFaqs: [
+      {
+        question: {
+          ko: "SBOM 파일은 어떻게 만드나요?",
+          en: "How do I generate an SBOM file in the first place?",
+        },
+        answer: {
+          ko: "생성은 빌드 환경에서 별도 도구로 합니다. 컨테이너 이미지나 파일시스템은 Syft(`syft <target> -o cyclonedx-json`), 리눅스 패키지 기반 어플라이언스는 Syft 나 Tern, 언어 생태계별로는 cdxgen, npm 은 `npm sbom --sbom-format cyclonedx` 를 씁니다. 이 뷰어는 생성된 결과를 열어 확인하는 쪽을 담당합니다.",
+          en: "Generation happens in your build environment with a separate tool. For container images or filesystems use Syft (`syft <target> -o cyclonedx-json`); for Linux-package-based appliances, Syft or Tern; cdxgen covers many language ecosystems, and npm has `npm sbom --sbom-format cyclonedx`. This viewer handles inspecting the result.",
+        },
+      },
+      {
+        question: {
+          ko: "취약점(CVE)도 같이 보여주나요?",
+          en: "Does it also show vulnerabilities (CVEs)?",
+        },
+        answer: {
+          ko: "아직 아닙니다. 취약점 조회는 외부 데이터베이스가 필요한데, 이 도구의 전제인 '파일이 브라우저 밖으로 나가지 않는다'를 지키면서 조회하려면 방식을 따로 설계해야 합니다. 현재는 purl 목록을 CSV 로 내보내 각자 환경에서 OSV 나 Trivy 같은 도구로 대조하는 흐름을 권합니다.",
+          en: "Not yet. Vulnerability lookup needs an external database, and doing that while keeping the promise that files never leave your browser requires a separate design. For now, export the purl list as CSV and match it in your own environment with tools like OSV or Trivy.",
         },
       },
     ],

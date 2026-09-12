@@ -2930,6 +2930,82 @@ export const TOOLS: Tool[] = [
       },
     ],
   },
+  {
+    slug: "sbom-viewer",
+    title: {
+      ko: "SBOM 뷰어 — CycloneDX · SPDX",
+      en: "SBOM Viewer — CycloneDX & SPDX",
+    },
+    description: {
+      ko: "CycloneDX·SPDX 형식의 SBOM 파일을 브라우저에서 열어 컴포넌트·버전·라이선스·purl 을 표로 확인합니다. 파일은 서버로 전송되지 않습니다.",
+      en: "Open CycloneDX and SPDX SBOM files in your browser to inspect components, versions, licenses, and purls. Files never leave your machine.",
+    },
+    longDescription: {
+      ko: "SBOM(소프트웨어 자재명세서)은 제품에 들어간 오픈소스 패키지와 버전의 목록입니다. 고객사 보안 검토나 취약점 대응에서 먼저 요구되는 산출물이지만, 대부분의 SBOM 도구는 파일을 클라우드에 올려야 동작합니다. 제품의 SBOM 은 어떤 오픈소스를 어느 버전으로 쓰는지 그대로 드러내는 자료라 외부 업로드가 곤란한 경우가 많습니다. 이 뷰어는 파싱·집계·CSV 생성을 전부 브라우저에서 처리하므로 네트워크 요청이 발생하지 않고, 인터넷이 없는 폐쇄망 환경에서도 동일하게 동작합니다. CycloneDX 의 중첩 컴포넌트를 평탄화하고 라이선스 표기 세 형태(license.id·license.name·expression)를 모두 읽으며, SPDX 의 NOASSERTION·NONE 을 '미기재'로 구분해 집계합니다. 라이선스나 버전이 빠진 항목을 먼저 찾는 것이 취약점 대응의 출발점이라 해당 건수를 상단에 따로 보여줍니다.",
+      en: "An SBOM (Software Bill of Materials) lists the open-source packages and versions inside a product. It is usually the first artifact requested in a customer security review, yet most SBOM tools require uploading the file to a cloud service — awkward, since an SBOM reveals exactly which open-source components and versions a product ships. This viewer parses, aggregates, and exports entirely in the browser: no network request is made, so it behaves identically on an air-gapped network. It flattens nested CycloneDX components, reads all three license shapes (license.id, license.name, expression), and treats SPDX NOASSERTION/NONE as 'not stated'. Counts of missing licenses and versions are surfaced at the top, since those entries are where vulnerability triage starts.",
+    },
+    category: "security",
+    keywords: [
+      "SBOM",
+      "CycloneDX",
+      "SPDX",
+      "purl",
+      "소프트웨어 자재명세서",
+      "SBOM 뷰어",
+      "오픈소스 라이선스",
+      "공급망 보안",
+      "폐쇄망",
+      "sbom viewer",
+      "software bill of materials",
+      "license inventory",
+      "air-gapped",
+    ],
+    component: "SbomViewer",
+    datePublished: "2026-09-12",
+    // howTo · relatedConcepts · relatedTools · 추가 FAQ 는 enhancements/security.ts 에서 머지된다
+    faqs: [
+      {
+        question: {
+          ko: "SBOM 파일이 서버로 올라가나요?",
+          en: "Is my SBOM file uploaded to a server?",
+        },
+        answer: {
+          ko: "아니요. 파일 읽기, 파싱, 집계, CSV 생성까지 전부 브라우저 안에서 실행됩니다. 개발자도구 네트워크 탭을 열어두고 파일을 올려보면 요청이 하나도 발생하지 않는 것을 확인할 수 있습니다. 페이지를 한 번 연 뒤에는 인터넷 연결을 끊어도 동작합니다.",
+          en: "No. Reading, parsing, aggregation, and CSV export all run in your browser. Open the DevTools network tab and drop a file — you will see zero requests. Once the page has loaded, it keeps working with the network disconnected.",
+        },
+      },
+      {
+        question: {
+          ko: "어떤 버전의 CycloneDX·SPDX 를 지원하나요?",
+          en: "Which CycloneDX and SPDX versions are supported?",
+        },
+        answer: {
+          ko: "CycloneDX JSON 1.2~1.6, SPDX JSON 2.2·2.3 을 지원합니다. SPDX 3.x 는 문서 구조가 근본적으로 달라 현재 지원하지 않으며, 해당 파일을 올리면 조용히 실패하지 않고 명시적인 안내 메시지를 표시합니다.",
+          en: "CycloneDX JSON 1.2–1.6 and SPDX JSON 2.2/2.3. SPDX 3.x uses a fundamentally different document structure and is not supported yet — such files produce an explicit message rather than failing silently.",
+        },
+      },
+      {
+        question: {
+          ko: "'라이선스 미기재' 건수가 왜 따로 표시되나요?",
+          en: "Why is the 'license missing' count shown separately?",
+        },
+        answer: {
+          ko: "SBOM 을 자동 생성하면 라이선스나 버전이 비어 있는 항목이 흔히 섞입니다. SPDX 는 이를 NOASSERTION 이나 NONE 으로 표기하는데, 값이 있는 것처럼 보여 그냥 넘어가기 쉽습니다. 이 항목들은 라이선스 검토와 취약점 대조에서 모두 구멍이 되므로 '미기재'로 통일해 따로 세고, 필터로 바로 추려볼 수 있게 했습니다.",
+          en: "Auto-generated SBOMs routinely contain entries with no license or version. SPDX encodes these as NOASSERTION or NONE, which look like values and are easy to skim past. Those entries are blind spots for both license review and vulnerability matching, so they are normalized to 'not stated', counted separately, and filterable in one click.",
+        },
+      },
+      {
+        question: {
+          ko: "컴포넌트가 수만 개인 SBOM 도 열 수 있나요?",
+          en: "Can it open an SBOM with tens of thousands of components?",
+        },
+        answer: {
+          ko: "됩니다. 검색·필터·정렬은 전체 데이터에 적용하되 표에는 100건씩 나눠 그리기 때문에 항목이 많아도 화면이 멈추지 않습니다. CSV 내보내기는 현재 필터가 적용된 전체 결과를 대상으로 합니다.",
+          en: "Yes. Search, filter, and sort run across the full dataset while the table renders 100 rows at a time, so large files do not freeze the page. CSV export covers the entire filtered result, not just the visible page.",
+        },
+      },
+    ],
+  },
 ];
 
 // Enhancement 데이터 통합: howTo, relatedConcepts, relatedTools, extraFaqs, usageExamples 머지
