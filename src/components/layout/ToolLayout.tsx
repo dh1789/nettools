@@ -2,7 +2,6 @@
 
 import { type ReactNode, useState } from "react";
 import Link from "next/link";
-import { AdSlot } from "./AdSlot";
 import type { FAQ, HowTo, RelatedConcept, UsageExample } from "@/data/tools";
 import { getToolBySlug } from "@/data/tools";
 import type { GuideLink } from "@/lib/blog";
@@ -449,9 +448,6 @@ export function ToolLayout({
 }: ToolLayoutProps) {
   return (
     <article style={{ maxWidth: "960px", margin: "0 auto", padding: "0 1rem" }}>
-      {/* 상단 광고 */}
-      <AdSlot position="top" />
-
       {/* 도구 헤더 */}
       <header style={{ marginBottom: "1.5rem" }}>
         <h1
@@ -611,8 +607,6 @@ export function ToolLayout({
         </section>
       )}
 
-      {/* 하단 광고 */}
-      <AdSlot position="bottom" />
     </article>
   );
 }

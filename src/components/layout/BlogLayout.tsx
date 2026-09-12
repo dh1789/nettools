@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useLocale } from "@/lib/LocaleProvider";
 import { T, localePath } from "@/lib/i18n";
 import { getToolBySlug } from "@/data/tools";
-import { AdSlot } from "./AdSlot";
 import type { TocItem } from "@/lib/blog";
 
 interface BlogLayoutProps {
@@ -191,8 +190,6 @@ export function BlogLayout({
 
   return (
     <article style={{ maxWidth: "960px", margin: "0 auto", padding: "0 1rem" }}>
-      <AdSlot position="top" />
-
       {/* 뒤로가기 + 브레드크럼 */}
       <nav style={{ marginBottom: "1rem" }}>
         <Link
@@ -320,7 +317,6 @@ export function BlogLayout({
         <RelatedToolsSection slugs={relatedTools} locale={locale} />
       )}
 
-      <AdSlot position="bottom" />
     </article>
   );
 }

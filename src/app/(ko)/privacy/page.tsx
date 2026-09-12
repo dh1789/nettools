@@ -7,7 +7,6 @@ export const metadata: Metadata = generateLegalMetadata("privacy", "ko");
 const ulStyle = { marginTop: "0.75rem", paddingLeft: "1.5rem" } as const;
 const liStyle = { marginBottom: "0.5rem" } as const;
 const linkStyle = { color: "#3b82f6" } as const;
-const extra = { target: "_blank", rel: "noopener noreferrer", style: linkStyle } as const;
 
 const sections: DocSection[] = [
   {
@@ -44,10 +43,6 @@ const sections: DocSection[] = [
               <strong>쿠키 및 유사 기술:</strong> 언어 설정 저장 등 서비스 개선을 위한
               로컬 스토리지 사용
             </li>
-            <li style={liStyle}>
-              <strong>광고 관련 정보:</strong> Google AdSense를 통해 광고 게재 목적의
-              쿠키가 사용될 수 있습니다
-            </li>
           </ul>
           <p style={{ marginTop: "0.75rem" }}>
             <strong>도구 입력값은 수집하지 않습니다.</strong> 서브넷 계산, IP 조회 등
@@ -67,10 +62,6 @@ const sections: DocSection[] = [
               <strong>Cookies and similar technologies:</strong> local storage used to
               improve the Service, such as saving your language preference
             </li>
-            <li style={liStyle}>
-              <strong>Advertising data:</strong> cookies may be used to serve ads via
-              Google AdSense
-            </li>
           </ul>
           <p style={{ marginTop: "0.75rem" }}>
             <strong>We do not collect tool inputs.</strong> All tools — subnet
@@ -88,7 +79,6 @@ const sections: DocSection[] = [
         <ul style={{ paddingLeft: "1.5rem" }}>
           <li style={liStyle}>서비스 운영 및 품질 개선</li>
           <li style={liStyle}>이용 통계 분석</li>
-          <li style={liStyle}>맞춤형 광고 제공 (Google AdSense)</li>
           <li style={liStyle}>법적 의무 이행</li>
         </ul>
       ),
@@ -96,7 +86,6 @@ const sections: DocSection[] = [
         <ul style={{ paddingLeft: "1.5rem" }}>
           <li style={liStyle}>Operating and improving the Service</li>
           <li style={liStyle}>Analyzing usage statistics</li>
-          <li style={liStyle}>Serving personalized ads (Google AdSense)</li>
           <li style={liStyle}>Meeting legal obligations</li>
         </ul>
       ),
@@ -104,88 +93,47 @@ const sections: DocSection[] = [
   },
   {
     title: {
-      ko: "4. Google AdSense 및 제3자 광고",
-      en: "4. Google AdSense and Third-Party Advertising",
+      ko: "4. 광고 및 제3자 추적",
+      en: "4. Advertising and Third-Party Tracking",
     },
     body: {
       ko: (
         <>
           <p>
-            NetTools는 Google AdSense를 비롯한 제3자 광고 서비스를 통해 광고를 게재합니다.
-            Google을 포함한 제3자 광고 공급업체는 쿠키를 사용하여 사용자의 본 사이트 및 다른
-            웹사이트 방문 기록을 기반으로 광고를 게재합니다.
+            <strong>NetTools는 광고를 게재하지 않습니다.</strong> 배너 광고, 애드센스를
+            포함한 제3자 광고 네트워크, 행동 기반 맞춤 광고를 일체 사용하지 않습니다.
           </p>
           <p style={{ marginTop: "0.75rem" }}>
-            Google의 광고 쿠키(예: DART 쿠키)는 사용자가 본 사이트 및 인터넷상의 다른 사이트를
-            방문한 기록을 바탕으로 맞춤 광고를 표시할 수 있게 합니다. 또한 제3자 광고 공급업체나
-            광고 네트워크는 광고 게재 과정에서 쿠키 및 웹 비콘(web beacon)을 사용하거나 IP
-            주소 등의 정보를 수집·이용할 수 있습니다.
+            <strong>분석·추적 스크립트도 넣지 않습니다.</strong> Google Analytics 를 비롯한
+            방문자 추적 도구, 광고 네트워크의 쿠키·웹 비콘·픽셀을 사용하지 않으므로, 이
+            사이트를 방문했다는 사실이 제3자에게 전달되지 않습니다. 따라서 맞춤 광고
+            옵트아웃 절차도 필요하지 않습니다.
           </p>
           <p style={{ marginTop: "0.75rem" }}>
-            사용자는 다음에서 맞춤 광고를 비활성화하거나 관리할 수 있습니다:
-          </p>
-          <ul style={ulStyle}>
-            <li style={liStyle}>
-              <a href="https://www.google.com/settings/ads" {...extra}>Google 광고 설정</a>{" "}
-              — Google 맞춤 광고 사용 안 함
-            </li>
-            <li style={liStyle}>
-              <a href="https://www.aboutads.info/choices/" {...extra}>www.aboutads.info/choices</a>{" "}
-              — 제3자 광고 공급업체 옵트아웃(미국)
-            </li>
-            <li style={liStyle}>
-              <a href="https://www.youronlinechoices.eu/" {...extra}>www.youronlinechoices.eu</a>{" "}
-              — 유럽 사용자 옵트아웃
-            </li>
-          </ul>
-          <p style={{ marginTop: "0.75rem" }}>
-            Google이 광고 파트너로서 데이터를 사용하는 방식은{" "}
-            <a href="https://policies.google.com/technologies/partner-sites" {...extra}>
-              Google 파트너 사이트 정책
-            </a>
-            에서, 전반적인 처리 방침은{" "}
-            <a href="https://policies.google.com/privacy" {...extra}>Google 개인정보처리방침</a>
-            에서 확인할 수 있습니다.
+            이는 비용 절감을 위한 선택이 아니라 서비스 성격에서 나온 원칙입니다. SBOM 처럼
+            내부 구성이 드러나는 파일을 브라우저에서 다루는 도구를 제공하면서, 같은 페이지에
+            제3자 추적 스크립트를 싣는 것은 앞뒤가 맞지 않습니다.
           </p>
         </>
       ),
       en: (
         <>
           <p>
-            NetTools serves ads through third-party advertising services including Google
-            AdSense. Third-party vendors, including Google, use cookies to serve ads based
-            on your visits to this site and other websites.
+            <strong>NetTools does not serve advertising.</strong> No banner ads, no
+            third-party ad networks including AdSense, and no behavioral or personalized
+            advertising of any kind.
           </p>
           <p style={{ marginTop: "0.75rem" }}>
-            Google&apos;s advertising cookies (such as the DART cookie) enable it to show
-            personalized ads based on your visits to this and other sites on the internet.
-            In addition, third-party vendors or ad networks may use cookies and web beacons
-            or collect information such as IP addresses in the course of serving ads.
+            <strong>We also do not load analytics or tracking scripts.</strong> There is no
+            Google Analytics or comparable visitor tracking, and no ad-network cookies, web
+            beacons, or pixels — so the fact that you visited this site is not shared with
+            any third party. As a result, there is no personalized-ad opt-out to perform.
           </p>
           <p style={{ marginTop: "0.75rem" }}>
-            You can disable or manage personalized advertising at the following:
-          </p>
-          <ul style={ulStyle}>
-            <li style={liStyle}>
-              <a href="https://www.google.com/settings/ads" {...extra}>Google Ad Settings</a>{" "}
-              — turn off Google personalized ads
-            </li>
-            <li style={liStyle}>
-              <a href="https://www.aboutads.info/choices/" {...extra}>www.aboutads.info/choices</a>{" "}
-              — third-party vendor opt-out (US)
-            </li>
-            <li style={liStyle}>
-              <a href="https://www.youronlinechoices.eu/" {...extra}>www.youronlinechoices.eu</a>{" "}
-              — opt-out for European users
-            </li>
-          </ul>
-          <p style={{ marginTop: "0.75rem" }}>
-            How Google uses data as an advertising partner is described in the{" "}
-            <a href="https://policies.google.com/technologies/partner-sites" {...extra}>
-              Google partner sites policy
-            </a>
-            , and its overall practices in the{" "}
-            <a href="https://policies.google.com/privacy" {...extra}>Google Privacy Policy</a>.
+            This is a consequence of what the Service is, not a cost decision. Offering
+            tools that handle files revealing internal composition — an SBOM, for example —
+            in your browser, while loading third-party trackers on the same page, would be
+            self-contradictory.
           </p>
         </>
       ),
@@ -199,7 +147,6 @@ const sections: DocSection[] = [
           <p>서비스는 다음 목적으로 쿠키 및 로컬 스토리지를 사용합니다:</p>
           <ul style={ulStyle}>
             <li style={liStyle}>언어 설정 저장 (한국어/영어)</li>
-            <li style={liStyle}>광고 게재를 위한 Google AdSense 쿠키</li>
           </ul>
           <p style={{ marginTop: "0.75rem" }}>
             브라우저 설정을 통해 쿠키를 비활성화할 수 있으나, 일부 서비스 기능에
@@ -212,7 +159,6 @@ const sections: DocSection[] = [
           <p>The Service uses cookies and local storage for the following purposes:</p>
           <ul style={ulStyle}>
             <li style={liStyle}>Saving your language preference (Korean/English)</li>
-            <li style={liStyle}>Google AdSense cookies for serving ads</li>
           </ul>
           <p style={{ marginTop: "0.75rem" }}>
             You can disable cookies through your browser settings, but this may affect

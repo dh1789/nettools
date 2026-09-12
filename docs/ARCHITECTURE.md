@@ -161,7 +161,6 @@ src/
 | `ToolPageContent` | `useLocale` 로 로케일 뽑아 `ToolLayout` 에 주입 |
 | `BlogLayout` · `BlogPostContent` | 가이드 골격(TOC·메타·관련 도구) |
 | `ToolCard` · `Sidebar` · `ClientHeader` · `ClientFooter` · `LanguageSwitcher` | 네비게이션 |
-| `AdSlot` | 광고 슬롯. `NEXT_PUBLIC_ADSENSE_ID` 미설정 시 렌더 안 함(현재 미설정) |
 | `ToolLoadingSkeleton` | dynamic import 로딩 표시 |
 | `ComparisonTable` | MDX 전용 비교표 (`src/components/blog/`) |
 
@@ -293,6 +292,16 @@ curl -X POST https://api.indexnow.org/indexnow \
 
 **`QrCodeGenerator` 는 고쳐야 한다.** QR 에 넣는 내용(URL·와이파이 비밀번호·연락처)이 제3자 서버로 나가는데, 이건 조회 도구처럼 "성격상 불가피"한 경우가 아니다. QR 인코딩은 순수 클라이언트로 구현 가능하다. 슬로건을 직접 반증하는 항목이라 우선순위가 높다.
 
+### 광고·트래킹 스크립트 금지 (2026-09-12 결정)
+
+사이트 전체에 광고·분석·트래킹 스크립트를 싣지 않는다. AdSense 연동(`AdSlot` 컴포넌트, `SiteShell` 의 `adsbygoogle.js` 주입, `NEXT_PUBLIC_ADSENSE_ID`)은 이날 전부 제거했고 `.env.production` 도 삭제했다.
+
+배경: 승인 시도는 7/5·8/8 두 차례 거절됐고 7주간 색인 1에서 움직이지 않았다. 그 사이 라이브 전 페이지에 `adsbygoogle.js` + `adtrafficquality.google` + `recaptcha` 가 로드되고 있었는데, "가입 없이. 추적 없이." 를 내세우고 SBOM 같은 민감 파일을 다루는 사이트로서 앞뒤가 맞지 않았다. 수익화는 광고가 아니라 도구→가이드→문의→유료 제품 경로로 간다.
+
+되돌리려면 이 결정을 먼저 뒤집어야 한다. `docs/ADSENSE_APPROVAL.md` 최상단에 종료 기록이 있다.
+
+**검증**: 빌드 후 `grep -rl "adsbygoogle\|googlesyndication\|ca-pub-" out` 이 0건이어야 한다.
+
 ---
 
 ## 10. 절대 하지 말 것
@@ -308,3 +317,4 @@ curl -X POST https://api.indexnow.org/indexnow \
 - `public/oui-db.json` 등 빌드 데이터 파일 git 제외
 - 빌드 산출물(`out/`, `.next/`) 커밋
 - 신규 도구에서 사용자 데이터를 외부로 전송
+- 광고·분석·트래킹 스크립트 재도입 (§9 결정을 먼저 뒤집을 것)

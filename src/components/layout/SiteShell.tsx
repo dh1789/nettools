@@ -5,7 +5,6 @@ import { ClientHeader } from "./ClientHeader";
 import { ClientFooter } from "./ClientFooter";
 import { SidebarLayout } from "./SidebarLayout";
 
-const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID;
 const GSC_VERIFICATION = process.env.NEXT_PUBLIC_GSC_VERIFICATION;
 
 /**
@@ -28,14 +27,8 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
           name="naver-site-verification"
           content="a65d425fb21c66df74e8c041c77d36dfb54248a7"
         />
-        {/* Google AdSense — publisher ID는 에드센스 승인 후 NEXT_PUBLIC_ADSENSE_ID 환경변수로 설정 */}
-        {ADSENSE_ID && (
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}`}
-            crossOrigin="anonymous"
-          />
-        )}
+        {/* 광고·트래킹 스크립트는 싣지 않는다 — "추적 없이" 포지셔닝이 이 사이트의 자산이고,
+            파일을 다루는 도구(SBOM 뷰어 등)의 프라이버시 약속과 양립할 수 없다(2026-09-12 결정). */}
         <style
           dangerouslySetInnerHTML={{
             __html: `

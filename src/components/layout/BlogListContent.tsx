@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useLocale } from "@/lib/LocaleProvider";
 import { T } from "@/lib/i18n";
-import { AdSlot } from "./AdSlot";
 import type { BlogFrontmatter } from "@/lib/blog";
 
 interface PostSummary {
@@ -21,8 +20,6 @@ export function BlogListContent({ posts }: BlogListContentProps) {
 
   return (
     <div style={{ maxWidth: "960px", margin: "0 auto", padding: "0 1rem" }}>
-      <AdSlot position="top" />
-
       <header style={{ marginBottom: "2rem" }}>
         <h1
           style={{
@@ -156,7 +153,6 @@ export function BlogListContent({ posts }: BlogListContentProps) {
         </div>
       )}
 
-      <AdSlot position="bottom" />
     </div>
   );
 }

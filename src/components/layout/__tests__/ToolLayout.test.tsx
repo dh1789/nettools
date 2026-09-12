@@ -6,11 +6,6 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { ToolLayout } from "../ToolLayout";
 
-// AdSlot mock
-jest.mock("../AdSlot", () => ({
-  AdSlot: () => null,
-}));
-
 // next/link mock
 jest.mock("next/link", () => {
   const MockLink = ({ href, children, ...props }: { href: string; children: React.ReactNode }) => (
