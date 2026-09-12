@@ -304,7 +304,13 @@ curl -X POST https://api.indexnow.org/indexnow \
 
 되돌리려면 이 결정을 먼저 뒤집어야 한다. `docs/ADSENSE_APPROVAL.md` 최상단에 종료 기록이 있다.
 
-**검증**: 빌드 후 `grep -rl "adsbygoogle\|googlesyndication\|ca-pub-" out` 이 0건이어야 한다.
+**검증**: `./bin/harness smoke --live`
+
+빌드 산출물만 grep 하면 **구조적으로 못 잡는다.** Cloudflare 는 Web Analytics 비컨을 엣지에서 브라우저 요청에만 주입하므로 저장소에도 `out/` 에도 흔적이 없고, `curl` 기본 UA 로 받은 HTML 에도 안 나온다. 실제로 `static.cloudflareinsights.com/beacon.min.js` (토큰 `d321bbc4…`) 가 라이브에서 돌고 있었는데 privacy 페이지는 "분석·추적 스크립트도 싣지 않습니다 … 웹 비컨이나 픽셀도 없어서" 라고 적혀 있었다(2026-09-12 발견). AdSense 를 걷어내며 문구를 절대적으로 바꾼 것이 원인이라, 같은 종류의 오류를 같은 날 새로 만든 셈이다.
+
+그래서 검증은 **브라우저 UA 로 라이브를 직접 받아** 확인한다. `smoke --live` 가 `cloudflareinsights` · `adsbygoogle` · `googlesyndication` · `ca-pub-` · GTM · GA · gtag · Hotjar · Clarity · Plausible 를 본다. 네트워크를 타므로 pre-commit 게이트(`verify`)에는 넣지 않았다 — 배포 후에 돌린다. 대상은 `NETTOOLS_LIVE_URL` 로 바꿀 수 있다.
+
+**Cloudflare Web Analytics 는 존 레벨 설정이라 코드로 못 끈다.** 대시보드 → Web Analytics → 해당 사이트 → Automatic setup 해제.
 
 ---
 

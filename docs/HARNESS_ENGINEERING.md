@@ -37,7 +37,7 @@ AI 에이전트는 코드 변경 후 무엇이 깨졌는지 즉시 감지하기 
 |------|------|------|-----------|
 | `status` | 시스템 상태 종합 리포트 (작업 전/후 비교용) | `--json` | 항상 0 |
 | `verify` | 불변 조건 검증 (pre-commit용) | `--json` | 통과 0 / 실패 1 |
-| `smoke` | 5초 헬스 체크 (타입/데이터/dev 서버) | `--json` | 항상 0 (정보용) |
+| `smoke` | 5초 헬스 체크 (타입/데이터/dev 서버) | `--json` `--live` | 항상 0 (정보용) |
 | `lint` | 컨벤션 위반 감지 | `--json` | 항상 0 (pre-commit가 baseline 비교) |
 | `defects` | `KNOWN_DEFECTS.md` 결함 목록 | `--json` `--stats` `--all` | 항상 0 |
 | `drift` | 에이전트 메모리 ↔ 현실 불일치 감지 | `--json` | 항상 0 |
@@ -146,8 +146,22 @@ AI 에이전트는 코드 변경 후 무엇이 깨졌는지 즉시 감지하기 
 | `oui-data` | `public/oui.json` 존재 + 100KB 이상 (정상 크기) |
 | `public-dir` | `public/` 존재 |
 | `dev-server` | 포트 50000 listen 여부 |
+| `live-trackers` | **`--live` 일 때만.** 라이브 HTML 에 광고·분석 스크립트가 섞였는지 |
 
 서버 재시작 후 또는 의심 상황에서 `./bin/harness smoke` 실행.
+
+### `--live` — 배포본 트래커 검사
+
+```bash
+./bin/harness smoke --live                                    # https://beomanro.com/
+NETTOOLS_LIVE_URL=https://beomanro.com/tools/net/sbom-viewer/ ./bin/harness smoke --live
+```
+
+브라우저 UA 로 라이브를 직접 받아 `cloudflareinsights` · `adsbygoogle` · `googlesyndication` · `ca-pub-` · GTM · GA · gtag · Hotjar · Clarity · Plausible 를 찾는다.
+
+**왜 `out/` grep 으로 안 되나**: Cloudflare 는 Web Analytics 비컨을 엣지에서 브라우저 요청에만 주입한다. 저장소·`out/` 에 흔적이 없고 `curl` 기본 UA 로도 안 보인다. 2026-09-12 에 `static.cloudflareinsights.com/beacon.min.js` 가 라이브에서 돌고 있는 걸 QR 도구 실측 중 발견했다 — privacy 페이지는 "분석·추적 스크립트도 싣지 않습니다" 라고 적혀 있었다.
+
+네트워크를 타므로 기본값에서 뺐다. pre-commit 게이트(`verify`)가 아니라 **배포 후** 돌린다.
 
 ---
 
