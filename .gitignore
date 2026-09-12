@@ -38,3 +38,6 @@ next-env.d.ts
 # harness
 .harness-lint-baseline
 .claude/agent_log/
+
+# 작업용 임시 문서 (핸드오프 등)
+/tmp/

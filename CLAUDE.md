@@ -37,6 +37,7 @@ open -na "Google Chrome" --args --remote-debugging-port=9335 --user-data-dir="$H
 
 | 문서 | 역할 |
 |------|------|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | 저장소 구조 + **새 도구 추가 절차서**(3중 정합성·검증·배포·전파) · 신규 도구 네트워크 제약 |
 | [docs/PROJECT_CONVENTIONS.md](docs/PROJECT_CONVENTIONS.md) | 레이어 컨벤션·도메인 규칙·코딩 안티패턴·운영 안전 규칙 |
 | [docs/HARNESS_ENGINEERING.md](docs/HARNESS_ENGINEERING.md) | `bin/harness` 자동 검증/진단 도구 매뉴얼 (verify/lint/smoke/status/drift/defects/log) |
 | [docs/KNOWN_DEFECTS.md](docs/KNOWN_DEFECTS.md) | 구조적 결함 카탈로그 (`harness defects` 가 파싱) |
