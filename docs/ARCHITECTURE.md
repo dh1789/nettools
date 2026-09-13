@@ -298,7 +298,11 @@ curl -X POST https://api.indexnow.org/indexnow \
 
 ### 광고·트래킹 스크립트 금지 (2026-09-12 결정)
 
-사이트 전체에 광고·분석·트래킹 스크립트를 싣지 않는다. AdSense 연동(`AdSlot` 컴포넌트, `SiteShell` 의 `adsbygoogle.js` 주입, `NEXT_PUBLIC_ADSENSE_ID`)은 이날 전부 제거했고 `.env.production` 도 삭제했다.
+**저장소가 광고·분석·트래킹 스크립트를 직접 붙이지 않는다.** AdSense 연동(`AdSlot` 컴포넌트, `SiteShell` 의 `adsbygoogle.js` 주입, `NEXT_PUBLIC_ADSENSE_ID`)은 이날 전부 제거했고 `.env.production` 도 삭제했다.
+
+**호스팅 플랫폼이 넣는 것은 별도로 다룬다 (2026-09-13 보강).** Cloudflare 는 Web Analytics 비컨을 엣지에서 주입하며 코드로는 못 끈다. 이건 금지 대상이 아니라 **고지 대상**이다 — privacy 페이지 4항이 무엇이 나가는지(페이지 주소·referrer·브라우저·렌더 성능), 무엇을 안 하는지(쿠키·로컬 스토리지·핑거프린팅·사이트 간 추적), 왜 남겨두는지(Cloudflare 가 호스트라 대부분 이미 처리된다 / 검색 외 유입을 볼 유일한 수단)를 적는다. 도구 입력값이 여기 포함되지 않는다는 점도 같은 항에 명시한다.
+
+판단 근거: 비컨은 쿠키리스이고 Cloudflare 는 이 사이트의 CDN 이라 URL·referrer·UA·IP 를 이미 로그로 갖는다. 반면 GSC 는 검색 유입만 보여준다 — 커뮤니티·슬랙 등에서 링크로 들어오는 경로는 이것 없이는 관측이 안 된다. 8장 성패 기준("SBOM 뷰어에 실제 유입이 있는가")을 재는 동안에는 남긴다. 끄기로 하면 대시보드 → Web Analytics → 해당 사이트 → Automatic setup 해제이고, **그때 privacy 4항의 Cloudflare 문단도 같이 지워야 한다**(`smoke --live` 가 양방향으로 알려준다).
 
 배경: 승인 시도는 7/5·8/8 두 차례 거절됐고 7주간 색인 1에서 움직이지 않았다. 그 사이 라이브 전 페이지에 `adsbygoogle.js` + `adtrafficquality.google` + `recaptcha` 가 로드되고 있었는데, "가입 없이. 추적 없이." 를 내세우고 SBOM 같은 민감 파일을 다루는 사이트로서 앞뒤가 맞지 않았다. 수익화는 광고가 아니라 도구→가이드→문의→유료 제품 경로로 간다.
 
@@ -306,11 +310,17 @@ curl -X POST https://api.indexnow.org/indexnow \
 
 **검증**: `./bin/harness smoke --live`
 
-빌드 산출물만 grep 하면 **구조적으로 못 잡는다.** Cloudflare 는 Web Analytics 비컨을 엣지에서 브라우저 요청에만 주입하므로 저장소에도 `out/` 에도 흔적이 없고, `curl` 기본 UA 로 받은 HTML 에도 안 나온다. 실제로 `static.cloudflareinsights.com/beacon.min.js` (토큰 `d321bbc4…`) 가 라이브에서 돌고 있었는데 privacy 페이지는 "분석·추적 스크립트도 싣지 않습니다 … 웹 비컨이나 픽셀도 없어서" 라고 적혀 있었다(2026-09-12 발견). AdSense 를 걷어내며 문구를 절대적으로 바꾼 것이 원인이라, 같은 종류의 오류를 같은 날 새로 만든 셈이다.
+빌드 산출물만 grep 하면 **구조적으로 못 잡는다.** Cloudflare 는 Web Analytics 비컨을 엣지에서 브라우저 요청에만 주입하므로 저장소에도 `out/` 에도 흔적이 없고, `curl` 기본 UA 로 받은 HTML 에도 안 나온다. 실제로 `static.cloudflareinsights.com/beacon.min.js` 가 라이브에서 돌고 있었는데 privacy 페이지는 "분석·추적 스크립트도 싣지 않습니다 … 웹 비컨이나 픽셀도 없어서" 라고 적혀 있었다(2026-09-12 발견). AdSense 를 걷어내며 문구를 절대적으로 바꾼 것이 원인이라, 같은 종류의 오류를 같은 날 새로 만든 셈이다.
 
-그래서 검증은 **브라우저 UA 로 라이브를 직접 받아** 확인한다. `smoke --live` 가 `cloudflareinsights` · `adsbygoogle` · `googlesyndication` · `ca-pub-` · GTM · GA · gtag · Hotjar · Clarity · Plausible 를 본다. 네트워크를 타므로 pre-commit 게이트(`verify`)에는 넣지 않았다 — 배포 후에 돌린다. 대상은 `NETTOOLS_LIVE_URL` 로 바꿀 수 있다.
+그래서 검증은 **브라우저 UA 로 라이브를 직접 받아** 확인하고, 판정을 두 갈래로 나눈다.
 
-**Cloudflare Web Analytics 는 존 레벨 설정이라 코드로 못 끈다.** 대시보드 → Web Analytics → 해당 사이트 → Automatic setup 해제.
+| 분류 | 대상 | 판정 |
+|---|---|---|
+| `FORBIDDEN` | AdSense · Google Ads · `ca-pub-` · GTM · GA · gtag · Hotjar · Clarity · Plausible · Matomo · Segment · FullStory | ❌ fail — §9 위반 |
+| `PLATFORM_INJECTED` | `cloudflareinsights` | ⚠️ warn — privacy 4항에 고지돼 있어야 함 |
+| 둘 다 없음 | — | ✅ ok — privacy 4항의 Cloudflare 문단을 지우라고 알림 |
+
+플랫폼 주입은 붙어도 떨어져도 privacy 문구를 손봐야 하므로 양방향으로 알린다. 네트워크를 타므로 pre-commit 게이트(`verify`)에는 넣지 않았다 — 배포 후에 돌린다. 대상은 `NETTOOLS_LIVE_URL` 로 바꿀 수 있다.
 
 ---
 

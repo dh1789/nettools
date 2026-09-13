@@ -157,9 +157,17 @@ AI 에이전트는 코드 변경 후 무엇이 깨졌는지 즉시 감지하기 
 NETTOOLS_LIVE_URL=https://beomanro.com/tools/net/sbom-viewer/ ./bin/harness smoke --live
 ```
 
-브라우저 UA 로 라이브를 직접 받아 `cloudflareinsights` · `adsbygoogle` · `googlesyndication` · `ca-pub-` · GTM · GA · gtag · Hotjar · Clarity · Plausible 를 찾는다.
+브라우저 UA 로 라이브를 직접 받아 광고·분석 스크립트를 찾는다. 판정은 두 갈래다.
 
-**왜 `out/` grep 으로 안 되나**: Cloudflare 는 Web Analytics 비컨을 엣지에서 브라우저 요청에만 주입한다. 저장소·`out/` 에 흔적이 없고 `curl` 기본 UA 로도 안 보인다. 2026-09-12 에 `static.cloudflareinsights.com/beacon.min.js` 가 라이브에서 돌고 있는 걸 QR 도구 실측 중 발견했다 — privacy 페이지는 "분석·추적 스크립트도 싣지 않습니다" 라고 적혀 있었다.
+| 분류 | 대상 | 판정 |
+|---|---|---|
+| `FORBIDDEN` — 저장소가 직접 붙이는 것 | AdSense · Google Ads · `ca-pub-` · GTM · GA · gtag · Hotjar · Clarity · Plausible · Matomo · Segment · FullStory | ❌ fail |
+| `PLATFORM_INJECTED` — 호스팅이 넣어 코드로 못 끄는 것 | `cloudflareinsights` | ⚠️ warn (privacy 4항 고지 대상) |
+| 둘 다 없음 | — | ✅ ok |
+
+플랫폼 주입은 **붙어도 떨어져도** privacy 문구를 손봐야 한다. 그래서 사라지면 ok 메시지가 "privacy 4항의 Cloudflare 서술을 지울 수 있다" 고 알린다 — 한쪽만 바뀌어 문서와 현실이 다시 어긋나는 걸 막는다.
+
+**왜 `out/` grep 으로 안 되나**: Cloudflare 는 Web Analytics 비컨을 엣지에서 브라우저 요청에만 주입한다. 저장소·`out/` 에 흔적이 없고 `curl` 기본 UA 로도 안 보인다. 2026-09-12 에 `static.cloudflareinsights.com/beacon.min.js` 가 라이브에서 돌고 있는 걸 QR 도구 실측 중 발견했다 — privacy 페이지는 "분석·추적 스크립트도 싣지 않습니다" 라고 적혀 있었다. 비컨은 남기고 privacy 4항에 고지하는 쪽으로 정리했다(2026-09-13, ARCHITECTURE §9).
 
 네트워크를 타므로 기본값에서 뺐다. pre-commit 게이트(`verify`)가 아니라 **배포 후** 돌린다.
 

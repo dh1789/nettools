@@ -97,8 +97,8 @@ function checkDevServer() {
  * privacy 페이지는 "분석·추적 스크립트도 싣지 않습니다" 라고 적혀 있었다(2026-09-12 발견).
  * 그래서 브라우저 UA 로 라이브를 직접 받아 확인한다.
  */
-const TRACKER_PATTERNS = [
-  ["cloudflareinsights", "Cloudflare Web Analytics"],
+/** 저장소가 직접 붙이는 것 — 하나라도 있으면 §9 위반 */
+const FORBIDDEN = [
   ["adsbygoogle", "AdSense"],
   ["googlesyndication", "Google Ads"],
   ["ca-pub-", "AdSense 퍼블리셔 ID"],
@@ -108,7 +108,17 @@ const TRACKER_PATTERNS = [
   ["hotjar", "Hotjar"],
   ["clarity.ms", "Microsoft Clarity"],
   ["plausible.io", "Plausible"],
+  ["matomo", "Matomo"],
+  ["segment.com/analytics.js", "Segment"],
+  ["fullstory", "FullStory"],
 ];
+
+/**
+ * 호스팅 플랫폼이 넣는 것 — 코드로 못 끄므로 위반이 아니라 **고지 대상**이다.
+ * 붙어 있는 동안 privacy 페이지 4항이 이걸 설명하고 있어야 한다.
+ * 빠지면(플랫폼 설정 변경 등) privacy 문구도 같이 손봐야 하므로 양방향으로 알린다.
+ */
+const PLATFORM_INJECTED = [["cloudflareinsights", "Cloudflare Web Analytics"]];
 
 async function checkLiveTrackers() {
   const url = process.env.NETTOOLS_LIVE_URL || "https://beomanro.com/";
@@ -128,13 +138,27 @@ async function checkLiveTrackers() {
     return { name: "live-trackers", status: "warn", detail: `${url} 요청 실패: ${e.message}` };
   }
 
-  const found = TRACKER_PATTERNS.filter(([p]) => html.includes(p)).map(([, label]) => label);
-  if (found.length === 0) {
-    return { name: "live-trackers", status: "ok", detail: `${url} 트래커 0건` };
+  const bad = FORBIDDEN.filter(([p]) => html.includes(p)).map(([, label]) => label);
+  if (bad.length > 0) {
+    return {
+      name: "live-trackers",
+      status: "fail",
+      detail: `${url} 에 트래커 ${bad.length}건: ${bad.join(", ")} — docs/ARCHITECTURE.md §9 위반. privacy 페이지 서술과도 어긋난다`,
+    };
   }
+
+  const platform = PLATFORM_INJECTED.filter(([p]) => html.includes(p)).map(([, label]) => label);
+  if (platform.length > 0) {
+    return {
+      name: "live-trackers",
+      status: "warn",
+      detail: `${url} 광고·분석 스크립트 0건. 플랫폼 주입 ${platform.join(", ")} 있음 — privacy 4항에 고지된 상태여야 한다`,
+    };
+  }
+
   return {
     name: "live-trackers",
-    status: "fail",
-    detail: `${url} 에 트래커 ${found.length}건: ${found.join(", ")} — docs/ARCHITECTURE.md §9 위반. privacy 페이지 서술과도 어긋난다`,
+    status: "ok",
+    detail: `${url} 트래커 0건 (플랫폼 주입도 없음 — privacy 4항의 Cloudflare 서술을 지울 수 있다)`,
   };
 }

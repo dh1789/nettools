@@ -43,6 +43,11 @@ const sections: DocSection[] = [
               <strong>쿠키 및 유사 기술:</strong> 언어 설정 저장 등 서비스 개선을 위한
               로컬 스토리지 사용
             </li>
+            <li style={liStyle}>
+              <strong>호스팅 플랫폼의 측정 정보:</strong> 페이지 주소, 유입 경로, 브라우저
+              종류, 렌더링 성능 지표. 쿠키·브라우저 지문을 쓰지 않습니다 (자세한 내용은
+              아래 4항)
+            </li>
           </ul>
           <p style={{ marginTop: "0.75rem" }}>
             <strong>도구 입력값은 수집하지 않습니다.</strong> 서브넷 계산, IP 조회 등
@@ -61,6 +66,11 @@ const sections: DocSection[] = [
             <li style={liStyle}>
               <strong>Cookies and similar technologies:</strong> local storage used to
               improve the Service, such as saving your language preference
+            </li>
+            <li style={liStyle}>
+              <strong>Hosting platform measurements:</strong> page address, referrer,
+              browser type, and rendering performance metrics. No cookies and no browser
+              fingerprint are used (see section 4 below)
             </li>
           </ul>
           <p style={{ marginTop: "0.75rem" }}>
@@ -102,17 +112,33 @@ const sections: DocSection[] = [
           <p>
             <strong>NetTools는 광고를 게재하지 않습니다.</strong> 배너 광고, 애드센스를
             포함한 제3자 광고 네트워크, 행동 기반 맞춤 광고를 일체 사용하지 않습니다.
+            따라서 맞춤 광고 옵트아웃 절차도 필요하지 않습니다.
           </p>
           <p style={{ marginTop: "0.75rem" }}>
-            <strong>분석·추적 스크립트도 넣지 않습니다.</strong> Google Analytics 를 비롯한
-            방문자 추적 도구, 광고 네트워크의 쿠키·웹 비콘·픽셀을 사용하지 않으므로, 이
-            사이트를 방문했다는 사실이 제3자에게 전달되지 않습니다. 따라서 맞춤 광고
-            옵트아웃 절차도 필요하지 않습니다.
+            <strong>분석·추적 스크립트를 직접 넣지 않습니다.</strong> Google Analytics,
+            태그 매니저, 광고 네트워크의 픽셀·비콘을 이 사이트에 추가하지 않았습니다.
+            방문자를 식별하거나 프로필을 만들지 않으며, 다른 사이트에서의 활동과 연결하지
+            않습니다.
+          </p>
+          <p style={{ marginTop: "0.75rem" }}>
+            <strong>다만 호스팅 플랫폼이 자체 측정 스크립트를 덧붙입니다.</strong> 이
+            사이트는 Cloudflare 에서 제공되며, Cloudflare 는 페이지 응답에 자사 측정
+            스크립트(Web Analytics)를 자동으로 붙입니다. 이 스크립트는 페이지 주소, 유입
+            경로(referrer), 브라우저 종류, 화면 렌더링 성능 지표를 Cloudflare 로 보냅니다.
+            쿠키나 로컬 스토리지를 쓰지 않고, 브라우저 지문(fingerprint)을 만들지 않으며,
+            사이트 간 추적을 하지 않습니다. Cloudflare 는 이 사이트의 호스팅·CDN 사업자라
+            이 정보의 대부분은 페이지를 전달하는 과정에서 이미 처리됩니다. 운영자는 이
+            데이터를 어떤 글이 얼마나 읽히는지 집계로만 봅니다.
+          </p>
+          <p style={{ marginTop: "0.75rem" }}>
+            <strong>도구에 입력한 값은 여기에 포함되지 않습니다.</strong> 위 스크립트가
+            기록하는 것은 페이지 방문뿐입니다. 도구에 넣은 파일·텍스트와 계산 결과는
+            브라우저 밖으로 나가지 않습니다.
           </p>
           <p style={{ marginTop: "0.75rem" }}>
             이는 비용 절감을 위한 선택이 아니라 서비스 성격에서 나온 원칙입니다. SBOM 처럼
             내부 구성이 드러나는 파일을 브라우저에서 다루는 도구를 제공하면서, 같은 페이지에
-            제3자 추적 스크립트를 싣는 것은 앞뒤가 맞지 않습니다.
+            광고망 추적 스크립트를 싣는 것은 앞뒤가 맞지 않습니다.
           </p>
         </>
       ),
@@ -121,18 +147,34 @@ const sections: DocSection[] = [
           <p>
             <strong>NetTools does not serve advertising.</strong> No banner ads, no
             third-party ad networks including AdSense, and no behavioral or personalized
-            advertising of any kind.
+            advertising of any kind. As a result, there is no personalized-ad opt-out to
+            perform.
           </p>
           <p style={{ marginTop: "0.75rem" }}>
-            <strong>We also do not load analytics or tracking scripts.</strong> There is no
-            Google Analytics or comparable visitor tracking, and no ad-network cookies, web
-            beacons, or pixels — so the fact that you visited this site is not shared with
-            any third party. As a result, there is no personalized-ad opt-out to perform.
+            <strong>We do not add analytics or tracking scripts ourselves.</strong> We have
+            not added Google Analytics, a tag manager, or ad-network pixels and beacons to
+            this site. We do not identify visitors, build profiles, or link your activity
+            here to your activity elsewhere.
+          </p>
+          <p style={{ marginTop: "0.75rem" }}>
+            <strong>The hosting platform does add its own measurement script.</strong> This
+            site is served by Cloudflare, which automatically attaches its measurement
+            script (Web Analytics) to page responses. It reports the page address, the
+            referrer, the browser type, and rendering performance metrics to Cloudflare. It
+            uses no cookies or local storage, builds no browser fingerprint, and does no
+            cross-site tracking. Cloudflare is this site&apos;s host and CDN, so most of
+            this information is already processed in the course of delivering the page. We
+            look at the result only as aggregate counts of how often each page is read.
+          </p>
+          <p style={{ marginTop: "0.75rem" }}>
+            <strong>What you type into a tool is not part of this.</strong> The script
+            above records page visits only. Files and text you put into a tool, and the
+            results it computes, never leave your browser.
           </p>
           <p style={{ marginTop: "0.75rem" }}>
             This is a consequence of what the Service is, not a cost decision. Offering
             tools that handle files revealing internal composition — an SBOM, for example —
-            in your browser, while loading third-party trackers on the same page, would be
+            in your browser, while loading ad-network trackers on the same page, would be
             self-contradictory.
           </p>
         </>
@@ -149,6 +191,10 @@ const sections: DocSection[] = [
             <li style={liStyle}>언어 설정 저장 (한국어/영어)</li>
           </ul>
           <p style={{ marginTop: "0.75rem" }}>
+            이것이 전부입니다. 4항의 호스팅 플랫폼 측정 스크립트도 쿠키나 로컬 스토리지를
+            쓰지 않으므로, 추적 목적으로 저장되는 값은 없습니다.
+          </p>
+          <p style={{ marginTop: "0.75rem" }}>
             브라우저 설정을 통해 쿠키를 비활성화할 수 있으나, 일부 서비스 기능에
             영향을 줄 수 있습니다.
           </p>
@@ -160,6 +206,11 @@ const sections: DocSection[] = [
           <ul style={ulStyle}>
             <li style={liStyle}>Saving your language preference (Korean/English)</li>
           </ul>
+          <p style={{ marginTop: "0.75rem" }}>
+            That is the whole list. The hosting platform&apos;s measurement script
+            described in section 4 uses no cookies or local storage either, so nothing is
+            stored for tracking purposes.
+          </p>
           <p style={{ marginTop: "0.75rem" }}>
             You can disable cookies through your browser settings, but this may affect
             some features of the Service.
