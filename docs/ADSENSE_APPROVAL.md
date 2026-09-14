@@ -176,6 +176,18 @@
 - Bing: `site:` 무시 지속("약 15,200개" + 최상단 microsoft.com) → 측정 불가 **6주 연속**. 지표에서 제외 검토.
 - 다음 회차 관전점: 발견됨 84 → **크롤링됨** 이동 여부, 그 다음이 색인. `site:/en/` 첫 진입이 최종 확인.
 
+### 2026-09-14 주간 체크 (`site:/en/` **0 → 1** 첫 진입 · GSC 데이터 9/4 정지로 핵심 판정 불가)
+- ⭐ **`site:beomanro.com/en/` 0 → 1** — `https://beomanro.com/en/` 가 구글 검색 결과에 처음 나왔다. 8/30 /en/ 라우트 도입 후 15일. 전체 `site:` 도 1 → **2**. 지난 회차 "최종 확인" 으로 잡아둔 지표가 움직인 첫 사례다.
+- 🚨 **GSC 데이터가 9/4 에서 10일째 멈춰 있다**(9/7 회차와 동일한 최종 업데이트 날짜). 따라서 이번 주 GSC 수치는 **새 관측이 아니라 같은 데이터의 재출력**이다 — 색인 1 · 미색인 196 · 발견됨-미색인 84 · 크롤링됨-미색인 81 · 404 14 · 리디렉션 오류 15 · 리디렉션 포함 1 · NOINDEX 1 · robots 0 전부 불변.
+- ⚠️ **핵심 관전점(발견됨 84 → 크롤링됨 이동)은 이번 주 판정 불가.** "84 에 머물렀다" 로 읽으면 오독이다. 데이터가 갱신되지 않았을 뿐 정체가 확인된 게 아니다. 다음 회차에 GSC 가 갱신돼야 비로소 1주치 판정이 가능하다.
+- ✅ **사이트맵 15일 정체 해소 — 재제출 1회 통과**(TR-9 수정 유지). sitemap.xml 8/30 → **9/14**, 발견 페이지 166 → **170**(+4 = SBOM 뷰어 ko/en + 취약점 리포트 가이드 ko/en). rss.xml 8/30 → **9/14**, 26 → **27**. GSC 데이터 정지 기간과 사이트맵 미독 기간이 겹치므로, 재제출이 갱신 트리거가 되는지도 함께 본다.
+- 실적: 클릭 **1** / 노출 **61**(62 → −1, 3개월 롤링 윈도우 앞단 이탈) / 게재순위 32.9 → **33.9**(−1 하락). 인기 검색어 `nmea checksum online` 노출 1 → 2, AES-CMAC 2종 유지.
+- 외부 링크 **16** 불변(hada.io 14 · disquiet.io 1 · thefrontpageofai.com 1 — 실질 1출처) · 내부 링크 **0** 불변(색인 1 상태에선 집계 불가, 후행 지표).
+- Bing: 이번엔 쿼리 무시가 아니라 **캡차**("계속하려면 아래 과제 해결"). 형태만 바뀌었고 측정 불가는 **7주 연속**. → **지표에서 제외한다**(다음 회차부터 weekly.py 에서 제거 검토).
+- PR [awesome-networking#31](https://github.com/facyber/awesome-networking/pull/31) **OPEN 60일차** · 미병합.
+- 이번 주 배포(색인 지표와 별개): QR 생성기 클라이언트 인코딩 전환(외부 전송 제거, `79ed32a`) · `smoke --live` 트래커 검사 신설(`6667ffe`) · privacy 4항 Cloudflare Web Analytics 고지 정정(`0cc37a1`).
+- 다음 회차 관전점: ① GSC 최종 업데이트가 9/4 를 벗어나는가(못 벗어나면 데이터 파이프라인 자체를 의심) ② 벗어났다면 발견됨 84 → 크롤링됨 이동 여부 ③ `site:/en/` 이 1 에서 더 늘어나는가.
+
 ### 백링크 확보 (2026-07-16 — 유일한 능동 레버 실행)
 - ✅ PR 제출: [Awesome-Geospatial#227](https://github.com/sacridini/Awesome-Geospatial/pull/227) (5.2k★, SaaS 섹션, nmea-checksum — bng2latlong 선례) · [awesome-online-tools#68](https://github.com/Bakumon/awesome-online-tools/pull/68) (Develop 섹션, NetTools 전체). 머지 대기 — 주간 확인.
 - 탈락 판정: free-for-dev(정책상 "generic toolbox sites" 명시 거절), awesome-sysadmin(설치형 오픈소스 전용), awesome-console-services(curl 접근 필수).
